@@ -1,4 +1,4 @@
-package com.alliander.database;
+package org.lfenergy.compas.database;
 
 import java.io.*;
 import java.net.*;

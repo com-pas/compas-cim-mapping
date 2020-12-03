@@ -1,4 +1,4 @@
-package com.alliander.service;
+package org.lfenergy.compas.service;
 
 public interface DatabaseService {
     

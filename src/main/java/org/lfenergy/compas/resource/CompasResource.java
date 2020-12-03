@@ -1,4 +1,4 @@
-package com.alliander.resource;
+package org.lfenergy.compas.resource;
 
 import java.io.IOException;
 
@@ -11,7 +11,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import com.alliander.service.BaseXService;
+import org.lfenergy.compas.service.BaseXService;
 
 import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
 import org.eclipse.microprofile.openapi.annotations.info.Info;

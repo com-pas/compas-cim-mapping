@@ -1,11 +1,11 @@
-package com.alliander.service;
+package org.lfenergy.compas.service;
 
 import java.io.IOException;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import com.alliander.database.BaseXClient;
-import com.alliander.database.BaseXClient.Query;
+import org.lfenergy.compas.database.BaseXClient;
+import org.lfenergy.compas.database.BaseXClient.Query;
 
 @ApplicationScoped
 public class BaseXService implements DatabaseService {

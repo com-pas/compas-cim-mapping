@@ -1,4 +1,4 @@
-package com.alliander;
+package org.lfenergy.compas;
 
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;

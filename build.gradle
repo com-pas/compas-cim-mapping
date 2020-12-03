@@ -17,7 +17,7 @@ dependencies {
     testImplementation 'io.rest-assured:rest-assured'
 }
 
-group 'com.alliander'
+group 'org.lfenergy.compas'
 version '1.0-SNAPSHOT'
 
 compileJava {
