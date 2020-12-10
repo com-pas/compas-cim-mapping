@@ -1,3 +1,5 @@
+[![GitHub Actions Status](<https://img.shields.io/github/workflow/status/com-pas/compas-cim-mapping/Compas%20CI?logo=GitHub&style=for-the-badge>)](https://github.com/com-pas/compas-cim-mapping/actions?query=workflow%3A%22Compas+CI%22)
+
 # compas-cim-mapping project
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
