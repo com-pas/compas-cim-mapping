@@ -1,0 +1,11 @@
+name: "CodeQL Config"
+
+languages: java
+
+queries:
+  - name: Extended Security
+    uses: security-extended
+  - name: Security and Quality
+    uses: security-and-quality
+  - name: Java code scanning
+    uses: java-code-scanning
