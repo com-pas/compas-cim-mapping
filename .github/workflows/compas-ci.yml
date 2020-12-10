@@ -1,4 +1,4 @@
-name: Push Build
+name: CoMPAS CI
 
 # Triggered on every push
 on: push
