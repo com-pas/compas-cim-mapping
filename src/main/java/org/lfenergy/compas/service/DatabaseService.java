@@ -11,7 +11,8 @@ public interface DatabaseService {
 
     /**
      * Execute a database query
-     * @param command the query to execute
+     * @param database the database to run the query on
+     * @param query the query to execute
      * @return the result
      */
     String executeQuery(String database, String query);
