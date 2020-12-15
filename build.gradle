@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'io.quarkus'
+    id 'org.sonarqube' version '3.0'
 }
 
 repositories {
@@ -32,6 +33,14 @@ compileTestJava {
 java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "com-pas_compas-cim-mapping"
+        property "sonar.organization", "com-pas"
+        property "sonar.host.url", "https://sonarcloud.io"
+    }
 }
 
 test {
