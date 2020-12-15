@@ -35,14 +35,6 @@ java {
     targetCompatibility = JavaVersion.VERSION_11
 }
 
-sonarqube {
-    properties {
-        property "sonar.projectKey", "com-pas_compas-cim-mapping"
-        property "sonar.organization", "com-pas"
-        property "sonar.host.url", "https://sonarcloud.io"
-    }
-}
-
 test {
     systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
 }
