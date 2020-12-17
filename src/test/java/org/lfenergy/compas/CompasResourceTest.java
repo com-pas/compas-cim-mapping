@@ -9,7 +9,7 @@ import static io.restassured.RestAssured.given;
 class CompasResourceTest {
 
     @Test
-    void testCompasEndpoint() {
+    void testApiEndpoint() {
         given()
           .when().get("/api")
           .then()
