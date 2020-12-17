@@ -15,16 +15,16 @@ public class BaseXService implements DatabaseService {
     private static final Logger LOGGER = Logger.getLogger(BaseXService.class);
 
     @ConfigProperty(name = "basex.host")
-    private String baseXHost;
+    String baseXHost;
 
     @ConfigProperty(name = "basex.port")
-    private Integer baseXPort;
+    Integer baseXPort;
 
     @ConfigProperty(name = "basex.username")
-    private String baseXUsername;
+    String baseXUsername;
 
     @ConfigProperty(name = "basex.password")
-    private String baseXPassword;
+    String baseXPassword;
 
     @Override
     public String executeCommand(String command) {

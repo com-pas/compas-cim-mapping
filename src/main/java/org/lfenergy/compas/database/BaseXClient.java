@@ -54,12 +54,10 @@ public final class BaseXClient implements Closeable {
     final String code;
     final String nonce;
     if(response.length > 1) {
-      LOGGER.info("digesttttt");
       // support for digest authentication
       code = username + ':' + response[0] + ':' + password;
       nonce = response[1];
     } else {
-      LOGGER.info("cram-md5");
       // support for cram-md5 (Version < 8.0)
       code = password;
       nonce = response[0];

@@ -11,9 +11,9 @@ class CompasResourceTest {
     @Test
     void testApiEndpoint() {
         given()
-          .when().get("/api")
-          .then()
-             .statusCode(200);
+            .when().get("/api")
+            .then()
+                .statusCode(200);
     }
 
 }
