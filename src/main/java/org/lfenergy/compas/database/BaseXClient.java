@@ -6,6 +6,8 @@ import java.nio.charset.*;
 import java.security.*;
 import java.util.*;
 
+import org.jboss.logging.Logger;
+
 /**
  * Java client for BaseX.
  * Works with BaseX 7.0 and later
@@ -15,6 +17,9 @@ import java.util.*;
  * (C) BaseX Team 2005-20, BSD License
  */
 public final class BaseXClient implements Closeable {
+
+  private static final Logger LOGGER = Logger.getLogger(BaseXClient.class);
+  
   /** UTF-8 charset. */
   private static final Charset UTF8 = StandardCharsets.UTF_8;
   /** Output stream. */
@@ -49,10 +54,12 @@ public final class BaseXClient implements Closeable {
     final String code;
     final String nonce;
     if(response.length > 1) {
+      LOGGER.info("digesttttt");
       // support for digest authentication
       code = username + ':' + response[0] + ':' + password;
       nonce = response[1];
     } else {
+      LOGGER.info("cram-md5");
       // support for cram-md5 (Version < 8.0)
       code = password;
       nonce = response[0];

@@ -5,11 +5,14 @@ import java.io.IOException;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.jboss.logging.Logger;
 import org.lfenergy.compas.database.BaseXClient;
 import org.lfenergy.compas.database.BaseXClient.Query;
 
 @ApplicationScoped
 public class BaseXService implements DatabaseService {
+
+    private static final Logger LOGGER = Logger.getLogger(BaseXService.class);
 
     @ConfigProperty(name = "basex.host")
     private String baseXHost;
@@ -28,7 +31,9 @@ public class BaseXService implements DatabaseService {
         try (BaseXClient client = new BaseXClient(baseXHost, baseXPort, baseXUsername, baseXPassword)) {
             return client.execute(command);
         } catch (IOException exception) {
-            return exception.getLocalizedMessage();
+            final String exceptionMessage = exception.getLocalizedMessage();
+            LOGGER.errorv("executeCommand: {0}", exceptionMessage);
+            return exceptionMessage;
         }
     }
 
@@ -45,7 +50,9 @@ public class BaseXService implements DatabaseService {
             client.execute("close");
             return response.toString();
         }catch (IOException exception) {
-            return exception.getLocalizedMessage();
+            final String exceptionMessage = exception.getLocalizedMessage();
+            LOGGER.errorv("executeQuery: {0}", exceptionMessage);
+            return exceptionMessage;
         }
     }
 
