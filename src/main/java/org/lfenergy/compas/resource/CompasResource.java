@@ -1,7 +1,5 @@
 package org.lfenergy.compas.resource;
 
-import java.io.IOException;
-
 import javax.inject.Inject;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -24,7 +22,7 @@ import org.jboss.resteasy.annotations.jaxrs.PathParam;
         description = "The default API for all CoMPAS operations"
     )
 )
-@Path("/compas")
+@Path("/api")
 public class CompasResource {
 
     /**
@@ -35,31 +33,31 @@ public class CompasResource {
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)
-    public String initial() throws IOException {
+    public String initial() {
         return service.executeCommand("list");
     }
 
     @DELETE
-    @Path("/{database}")
-    public String dropDatabase(@PathParam String database) throws IOException {
+    @Path("/database/{database}")
+    public String dropDatabase(@PathParam String database) {
         return service.executeCommand("drop db ".concat(database));
     }
 
     @PUT
-    @Path("/{database}")
-    public String addDatabase(@PathParam String database, String file) throws IOException {
+    @Path("/database/{database}")
+    public String addDatabase(@PathParam String database, String file) {
         return service.executeCommand("create db ".concat(database).concat(" ").concat(file));
     }
 
     @POST
-    @Path("/{database}/query/")
-    public String query(@PathParam String database, String query) throws IOException {
+    @Path("/database/{database}/query/")
+    public String query(@PathParam String database, String query) {
         return service.executeQuery(database, query);
     }
 
     @POST
     @Path("/command")
-    public String command(String command) throws IOException {
+    public String command(String command) {
         return service.executeCommand(command);
     }
 }

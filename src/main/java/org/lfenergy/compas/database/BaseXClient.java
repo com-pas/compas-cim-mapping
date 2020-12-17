@@ -16,7 +16,7 @@ import java.util.*;
  */
 public final class BaseXClient implements Closeable {
   /** UTF-8 charset. */
-  private static final Charset UTF8 = Charset.forName("UTF-8");
+  private static final Charset UTF8 = StandardCharsets.UTF_8;
   /** Output stream. */
   private final OutputStream out;
   /** Input stream (buffered). */
@@ -46,7 +46,8 @@ public final class BaseXClient implements Closeable {
 
     // receive server response
     final String[] response = receive().split(":");
-    final String code, nonce;
+    final String code;
+    final String nonce;
     if(response.length > 1) {
       // support for digest authentication
       code = username + ':' + response[0] + ':' + password;
