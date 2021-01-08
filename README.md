@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2020 Alliander N.V.
 SPDX-License-Identifier: Apache-2.0
 -->
 
-[![GitHub Actions Status](<https://img.shields.io/github/workflow/status/com-pas/compas-cim-mapping/CoMPAS%20CI?logo=GitHub&style=for-the-badge>)](https://github.com/com-pas/compas-cim-mapping/actions?query=workflow%3A%22CoMPAS+CI%22)
+[![GitHub Actions Status](<https://img.shields.io/github/workflow/status/com-pas/compas-cim-mapping/CoMPAS%20CI?logo=GitHub>)](https://github.com/com-pas/compas-cim-mapping/actions?query=workflow%3A%22CoMPAS+CI%22)
 
 # compas-cim-mapping project
 
