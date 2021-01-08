@@ -5,6 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 -->
 
 [![GitHub Actions Status](<https://img.shields.io/github/workflow/status/com-pas/compas-cim-mapping/CoMPAS%20CI?logo=GitHub&style=for-the-badge>)](https://github.com/com-pas/compas-cim-mapping/actions?query=workflow%3A%22CoMPAS+CI%22)
+[![REUSE status](https://api.reuse.software/badge/github.com/com-pas/compas-cim-mapping)](https://api.reuse.software/info/github.com/com-pas/compas-cim-mapping)
 
 # compas-cim-mapping project
 
