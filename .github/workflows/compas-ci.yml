@@ -1,7 +1,10 @@
+# SPDX-FileCopyrightText: 2020 Alliander N.V.
+#
+# SPDX-License-Identifier: Apache-2.0
+
 name: CoMPAS CI
 
-# Triggered on every push
-on: push
+on: [push, pull_request]
 
 jobs:
   build:
