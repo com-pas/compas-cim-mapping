@@ -10,14 +10,14 @@ import org.junit.jupiter.api.Test;
 import static io.restassured.RestAssured.given;
 
 @QuarkusTest
-public class CompasResourceTest {
+class CompasResourceTest {
 
     @Test
-    public void testCompasEndpoint() {
+    void testApiEndpoint() {
         given()
-          .when().get("/compas")
-          .then()
-             .statusCode(200);
+            .when().get("/api")
+            .then()
+                .statusCode(200);
     }
 
 }
