@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.lfenergy.compas.model.xml.XmlModel;
+import org.lfenergy.compas.model.xml.CimModel;
 
 /**
  * FullModel XML section
@@ -22,7 +22,7 @@ import org.lfenergy.compas.model.xml.XmlModel;
  */
 @XmlRootElement(name = "FullModel")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FullModel extends XmlModel implements Serializable {
+public class FullModel extends CimModel implements Serializable {
     private static final long serialVersionUID = 1L;
     
     @XmlAttribute(name = "about", namespace = "http://www.w3.org/1999/02/22-rdf-syntax-ns#")

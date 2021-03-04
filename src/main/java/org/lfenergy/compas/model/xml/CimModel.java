@@ -8,6 +8,6 @@ package org.lfenergy.compas.model.xml;
  * Representing a fully of partly XML potion.
  * *Each XML model should extend this class!*
  */
-public abstract class XmlModel {
+public abstract class CimModel {
     
 }
