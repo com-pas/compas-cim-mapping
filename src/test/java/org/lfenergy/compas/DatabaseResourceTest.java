@@ -4,18 +4,18 @@
 
 package org.lfenergy.compas;
 
-import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
+import io.quarkus.test.junit.QuarkusTest;
 
 import static io.restassured.RestAssured.given;
 
 @QuarkusTest
-class CompasResourceTest {
+class DatabaseResourceTest {
 
     @Test
-    void testApiEndpoint() {
+    void testDatabaseApiEndpoint() {
         given()
-            .when().get("/api")
+            .when().get("/database")
             .then()
                 .statusCode(200);
     }
