@@ -12,13 +12,15 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.lfenergy.compas.model.xml.XmlModel;
+
 /**
  * Substation XML section
  * Containing all information in a Substation section.
  */
 @XmlRootElement(name = "Substation")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Substation implements Serializable {
+public class Substation extends XmlModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @XmlAttribute(name = "ID", namespace = "http://www.w3.org/1999/02/22-rdf-syntax-ns#")

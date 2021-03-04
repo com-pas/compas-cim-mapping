@@ -14,13 +14,15 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.lfenergy.compas.model.xml.XmlModel;
+
 /**
  * FullModel XML section
  * Containing all information in a FullModel section.
  */
 @XmlRootElement(name = "FullModel")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FullModel implements Serializable {
+public class FullModel extends XmlModel implements Serializable {
     private static final long serialVersionUID = 1L;
     
     @XmlAttribute(name = "about", namespace = "http://www.w3.org/1999/02/22-rdf-syntax-ns#")

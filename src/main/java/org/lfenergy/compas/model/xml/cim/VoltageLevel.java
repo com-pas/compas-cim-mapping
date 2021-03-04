@@ -12,13 +12,15 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.lfenergy.compas.model.xml.XmlModel;
+
 /**
  * VoltageLevel XML section
  * Containing all information in a VoltageLevel section.
  */
 @XmlRootElement(name = "VoltageLevel")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class VoltageLevel implements Serializable {
+public class VoltageLevel extends XmlModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @XmlAttribute(name = "ID", namespace = "http://www.w3.org/1999/02/22-rdf-syntax-ns#")
