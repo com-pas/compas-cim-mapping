@@ -7,12 +7,11 @@ package org.lfenergy.compas.model.xml.cim;
 import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.lfenergy.compas.model.xml.CimModel;
+import org.lfenergy.compas.model.xml.rdf.RdfSection;
 
 /**
  * Substation XML section
@@ -20,22 +19,19 @@ import org.lfenergy.compas.model.xml.CimModel;
  */
 @XmlRootElement(name = "Substation")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Substation extends CimModel implements Serializable {
+public class Substation extends RdfSection implements Serializable {
     private static final long serialVersionUID = 1L;
-
-    @XmlAttribute(name = "ID", namespace = "http://www.w3.org/1999/02/22-rdf-syntax-ns#")
-    private String id;
 
     @XmlElement(name = "IdentifiedObject.name")
     private String name;
 
     @XmlElement(name = "Substation.Region")
-    private SubstationRegion region;
+    private Region region;
 
     @Override
     public String toString() {
         return new StringBuilder("Substation { ")
-                    .append("id: ").append(id).append(", ")
+                    .append("id: ").append(getId()).append(", ")
                     .append("name: ").append(name).append(", ")
                     .append("region: ").append(region)
                     .append(" }")

@@ -7,12 +7,11 @@ package org.lfenergy.compas.model.xml.cim;
 import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.lfenergy.compas.model.xml.CimModel;
+import org.lfenergy.compas.model.xml.rdf.RdfSection;
 
 /**
  * VoltageLevel XML section
@@ -20,25 +19,22 @@ import org.lfenergy.compas.model.xml.CimModel;
  */
 @XmlRootElement(name = "VoltageLevel")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class VoltageLevel extends CimModel implements Serializable {
+public class VoltageLevel extends RdfSection implements Serializable {
     private static final long serialVersionUID = 1L;
-
-    @XmlAttribute(name = "ID", namespace = "http://www.w3.org/1999/02/22-rdf-syntax-ns#")
-    private String id;
 
     @XmlElement(name = "IdentifiedObject.name")
     private String name;
 
     @XmlElement(name = "VoltageLevel.Substation")
-    private VoltageLevelSubstation substation;
+    private Substation substation;
 
     @XmlElement(name = "VoltageLevel.BaseVoltage")
-    private VoltageLevelBaseVoltage baseVoltage;
+    private BaseVoltage baseVoltage;
 
     @Override
     public String toString() {
         return new StringBuilder("VoltageLevel { ")
-                    .append("id: ").append(id).append(", ")
+                    .append("id: ").append(getId()).append(", ")
                     .append("name: ").append(name).append(", ")
                     .append("substation: ").append(substation).append(", ")
                     .append("baseVoltage: ").append(baseVoltage)

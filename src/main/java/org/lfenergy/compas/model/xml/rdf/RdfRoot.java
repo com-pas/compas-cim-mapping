@@ -11,7 +11,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.lfenergy.compas.model.xml.CimModel;
 import org.lfenergy.compas.model.xml.cim.Substation;
 import org.lfenergy.compas.model.xml.cim.VoltageLevel;
 import org.lfenergy.compas.model.xml.md.FullModel;
@@ -20,9 +19,9 @@ import org.lfenergy.compas.model.xml.md.FullModel;
  * Rdf XML section
  * Containing all information in a Rdf section.
  */
-@XmlRootElement(name = "RDF")
+@XmlRootElement(name = "RDF", namespace = "http://www.w3.org/1999/02/22-rdf-syntax-ns#")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Rdf extends CimModel implements Serializable {
+public class RdfRoot extends RdfSection implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @XmlElement(name = "FullModel", namespace = "http://iec.ch/TC57/61970-552/ModelDescription/1#")

@@ -10,11 +10,10 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.lfenergy.compas.model.xml.CimModel;
+import org.lfenergy.compas.model.xml.rdf.RdfSection;
 
 /**
  * FullModel XML section
@@ -22,11 +21,8 @@ import org.lfenergy.compas.model.xml.CimModel;
  */
 @XmlRootElement(name = "FullModel")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FullModel extends CimModel implements Serializable {
+public class FullModel extends RdfSection implements Serializable {
     private static final long serialVersionUID = 1L;
-    
-    @XmlAttribute(name = "about", namespace = "http://www.w3.org/1999/02/22-rdf-syntax-ns#")
-    private String about;
 
     @XmlElement(name = "Model.created")
     private Date created;
@@ -49,7 +45,7 @@ public class FullModel extends CimModel implements Serializable {
     @Override
     public String toString() {
         return new StringBuilder("FullModel { ")
-                    .append("about: ").append(about).append(", ")
+                    .append("about: ").append(getAbout()).append(", ")
                     .append("created: ").append(created).append(", ")
                     .append("scenarioTime: ").append(scenarioTime).append(", ")
                     .append("version: ").append(version).append(", ")

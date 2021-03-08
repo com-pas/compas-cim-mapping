@@ -13,7 +13,7 @@ import javax.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
 import org.eclipse.microprofile.openapi.annotations.info.Info;
 import org.lfenergy.compas.bean.Cim61850Mapping;
-import org.lfenergy.compas.model.xml.rdf.Rdf;
+import org.lfenergy.compas.model.xml.rdf.RdfRoot;
 
 @OpenAPIDefinition(
     info = @Info(
@@ -31,7 +31,7 @@ public class MappingResource {
     @POST
     @Path("/rdf")
     @Consumes("application/xml")
-    public Response rdfConfig(Rdf model) {
+    public Response rdfConfig(RdfRoot model) {
         mappingBean.get61850Mapping(model);
         return Response.status(200).entity(model).build();
     }
