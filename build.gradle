@@ -19,6 +19,8 @@ dependencies {
     implementation 'io.quarkus:quarkus-resteasy-jaxb'
     implementation 'io.quarkus:quarkus-smallrye-openapi'
 
+    implementation 'org.eclipse.rdf4j:rdf4j-rio-rdfxml:3.6.0'
+
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
 }

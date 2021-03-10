@@ -4,16 +4,26 @@
 
 package org.lfenergy.compas.resource;
 
-import javax.inject.Inject;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
 import org.eclipse.microprofile.openapi.annotations.info.Info;
-import org.lfenergy.compas.bean.Cim61850Mapping;
-import org.lfenergy.compas.model.xml.rdf.RdfRoot;
+import org.eclipse.rdf4j.model.Model;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFParseException;
+import org.eclipse.rdf4j.rio.Rio;
+import org.eclipse.rdf4j.rio.UnsupportedRDFormatException;
+
+import org.jboss.logging.Logger;
 
 @OpenAPIDefinition(
     info = @Info(
@@ -25,14 +35,21 @@ import org.lfenergy.compas.model.xml.rdf.RdfRoot;
 @Path("/mapping")
 public class MappingResource {
 
-    @Inject
-    private Cim61850Mapping mappingBean;
+    private static final Logger LOGGER = Logger.getLogger(MappingResource.class);
+
+    @ConfigProperty(name = "rdf4j.baseuri")
+    String baseUri;
     
     @POST
-    @Path("/rdf")
+    @Path("/rio/rdf")
     @Consumes("application/xml")
-    public Response rdfConfig(RdfRoot model) {
-        mappingBean.get61850Mapping(model);
-        return Response.status(200).entity(model).build();
+    public Response rdf(File file) throws RDFParseException, UnsupportedRDFormatException, FileNotFoundException, IOException {
+        Model model = Rio.parse(new FileInputStream(file), baseUri, RDFFormat.RDFXML);
+
+        model.objects()
+            .stream()
+            .forEach(LOGGER::info);
+        
+        return Response.status(200).entity("Done, see log").build();
     }
 }

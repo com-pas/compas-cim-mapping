@@ -7,7 +7,6 @@ package org.lfenergy.compas.bean;
 import javax.enterprise.context.RequestScoped;
 
 import org.jboss.logging.Logger;
-import org.lfenergy.compas.model.xml.rdf.RdfSection;
 
 @RequestScoped
 public class Cim61850Mapping {
@@ -19,8 +18,8 @@ public class Cim61850Mapping {
      * @param model the CIM config file.
      * @return
      */
-    public String get61850Mapping(RdfSection model) {
-        LOGGER.info("get61850Mapping: got " + model.toString());
+    public String get61850Mapping() {
+        LOGGER.info("get61850Mapping");
         return "";
     }
     
