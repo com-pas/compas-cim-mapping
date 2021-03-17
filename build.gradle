@@ -21,6 +21,8 @@ dependencies {
 
     implementation 'org.eclipse.rdf4j:rdf4j-rio-rdfxml:3.6.0'
 
+    implementation 'javax.xml.bind:jaxb-api:2.3.1'
+
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
 }

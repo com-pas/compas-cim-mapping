@@ -5,25 +5,25 @@
 package org.lfenergy.compas.resource;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.Produces;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
 import org.eclipse.microprofile.openapi.annotations.info.Info;
-import org.eclipse.rdf4j.model.Model;
-import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.RDFParseException;
-import org.eclipse.rdf4j.rio.Rio;
 import org.eclipse.rdf4j.rio.UnsupportedRDFormatException;
 
-import org.jboss.logging.Logger;
+import org.lfenergy.compas.model.SclRoot;
 
 @OpenAPIDefinition(
     info = @Info(
@@ -35,21 +35,33 @@ import org.jboss.logging.Logger;
 @Path("/mapping")
 public class MappingResource {
 
-    private static final Logger LOGGER = Logger.getLogger(MappingResource.class);
+    // private static final Logger LOGGER = Logger.getLogger(MappingResource.class);
 
     @ConfigProperty(name = "rdf4j.baseuri")
     String baseUri;
     
     @POST
-    @Path("/rio/rdf")
+    @Path("/cim2iec61850")
     @Consumes("application/xml")
-    public Response rdf(File file) throws RDFParseException, UnsupportedRDFormatException, FileNotFoundException, IOException {
-        Model model = Rio.parse(new FileInputStream(file), baseUri, RDFFormat.RDFXML);
+    @Produces("application/xml")
+    public Response cim2iec61850(File file) throws RDFParseException, UnsupportedRDFormatException,
+        FileNotFoundException, IOException, JAXBException {
+        // Model model = Rio.parse(new FileInputStream(file), baseUri, RDFFormat.RDFXML);
+        // model.filter(subj, pred, obj, contexts)
+        // model.stream()
+        //     .forEach(LOGGER::info);
 
-        model.objects()
-            .stream()
-            .forEach(LOGGER::info);
+        // Get a root SCL file (without full mapping)
+        SclRoot scl = new SclRoot();
+
+        // Marshall everything to a XML file and create a SCL output file
+        JAXBContext context = JAXBContext.newInstance(SclRoot.class);
+        Marshaller marshaller = context.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+        File output = new File("output.scl");
+        marshaller.marshal(scl, output);
         
-        return Response.status(200).entity("Done, see log").build();
+        return Response.status(200).entity(output).build();
     }
 }
