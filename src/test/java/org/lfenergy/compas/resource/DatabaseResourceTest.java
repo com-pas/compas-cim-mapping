@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-package org.lfenergy.compas;
+package org.lfenergy.compas.resource;
 
 import org.junit.jupiter.api.Test;
 import io.quarkus.test.junit.QuarkusTest;

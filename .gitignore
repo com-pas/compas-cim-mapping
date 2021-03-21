@@ -67,3 +67,6 @@ build
 
 # Quarkus specific
 quarkus.log
+
+# Generated XJC classes
+src/main/java/**/generated

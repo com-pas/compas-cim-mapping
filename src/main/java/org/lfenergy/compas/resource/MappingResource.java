@@ -22,8 +22,7 @@ import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
 import org.eclipse.microprofile.openapi.annotations.info.Info;
 import org.eclipse.rdf4j.rio.RDFParseException;
 import org.eclipse.rdf4j.rio.UnsupportedRDFormatException;
-
-import org.lfenergy.compas.model.SclRoot;
+import org.lfenergy.compas.generated.main.SCL;
 
 @OpenAPIDefinition(
     info = @Info(
@@ -46,20 +45,22 @@ public class MappingResource {
     @Produces("application/xml")
     public Response cim2iec61850(File file) throws RDFParseException, UnsupportedRDFormatException,
         FileNotFoundException, IOException, JAXBException {
-        // Model model = Rio.parse(new FileInputStream(file), baseUri, RDFFormat.RDFXML);
-        // model.filter(subj, pred, obj, contexts)
-        // model.stream()
-        //     .forEach(LOGGER::info);
 
-        // Get a root SCL file (without full mapping)
-        SclRoot scl = new SclRoot();
+        // Model model = Rio.parse(new FileInputStream(file), baseUri, RDFFormat.RDFXML);
+
+        // CIM representatie
+        // model.filter("Substation", pred, obj, contexts)
+
+        // mappen naar SCL equivalent
+
+        SCL scl = new SCL();
 
         // Marshall everything to a XML file and create a SCL output file
-        JAXBContext context = JAXBContext.newInstance(SclRoot.class);
+        JAXBContext context = JAXBContext.newInstance(SCL.class);
         Marshaller marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
-        File output = new File("output.scl");
+        File output = new File("output.ssd");
         marshaller.marshal(scl, output);
         
         return Response.status(200).entity(output).build();

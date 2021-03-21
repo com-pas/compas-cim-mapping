@@ -13,7 +13,13 @@ repositories {
      mavenCentral()
 }
 
+configurations {
+  jaxb
+}
+
 dependencies {
+    jaxb 'org.glassfish.jaxb:jaxb-xjc:2.3.3'
+
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
     implementation 'io.quarkus:quarkus-resteasy'
     implementation 'io.quarkus:quarkus-resteasy-jaxb'
@@ -47,3 +53,59 @@ java {
 test {
     systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
 }
+
+/*
+ * XJC class generate stuff
+ */
+
+// Input directory containing the XSD schemas
+def xsdInputDir = 'schema/xsd/'
+
+// Output directory for the generated Java classes
+def xsdOutputDir = 'src/main/java/'
+
+def basePackageName = 'org.lfenergy.compas.generated.'
+
+task jaxb() {
+  description = 'Generate Java model classes using JAXB XJC tool'
+
+  ext {
+    schemas = [
+      'SCL.xsd'                     : 'main',
+      'SCL_Substation.xsd'          : 'substation',
+      'SCL_Namespaces.xsd'          : 'namespaces',
+      'SCL_IED.xsd'                 : 'ied',
+      'SCL_Enums.xsd'               : 'enums',
+      'SCL_DataTypeTemplates.xsd'   : 'data_type_templates',
+      'SCL_Coordinates.xsd'         : 'coordinates',
+      'SCL_Communication.xsd'       : 'communication',
+      'SCL_BaseTypes.xsd'           : 'base_types',
+      'SCL_BaseSimpleTypes.xsd'     : 'base_simple_types'
+    ]
+  }
+  
+  inputs.dir xsdInputDir
+  outputs.dir xsdOutputDir
+  
+  /*
+   * Iterating over all schemas declared above
+   * and calling the XJC tool
+   */
+  schemas.each { schema, specificSchemaPackageName ->
+    doLast {
+      javaexec {
+        classpath = configurations.jaxb
+        main = 'com.sun.tools.xjc.Driver'
+
+        args '-extension'
+        args '-p', basePackageName + specificSchemaPackageName
+        args '-d', xsdOutputDir
+        args '-mark-generated'
+        args '-quiet'
+        args xsdInputDir + schema
+      }
+    }
+  }
+}
+
+compileJava.dependsOn jaxb
