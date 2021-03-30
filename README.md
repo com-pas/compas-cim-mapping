@@ -18,4 +18,4 @@ If you want to learn more about Quarkus, please visit its website: https://quark
 Check [basexhttp on DockerHub](https://hub.docker.com/r/basex/basexhttp/) for a running BaseX docker container.
 
 ## Copyright notice
-The [IEC 61850 XML schemas](https://webstore.iec.ch/publication/63319) used are distributed under their [end user license agreement](CC-EULA.pdf).
+The [IEC 61850 XML schemas](https://webstore.iec.ch/publication/63319) used are distributed under their [end user license agreement](LICENSES/LicenseRef-IEC-CC-1.0.txt).
