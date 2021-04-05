@@ -6,7 +6,6 @@ package org.lfenergy.compas.resource;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
@@ -56,8 +55,7 @@ public class MappingResource {
     @Path("/rdf-cim-iec-61850-mapping")
     @Consumes("application/xml")
     @Produces("application/xml")
-    public Response rdfCimIec61850Mapping(File file) throws RDFParseException, UnsupportedRDFormatException,
-        FileNotFoundException, IOException, JAXBException {
+    public Response rdfCimIec61850Mapping(File file) throws RDFParseException, UnsupportedRDFormatException, IOException, JAXBException {
 
         // Create a root SCL file
         SCL scl = new SCL();
