@@ -73,11 +73,9 @@ task jaxb() {
     schemas = [
       'SCL.xsd'                     : 'main',
       'SCL_Substation.xsd'          : 'substation',
-      'SCL_Namespaces.xsd'          : 'namespaces',
       'SCL_IED.xsd'                 : 'ied',
       'SCL_Enums.xsd'               : 'enums',
       'SCL_DataTypeTemplates.xsd'   : 'data_type_templates',
-      'SCL_Coordinates.xsd'         : 'coordinates',
       'SCL_Communication.xsd'       : 'communication',
       'SCL_BaseTypes.xsd'           : 'base_types',
       'SCL_BaseSimpleTypes.xsd'     : 'base_simple_types'
