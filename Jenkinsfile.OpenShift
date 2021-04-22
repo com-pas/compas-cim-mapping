@@ -1,0 +1,35 @@
+// SPDX-FileCopyrightText: 2020 Alliander N.V.
+//
+// SPDX-License-Identifier: Apache-2.0
+
+@Library('jenkins-workflow-libs@main')
+
+def buildParameterMap = [:]
+buildParameterMap['appName'] = 'compas-cim-mapping'
+buildParameterMap['jenkinsNodeLabel'] = 'openshift-jenkins-agent-general'
+
+buildParameterMap['appType'] = 'custom'
+
+buildParameterMap['language'] = 'java-gradle'
+
+buildParameterMap['customPodTemplate'] = [
+  containerTemplate(
+    name: 'build',
+    image: 'gradle:jdk11',
+    command: '/bin/cat',
+    ttyEnabled: true,
+    alwaysPullImage: true,
+    resourceRequestCpu: '200m',
+    resourceRequestMemory: '1Gi',
+    resourceLimitCpu: '1',
+    resourceLimitMemory: '2Gi',
+ )
+]
+
+buildParameterMap['buildStrategy'] = [
+    'openshift-mvp': [ 'checkout', 'build', 'containerize',
+           'deploy:ogi-smt-dev'
+    ]
+]
+buildAndDeployGeneric(buildParameterMap)
+// vim: set ft=groovy:

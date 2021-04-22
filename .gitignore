@@ -26,12 +26,8 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
-# Alliander specific
-oc
-
 # Gradle stuff
 .gradle
-**/build/
 !src/**/build/
 
 # Ignore Gradle GUI config
@@ -63,7 +59,10 @@ bin
 *.swp
 *.swo
 .cache
+
+# Exclude build, but NOT oc/build
 build
+!oc/build
 
 # Quarkus specific
 quarkus.log
