@@ -20,8 +20,8 @@ abstract class AbstractPojoTester {
                 .with(new GetterMustExistRule())
                 .with(new SetterMustExistRule())
                 // Lets also validate that they are behaving as expected
-                .with(new SetterTester())
                 .with(new GetterTester())
+                .with(new SetterTester())
                 .build();
 
         // Start the Test
