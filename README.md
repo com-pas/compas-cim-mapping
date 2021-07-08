@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2021 Alliander N.V.
 SPDX-License-Identifier: Apache-2.0
 -->
 
-[![Gradle Build Github Action Status](<https://img.shields.io/github/workflow/status/com-pas/compas-cim-mapping/Gradle%20Build?logo=GitHub>)](https://github.com/com-pas/compas-cim-mapping/actions?query=workflow%3A%22Gradle+Build%22)
+[![Maven Build Github Action Status](<https://img.shields.io/github/workflow/status/com-pas/compas-cim-mapping/Maven%20Build?logo=GitHub>)](https://github.com/com-pas/compas-cim-mapping/actions?query=workflow%3A%22Maven+Build%22)
 [![REUSE status](https://api.reuse.software/badge/github.com/com-pas/compas-cim-mapping)](https://api.reuse.software/info/github.com/com-pas/compas-cim-mapping)
 
 # compas-cim-mapping
