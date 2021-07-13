@@ -11,11 +11,27 @@ SPDX-License-Identifier: Apache-2.0
     <parent>
         <groupId>org.lfenergy.compas.cim.mapping</groupId>
         <artifactId>compas-cim-mapping</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>local-SNAPSHOT</version>
     </parent>
 
     <artifactId>app</artifactId>
     <packaging>jar</packaging>
+
+    <properties>
+        <quarkus.platform.version>2.0.0.Final</quarkus.platform.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-universe-bom</artifactId>
+                <version>${quarkus.platform.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -111,11 +127,6 @@ SPDX-License-Identifier: Apache-2.0
     <profiles>
         <profile>
             <id>native</id>
-            <activation>
-                <property>
-                    <name>native</name>
-                </property>
-            </activation>
 
             <properties>
                 <quarkus.package.type>native</quarkus.package.type>
@@ -155,6 +166,20 @@ SPDX-License-Identifier: Apache-2.0
                     target/jacoco-report/jacoco.xml,
                     target/site/jacoco/jacoco.xml,
                 </sonar.coverage.jacoco.xmlReportPaths>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>release</id>
+
+            <properties>
+                <!-- Properties only used for publishing a native docker image (default to Docker Hub) -->
+                <quarkus.native.container-build>true</quarkus.native.container-build>
+                <quarkus.container-image.build>true</quarkus.container-image.build>
+                <quarkus.container-image.group>lfenergycompas</quarkus.container-image.group>
+                <quarkus.container-image.name>compas-cim-mapping</quarkus.container-image.name>
+                <quarkus.container-image.push>true</quarkus.container-image.push>
+                <quarkus.container-image.additional-tags>latest</quarkus.container-image.additional-tags>
             </properties>
         </profile>
     </profiles>
