@@ -3,7 +3,7 @@
 #
 # Before building the container image run:
 #
-# ./gradlew build -Dquarkus.package.type=native
+# ./mvnw package -Pnative
 #
 # Then, build the image with:
 #
@@ -15,7 +15,7 @@
 #
 ###
 FROM quay.io/quarkus/quarkus-distroless-image:1.0
-COPY build/*-runner /application
+COPY target/*-runner /application
 
 EXPOSE 8080
 USER nonroot
