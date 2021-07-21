@@ -4,8 +4,6 @@
 package org.lfenergy.compas.cim.mapping.cgmes;
 
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
@@ -13,8 +11,6 @@ import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CimReaderTest {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CimReaderTest.class);
-
     @Test
     void readModel_When_Then() {
         var cimContents = Map.of(
