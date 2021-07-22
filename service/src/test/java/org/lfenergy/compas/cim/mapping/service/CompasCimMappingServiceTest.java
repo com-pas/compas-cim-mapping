@@ -3,32 +3,66 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.compas.cim.mapping.service;
 
+import com.powsybl.iidm.network.Network;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.lfenergy.compas.cim.mapping.cgmes.CgmesCimReader;
+import org.lfenergy.compas.cim.mapping.mapper.CimToSclMapper;
+import org.lfenergy.compas.cim.mapping.model.CimData;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CompasCimMappingServiceTest {
-    private CompasCimMappingService compasCimMappingService = new CompasCimMappingService();
+    @Mock
+    private Network network;
+
+    @Mock
+    private CgmesCimReader cgmesCimReader;
+    @Mock
+    private CimToSclMapper cimToSclMapper;
+
+    @InjectMocks
+    private CompasCimMappingService compasCimMappingService;
 
     @Test
-    void getMessage_WhenCalledWithName_ThenMessageIncludingNameIsReturned() {
-        var result = compasCimMappingService.getMessage("Jan");
+    void map_WhenCalledWithData_ThenReaderAndMapperAreCalled() {
+        when(cgmesCimReader.readModel(any())).thenReturn(network);
 
-        assertEquals("Hello Jan", result);
+        var scl = compasCimMappingService.map(List.of(new CimData()));
+
+        assertNotNull(scl);
+        verify(cgmesCimReader, times(1)).readModel(any());
+        verify(cimToSclMapper, times(1)).mapCimToScl(network, scl);
     }
 
     @Test
-    void getMessage_WhenCalledWithNull_ThenWorldMessageIsReturned() {
-        var result = compasCimMappingService.getMessage(null);
-        assertEquals("Hello world", result);
+    void map_WhenCalledWithoutData_ThenReaderAndMapperAreNotCalled() {
+        var scl = compasCimMappingService.map(Collections.emptyList());
+
+        assertNotNull(scl);
+        verifyNoInteractions(cgmesCimReader, cimToSclMapper);
     }
 
     @Test
-    void getMessage_WhenCalledWithEmptyString_ThenWorldMessageIsReturned() {
-        var result = compasCimMappingService.getMessage("");
-        assertEquals("Hello world", result);
+    void createBasicSCL_WhenCalled_ThenNewSCLInstanceReturnedWithPartsFilled() {
+        var scl = compasCimMappingService.createBasicSCL();
+
+        assertNotNull(scl);
+        assertEquals("2007", scl.getVersion());
+        assertEquals("B", scl.getRevision());
+        assertEquals((short) 4, scl.getRelease());
+
+        assertNotNull(scl.getHeader());
+        assertNotNull(scl.getHeader().getHistory());
     }
 }

@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.compas.cim.mapping.rest.v1;
 
-import org.lfenergy.compas.cim.mapping.rest.model.GetRequest;
-import org.lfenergy.compas.cim.mapping.rest.model.GetResponse;
+import org.lfenergy.compas.cim.mapping.rest.model.MapRequest;
+import org.lfenergy.compas.cim.mapping.rest.model.MapResponse;
 import org.lfenergy.compas.cim.mapping.service.CompasCimMappingService;
 
 import javax.inject.Inject;
@@ -24,12 +24,12 @@ public class CompasCimMappingResource {
     }
 
     @POST
-    @Path("/message")
+    @Path("/map")
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.APPLICATION_XML)
-    public GetResponse getMessage(GetRequest request) {
-        var response = new GetResponse();
-        response.setMessage(compasCimMappingService.getMessage(request.getName()));
+    public MapResponse getMessage(MapRequest request) {
+        var response = new MapResponse();
+        response.setScl(compasCimMappingService.map(request.getCimData()));
         return response;
     }
 }
