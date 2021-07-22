@@ -54,6 +54,14 @@ class CompasCimMappingServiceTest {
     }
 
     @Test
+    void map_WhenCalledWithNullValue_ThenReaderAndMapperAreNotCalled() {
+        var scl = compasCimMappingService.map(null);
+
+        assertNotNull(scl);
+        verifyNoInteractions(cgmesCimReader, cimToSclMapper);
+    }
+
+    @Test
     void createBasicSCL_WhenCalled_ThenNewSCLInstanceReturnedWithPartsFilled() {
         var scl = compasCimMappingService.createBasicSCL();
 
