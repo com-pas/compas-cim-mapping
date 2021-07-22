@@ -17,10 +17,10 @@ import javax.inject.Inject;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 /**
  * Class to read the CIM Model into a Java Object Model to be used further for converting it to IEC 61850.
@@ -62,11 +62,13 @@ public class CgmesCimReader {
     }
 
     Map<String, InputStream> convertCimDataToMap(List<CimData> cimData) {
-        var cimContent = new HashMap<String, InputStream>();
-        for (var cimRecord : cimData) {
-            var xml = converter.convertToString(cimRecord.getRdf(), false);
-            cimContent.put(cimRecord.getName(), new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
-        }
-        return cimContent;
+        return cimData.stream().collect(
+                Collectors.toMap(
+                        CimData::getName,
+                        cimRecord -> {
+                            var xml = converter.convertToString(cimRecord.getRdf(), false);
+                            return new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
+                        })
+        );
     }
 }

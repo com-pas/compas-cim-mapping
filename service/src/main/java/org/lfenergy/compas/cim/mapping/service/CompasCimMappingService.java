@@ -13,6 +13,7 @@ import org.lfenergy.compas.scl2007b4.model.THeader;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Mapping Service to process the passed CIM XML(s) (RDF Format) and convert these to a IIDM Model
@@ -62,6 +63,7 @@ public class CompasCimMappingService {
         scl.setRelease((short) 4);
 
         THeader header = factory.createTHeader();
+        header.setId(UUID.randomUUID().toString());
         header.setHistory(new THeader.History());
         scl.setHeader(header);
 
