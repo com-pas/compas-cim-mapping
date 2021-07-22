@@ -27,7 +27,7 @@ public class CompasCimMappingResource {
     @Path("/map")
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.APPLICATION_XML)
-    public MapResponse getMessage(MapRequest request) {
+    public MapResponse mapCimToScl(MapRequest request) {
         var response = new MapResponse();
         response.setScl(compasCimMappingService.map(request.getCimData()));
         return response;
