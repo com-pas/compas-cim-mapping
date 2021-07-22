@@ -3,9 +3,9 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.compas.cim.mapping.rest.model;
 
-class GetResponseTest extends AbstractPojoTester {
+class MapRequestTest extends AbstractPojoTester {
     @Override
     protected Class<?> getClassToBeTested() {
-        return GetResponse.class;
+        return MapRequest.class;
     }
 }

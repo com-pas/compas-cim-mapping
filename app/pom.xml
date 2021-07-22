@@ -39,6 +39,10 @@ SPDX-License-Identifier: Apache-2.0
             <artifactId>service</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.lfenergy.compas.core</groupId>
+            <artifactId>scl2007b4</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>io.quarkus</groupId>
