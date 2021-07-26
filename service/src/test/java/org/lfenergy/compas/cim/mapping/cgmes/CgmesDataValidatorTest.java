@@ -33,8 +33,10 @@ class CgmesDataValidatorTest {
         var cimData2 = new CimData();
         cimData2.setName(expectedInString2);
 
+        var cimData = List.of(cimData1, cimData2);
+
         var exception = assertThrows(CompasValidationException.class,
-                () -> validator.validateData(List.of(cimData1, cimData2)));
+                () -> validator.validateData(cimData));
         assertTrue(exception.getMessage().contains(expectedInString1));
         assertTrue(exception.getMessage().contains(expectedInString2));
     }
