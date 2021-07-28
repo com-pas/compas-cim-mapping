@@ -5,6 +5,7 @@ package org.lfenergy.compas.cim.mapping.service;
 
 import org.lfenergy.compas.cim.mapping.cgmes.CgmesCimReader;
 import org.lfenergy.compas.cim.mapping.mapper.CimToSclMapper;
+import org.lfenergy.compas.cim.mapping.mapper.CimToSclMapperContext;
 import org.lfenergy.compas.cim.mapping.model.CimData;
 import org.lfenergy.compas.scl2007b4.model.ObjectFactory;
 import org.lfenergy.compas.scl2007b4.model.SCL;
@@ -42,8 +43,12 @@ public class CompasCimMappingService {
 
         if (cimData != null && !cimData.isEmpty()) {
             // Convert the Data to the Network Model from PowSyBl
-            var network = cgmesCimReader.readModel(cimData);
-            cimToSclMapper.mapCimToScl(network, scl);
+            var result = cgmesCimReader.readModel(cimData);
+            cimToSclMapper.map(
+                    new CimToSclMapperContext(
+                            result.getCgmesModel(),
+                            result.getNetwork(),
+                            scl));
         }
 
         return scl;

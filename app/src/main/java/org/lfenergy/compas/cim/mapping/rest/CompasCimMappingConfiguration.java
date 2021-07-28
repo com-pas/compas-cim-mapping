@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.compas.cim.mapping.rest;
 
-import org.lfenergy.compas.cim.mapping.mapper.SubstationMapper;
+import org.lfenergy.compas.cim.mapping.mapper.CimToSclMapper;
 import org.lfenergy.compas.core.commons.ElementConverter;
 
 import javax.enterprise.inject.Produces;
@@ -18,7 +18,7 @@ public class CompasCimMappingConfiguration {
     }
 
     @Produces
-    public SubstationMapper createSubstationMapper() {
-        return SubstationMapper.INSTANCE;
+    public CimToSclMapper createSclMapper() {
+        return CimToSclMapper.INSTANCE;
     }
 }
