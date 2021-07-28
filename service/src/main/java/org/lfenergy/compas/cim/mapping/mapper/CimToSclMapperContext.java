@@ -10,8 +10,9 @@ import org.lfenergy.compas.cim.mapping.model.CgmesConnectivityNode;
 import org.lfenergy.compas.scl2007b4.model.SCL;
 import org.lfenergy.compas.scl2007b4.model.TNaming;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
-import java.util.Stack;
 import java.util.stream.Collectors;
 
 public class CimToSclMapperContext {
@@ -74,7 +75,7 @@ public class CimToSclMapperContext {
      * At the end this list is used to create a PathName for the ConnectivityNode.
      */
     // Stack holding all passed TNaming Elements.
-    private Stack<TNaming> namingLevels = new Stack<>();
+    private Deque<TNaming> namingLevels = new ArrayDeque<>();
 
     /**
      * Adds the parameter to the stack. Called on the way down (BeforeMapping).

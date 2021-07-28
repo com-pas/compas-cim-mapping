@@ -3,38 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.compas.cim.mapping.model;
 
-import java.util.Optional;
-
-public class CgmesBay {
-    private String id;
-    private String name;
-
+public class CgmesBay extends AbstractCgmesEntity {
     public CgmesBay(String id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Optional<String> getOptionalName() {
-        return Optional.ofNullable(name);
-    }
-
-    public String getNameOrId() {
-        return getOptionalName().orElseGet(this::getId);
+        super(id, name);
     }
 }
