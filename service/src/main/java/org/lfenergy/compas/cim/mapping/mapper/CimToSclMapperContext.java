@@ -33,6 +33,13 @@ public class CimToSclMapperContext {
         return scl;
     }
 
+    /**
+     * Search for bays that belong to a specific Voltage Level. Because CGMES Model doesn't support this
+     * a SparQL is executed against the TripleStore.
+     *
+     * @param voltageLevelId The ID of the Voltage Level to filter on.
+     * @return The list of converted CGMES Bay that were found.
+     */
     public List<CgmesBay> getBaysByVoltageLevel(String voltageLevelId) {
         return cgmesModel.tripleStore().query(
                 "SELECT *\n" +
@@ -48,6 +55,12 @@ public class CimToSclMapperContext {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Search the CGMES Model for Connectivity Nodes that below to a specific container.
+     *
+     * @param id The ID of the Container.
+     * @return The List of converted CGMES ConnectivityNode that were found.
+     */
     public List<CgmesConnectivityNode> getConnectivityNode(String id) {
         return cgmesModel.connectivityNodes()
                 .stream()
@@ -56,16 +69,34 @@ public class CimToSclMapperContext {
                 .collect(Collectors.toList());
     }
 
+    /*
+     * Below part contains methods to keep track of all the naming elements passed.
+     * At the end this list is used to create a PathName for the ConnectivityNode.
+     */
+    // Stack holding all passed TNaming Elements.
     private Stack<TNaming> namingLevels = new Stack<>();
 
+    /**
+     * Adds the parameter to the stack. Called on the way down (BeforeMapping).
+     *
+     * @param tNaming The naming element to add.
+     */
     public void push(TNaming tNaming) {
         namingLevels.push(tNaming);
     }
 
-    public void pop() {
-        namingLevels.pop();
+    /**
+     * Remove the last added element from the stack. Called on the way back (AfterMapping).
+     */
+    public TNaming pop() {
+        return namingLevels.pop();
     }
 
+    /**
+     * Uses the Stack to create a PathName for the ConnectivityNode. All names are joined separated by a slash.
+     *
+     * @return The created PathName from the Stack.
+     */
     public String createPathName() {
         return namingLevels.stream()
                 .map(TNaming::getName)

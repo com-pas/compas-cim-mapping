@@ -47,14 +47,14 @@ public abstract class CimToSclMapper {
                                             @MappingTarget SCL scl,
                                             @Context CimToSclMapperContext context);
 
-    @Mapping(source = "substation.id", target = "name")
-    @Mapping(source = "substation.optionalName", target = "desc")
-    @Mapping(source = "substation.voltageLevelStream", target = "voltageLevel")
+    @Mapping(source = "id", target = "name")
+    @Mapping(source = "optionalName", target = "desc")
+    @Mapping(source = "voltageLevelStream", target = "voltageLevel")
     protected abstract TSubstation mapSubstationToTSubstation(Substation substation,
                                                               @Context CimToSclMapperContext context);
 
-    @Mapping(source = "voltageLevel.nameOrId", target = "name")
-    @Mapping(source = "voltageLevel.nominalV", target = "voltage.value")
+    @Mapping(source = "nameOrId", target = "name")
+    @Mapping(source = "nominalV", target = "voltage.value")
     protected abstract TVoltageLevel mapVoltageLevelToTVoltageLevel(VoltageLevel voltageLevel,
                                                                     @Context CimToSclMapperContext context);
 
@@ -69,7 +69,7 @@ public abstract class CimToSclMapper {
                 .forEach(tBay -> tVoltageLevel.getBay().add(tBay));
     }
 
-    @Mapping(source = "bay.nameOrId", target = "name")
+    @Mapping(source = "nameOrId", target = "name")
     protected abstract TBay mapBayToTBay(CgmesBay bay,
                                          @Context CimToSclMapperContext context);
 
@@ -83,7 +83,7 @@ public abstract class CimToSclMapper {
                 .forEach(tConnectivityNode -> tBay.getConnectivityNode().add(tConnectivityNode));
     }
 
-    @Mapping(source = "connectivityNode.nameOrId", target = "name")
+    @Mapping(source = "nameOrId", target = "name")
     protected abstract TConnectivityNode mapConnectivityNodeToTConnectivityNode(CgmesConnectivityNode connectivityNode,
                                                                                 @Context CimToSclMapperContext context);
 
