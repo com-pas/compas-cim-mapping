@@ -9,7 +9,7 @@ public abstract class AbstractCgmesEntity {
     private String id;
     private String name;
 
-    public AbstractCgmesEntity(String id, String name) {
+    protected AbstractCgmesEntity(String id, String name) {
         this.id = id;
         this.name = name;
     }
