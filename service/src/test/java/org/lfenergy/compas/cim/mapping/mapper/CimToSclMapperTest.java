@@ -112,7 +112,7 @@ class CimToSclMapperTest {
         verify(substation, atLeastOnce()).getId();
         verify(substation, atLeastOnce()).getOptionalName();
         verify(substation, atLeastOnce()).getVoltageLevelStream();
-        verify(context, times(1)).push(sclSubstation);
+        verify(context, times(1)).addLast(sclSubstation);
         verifyNoMoreInteractions(substation);
     }
 
@@ -132,7 +132,7 @@ class CimToSclMapperTest {
         verify(voltageLevel, atLeastOnce()).getId();
         verify(voltageLevel, atLeastOnce()).getNameOrId();
         verify(voltageLevel, atLeastOnce()).getNominalV();
-        verify(context, times(1)).push(sclVoltageLevel);
+        verify(context, times(1)).addLast(sclVoltageLevel);
         verifyNoMoreInteractions(voltageLevel);
     }
 
@@ -148,7 +148,7 @@ class CimToSclMapperTest {
         assertEquals(expectedName, sclBay.getName());
         verify(bay, atLeastOnce()).getId();
         verify(bay, atLeastOnce()).getNameOrId();
-        verify(context, times(1)).push(sclBay);
+        verify(context, times(1)).addLast(sclBay);
         verifyNoMoreInteractions(bay);
     }
 
@@ -166,7 +166,7 @@ class CimToSclMapperTest {
         assertEquals(expectedName, sclConnectivityNode.getName());
         assertEquals(expectedPathName, sclConnectivityNode.getPathName());
         verify(connectivityNode, atLeastOnce()).getNameOrId();
-        verify(context, times(1)).push(sclConnectivityNode);
+        verify(context, times(1)).addLast(sclConnectivityNode);
         verifyNoMoreInteractions(connectivityNode);
     }
 

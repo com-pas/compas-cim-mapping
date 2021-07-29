@@ -11,6 +11,8 @@ import org.lfenergy.compas.cim.mapping.model.CgmesConnectivityNode;
 import org.lfenergy.compas.scl2007b4.model.*;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
@@ -25,6 +27,8 @@ import java.util.Optional;
 public abstract class CimToSclMapper {
     public static final CimToSclMapper INSTANCE = Mappers.getMapper(CimToSclMapper.class);
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CimToSclMapper.class);
+
     /**
      * Top level mapping method to start the mapping of all known elements from Cgmes Model
      * and IIDM Network Model to the IEC SCL Model.
@@ -32,6 +36,7 @@ public abstract class CimToSclMapper {
      * @param context Holding all data from which the SCL (also passed) needs to be filled.
      */
     public void map(CimToSclMapperContext context) {
+        LOGGER.info("Mapping the CIM Content to SCL Content");
         mapNetworkToScl(context.getNetwork(), context.getScl(), context);
     }
 
@@ -39,7 +44,8 @@ public abstract class CimToSclMapper {
     protected void beforeTNaming(@MappingTarget TNaming tNaming,
                                  @Context CimToSclMapperContext context) {
         // Remark: leave this method as first, so it will always be called as the first one of the BeforeMapping.
-        context.push(tNaming);
+        LOGGER.trace("Adding the Named Element {}", tNaming.getName());
+        context.addLast(tNaming);
     }
 
     @Mapping(target = "substation", source = "substationStream")
@@ -101,6 +107,7 @@ public abstract class CimToSclMapper {
     protected void afterTNaming(@MappingTarget TNaming tNaming,
                                 @Context CimToSclMapperContext context) {
         // Remark: leave this method as last, so it will always be called as the last one of the AfterMapping.
-        context.pop();
+        LOGGER.trace("Removing the Named Element {}", tNaming.getName());
+        context.removeLast();
     }
 }

@@ -106,18 +106,18 @@ class CimToSclMapperContextTest {
         var firstPartname = "Name 1";
         var tSubstation = new TSubstation();
         tSubstation.setName(firstPartname);
-        context.push(tSubstation);
+        context.addLast(tSubstation);
 
         var secondPartname = "Name 2";
         var tVoltageLevel = new TVoltageLevel();
         tVoltageLevel.setName(secondPartname);
-        context.push(tVoltageLevel);
+        context.addLast(tVoltageLevel);
 
         // First look what is returned when both elements are on the stack.
         assertEquals(firstPartname + "/" + secondPartname, context.createPathName());
 
         // Now pop one from the stack and see what the name is then.
-        context.pop();
+        context.removeLast();
         assertEquals(firstPartname, context.createPathName());
     }
 }
