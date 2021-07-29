@@ -97,6 +97,38 @@ class CimToSclMapperContextTest {
 
 
     @Test
+    void getSwitches_WhenCalledWithKnownId_ThenPropertyBagsIsFilteredOnIdAndConvertedToCgmesSwitch() {
+        var switchId = "CcnId";
+        var switchName = "Name Switch";
+        var containerId = "Known Container ID";
+        var bags = new PropertyBags();
+        var bag = new PropertyBag(List.of("Switch", "name", "type", "EquipmentContainer", "Terminal1", "Terminal2"));
+        bag.put("Switch", switchId);
+        bag.put("name", switchName);
+        bag.put("type", "Breaker");
+        bag.put("EquipmentContainer", containerId);
+        bag.put("Terminal1", "Terminal1 ID");
+        bag.put("Terminal2", "Terminal2 ID");
+        bags.add(bag);
+
+        bag = new PropertyBag(List.of("Switch", "name", "type", "EquipmentContainer", "Terminal1", "Terminal2"));
+        bag.put("Switch", "Other ID");
+        bag.put("name", "Other Name");
+        bag.put("type", "Breaker");
+        bag.put("EquipmentContainer", "Unknown Container ID");
+        bags.add(bag);
+
+        when(cgmesModel.switches()).thenReturn(bags);
+
+        var result = context.getSwitches(containerId);
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        var ccn = result.get(0);
+        assertEquals(switchId, ccn.getId());
+        assertEquals(switchName, ccn.getName());
+    }
+
+    @Test
     void createPathName_WhenCalledWithNoStack_ThenEmptyStringIsReturned() {
         assertEquals("", context.createPathName());
     }

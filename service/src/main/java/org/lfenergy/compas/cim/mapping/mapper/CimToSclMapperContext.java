@@ -7,6 +7,7 @@ import com.powsybl.cgmes.model.CgmesModel;
 import com.powsybl.iidm.network.Network;
 import org.lfenergy.compas.cim.mapping.model.CgmesBay;
 import org.lfenergy.compas.cim.mapping.model.CgmesConnectivityNode;
+import org.lfenergy.compas.cim.mapping.model.CgmesSwitch;
 import org.lfenergy.compas.scl2007b4.model.SCL;
 import org.lfenergy.compas.scl2007b4.model.TNaming;
 
@@ -58,14 +59,35 @@ public class CimToSclMapperContext {
     /**
      * Search the CGMES Model for Connectivity Nodes that below to a specific container.
      *
-     * @param id The ID of the Container.
+     * @param containerId The ID of the Container.
      * @return The List of converted CGMES ConnectivityNode that were found.
      */
-    public List<CgmesConnectivityNode> getConnectivityNode(String id) {
+    public List<CgmesConnectivityNode> getConnectivityNode(String containerId) {
         return cgmesModel.connectivityNodes()
                 .stream()
-                .filter(bag -> id.equals(bag.getId("ConnectivityNodeContainer")))
-                .map(bag -> new CgmesConnectivityNode(bag.getId("ConnectivityNode"), bag.get("name")))
+                .filter(propertyBag -> containerId.equals(propertyBag.getId("ConnectivityNodeContainer")))
+                .map(propertyBag -> new CgmesConnectivityNode(
+                        propertyBag.getId("ConnectivityNode"),
+                        propertyBag.get("name")))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Search the CGMES Model for Switches (Breakers, Disconnector and more) that below to a specific container.
+     *
+     * @param containerId The ID of the Container.
+     * @return The List of converted CGMES Switches that were found.
+     */
+    public List<CgmesSwitch> getSwitches(String containerId) {
+        return cgmesModel.switches()
+                .stream()
+                .filter(propertyBag -> containerId.equals(propertyBag.getId("EquipmentContainer")))
+                .map(propertyBag -> new CgmesSwitch(
+                        propertyBag.getId("Switch"),
+                        propertyBag.get("name"),
+                        propertyBag.getLocal("type"),
+                        propertyBag.getId("Terminal1"),
+                        propertyBag.getId("Terminal2")))
                 .collect(Collectors.toList());
     }
 

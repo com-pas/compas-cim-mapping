@@ -8,6 +8,7 @@ import com.powsybl.iidm.network.Substation;
 import com.powsybl.iidm.network.VoltageLevel;
 import org.lfenergy.compas.cim.mapping.model.CgmesBay;
 import org.lfenergy.compas.cim.mapping.model.CgmesConnectivityNode;
+import org.lfenergy.compas.cim.mapping.model.CgmesSwitch;
 import org.lfenergy.compas.scl2007b4.model.*;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
@@ -48,19 +49,19 @@ public abstract class CimToSclMapper {
         context.addLast(tNaming);
     }
 
-    @Mapping(target = "substation", source = "substationStream")
+    @Mapping(source = "substationStream", target = "substation")
     protected abstract void mapNetworkToScl(Network network,
                                             @MappingTarget SCL scl,
                                             @Context CimToSclMapperContext context);
 
-    @Mapping(source = "id", target = "name")
-    @Mapping(source = "optionalName", target = "desc")
-    @Mapping(source = "voltageLevelStream", target = "voltageLevel")
+    @Mapping(target = "name", source = "id")
+    @Mapping(target = "desc", source = "optionalName")
+    @Mapping(target = "voltageLevel", source = "voltageLevelStream")
     protected abstract TSubstation mapSubstationToTSubstation(Substation substation,
                                                               @Context CimToSclMapperContext context);
 
-    @Mapping(source = "nameOrId", target = "name")
-    @Mapping(source = "nominalV", target = "voltage.value")
+    @Mapping(target = "name", source = "nameOrId")
+    @Mapping(target = "voltage.value", source = "nominalV")
     protected abstract TVoltageLevel mapVoltageLevelToTVoltageLevel(VoltageLevel voltageLevel,
                                                                     @Context CimToSclMapperContext context);
 
@@ -75,22 +76,31 @@ public abstract class CimToSclMapper {
                 .forEach(tBay -> tVoltageLevel.getBay().add(tBay));
     }
 
-    @Mapping(source = "nameOrId", target = "name")
-    protected abstract TBay mapBayToTBay(CgmesBay bay,
+    @Mapping(target = "name", source = "nameOrId")
+    protected abstract TBay mapBayToTBay(CgmesBay cgmesBay,
                                          @Context CimToSclMapperContext context);
 
     @AfterMapping
-    protected void afterBayToTBay(CgmesBay bay,
+    protected void afterBayToTBay(CgmesBay cgmesBay,
                                   @MappingTarget TBay tBay,
                                   @Context CimToSclMapperContext context) {
-        context.getConnectivityNode(bay.getId())
+        context.getSwitches(cgmesBay.getId())
+                .stream()
+                .map(cgmesSwitch -> mapSwitchToTConductingEquipment(cgmesSwitch, context))
+                .forEach(tConductingEquipment -> tBay.getConductingEquipment().add(tConductingEquipment));
+        context.getConnectivityNode(cgmesBay.getId())
                 .stream()
                 .map(cn -> mapConnectivityNodeToTConnectivityNode(cn, context))
                 .forEach(tConnectivityNode -> tBay.getConnectivityNode().add(tConnectivityNode));
     }
 
-    @Mapping(source = "nameOrId", target = "name")
-    protected abstract TConnectivityNode mapConnectivityNodeToTConnectivityNode(CgmesConnectivityNode connectivityNode,
+    @Mapping(target = "name", source = "nameOrId")
+    @Mapping(target = "type", expression = "java( org.lfenergy.compas.cim.mapping.model.SwitchType.convertSwitchType(cgmesSwitch.getType()).name() )")
+    protected abstract TConductingEquipment mapSwitchToTConductingEquipment(CgmesSwitch cgmesSwitch,
+                                                                            @Context CimToSclMapperContext context);
+
+    @Mapping(target = "name", source = "nameOrId")
+    protected abstract TConnectivityNode mapConnectivityNodeToTConnectivityNode(CgmesConnectivityNode cgmesConnectivityNode,
                                                                                 @Context CimToSclMapperContext context);
 
     @AfterMapping

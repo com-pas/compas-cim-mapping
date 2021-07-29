@@ -10,9 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.lfenergy.compas.cim.mapping.cgmes.CgmesCimReader;
 import org.lfenergy.compas.cim.mapping.cgmes.CgmesDataValidator;
-import org.lfenergy.compas.cim.mapping.model.CgmesBay;
-import org.lfenergy.compas.cim.mapping.model.CgmesConnectivityNode;
-import org.lfenergy.compas.cim.mapping.model.CimData;
+import org.lfenergy.compas.cim.mapping.model.*;
 import org.lfenergy.compas.core.commons.ElementConverter;
 import org.lfenergy.compas.scl2007b4.model.SCL;
 import org.mapstruct.factory.Mappers;
@@ -42,9 +40,11 @@ class CimToSclMapperTest {
     @Mock
     private VoltageLevel voltageLevel;
     @Mock
-    private CgmesBay bay;
+    private CgmesBay cgmesBay;
     @Mock
-    private CgmesConnectivityNode connectivityNode;
+    private CgmesConnectivityNode cgmesConnectivityNode;
+    @Mock
+    private CgmesSwitch cgmesSwitch;
 
     private CimToSclMapper mapper;
 
@@ -87,6 +87,11 @@ class CimToSclMapperTest {
         var connectivityNode = bay.getConnectivityNode().get(0);
         assertEquals("CONNECTIVITY_NODE83", connectivityNode.getName());
         assertEquals("_af9a4ae3-ba2e-4c34-8e47-5af894ee20f4/S1 380kV/BAY_T4_2/CONNECTIVITY_NODE83", connectivityNode.getPathName());
+
+        assertEquals(3, bay.getConductingEquipment().size());
+        var conductingEquipment = bay.getConductingEquipment().get(0);
+        assertEquals("BREAKER25", conductingEquipment.getName());
+        assertEquals("CBR", conductingEquipment.getType());
     }
 
     private String readFile() throws IOException {
@@ -140,16 +145,16 @@ class CimToSclMapperTest {
     void mapBayToTBay_WhenCalledWithCgmesBay_ThenPropertiesMappedToTBay() {
         var expectedName = "TheName";
 
-        when(bay.getNameOrId()).thenReturn(expectedName);
+        when(cgmesBay.getNameOrId()).thenReturn(expectedName);
 
-        var sclBay = mapper.mapBayToTBay(bay, context);
+        var sclBay = mapper.mapBayToTBay(cgmesBay, context);
 
         assertNotNull(sclBay);
         assertEquals(expectedName, sclBay.getName());
-        verify(bay, atLeastOnce()).getId();
-        verify(bay, atLeastOnce()).getNameOrId();
+        verify(cgmesBay, atLeastOnce()).getId();
+        verify(cgmesBay, atLeastOnce()).getNameOrId();
         verify(context, times(1)).addLast(sclBay);
-        verifyNoMoreInteractions(bay);
+        verifyNoMoreInteractions(cgmesBay);
     }
 
     @Test
@@ -157,17 +162,36 @@ class CimToSclMapperTest {
         var expectedName = "TheName";
         var expectedPathName = "ThePathName";
 
-        when(connectivityNode.getNameOrId()).thenReturn(expectedName);
+        when(cgmesConnectivityNode.getNameOrId()).thenReturn(expectedName);
         when(context.createPathName()).thenReturn(expectedPathName);
 
-        var sclConnectivityNode = mapper.mapConnectivityNodeToTConnectivityNode(connectivityNode, context);
+        var sclConnectivityNode = mapper.mapConnectivityNodeToTConnectivityNode(cgmesConnectivityNode, context);
 
         assertNotNull(sclConnectivityNode);
         assertEquals(expectedName, sclConnectivityNode.getName());
         assertEquals(expectedPathName, sclConnectivityNode.getPathName());
-        verify(connectivityNode, atLeastOnce()).getNameOrId();
+        verify(cgmesConnectivityNode, atLeastOnce()).getNameOrId();
         verify(context, times(1)).addLast(sclConnectivityNode);
-        verifyNoMoreInteractions(connectivityNode);
+        verifyNoMoreInteractions(cgmesConnectivityNode);
+    }
+
+    @Test
+    void mapSwitchToTConductingEquipment_WhenCalledWithCgmesSwitch_ThenPropertiesMappedToTConductingEquipment() {
+        var expectedName = "TheName";
+        var expectedType = SwitchType.CBR.name();
+
+        when(cgmesSwitch.getNameOrId()).thenReturn(expectedName);
+        when(cgmesSwitch.getType()).thenReturn(SwitchType.CBR.getCimTypes().get(0));
+
+        var sclConductingEquipment = mapper.mapSwitchToTConductingEquipment(cgmesSwitch, context);
+
+        assertNotNull(sclConductingEquipment);
+        assertEquals(expectedName, sclConductingEquipment.getName());
+        assertEquals(expectedType, sclConductingEquipment.getType());
+        verify(cgmesSwitch, atLeastOnce()).getNameOrId();
+        verify(cgmesSwitch, atLeastOnce()).getType();
+        verify(context, times(1)).addLast(sclConductingEquipment);
+        verifyNoMoreInteractions(cgmesSwitch);
     }
 
     @Test
