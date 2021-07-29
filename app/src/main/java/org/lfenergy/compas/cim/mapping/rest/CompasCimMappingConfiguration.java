@@ -18,7 +18,7 @@ public class CompasCimMappingConfiguration {
     }
 
     @Produces
-    public CimToSclMapper createSclMapper() {
+    public CimToSclMapper createCimToSclMapper() {
         return CimToSclMapper.INSTANCE;
     }
 }
