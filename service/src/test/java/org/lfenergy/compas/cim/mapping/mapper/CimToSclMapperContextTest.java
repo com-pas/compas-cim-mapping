@@ -4,13 +4,11 @@
 package org.lfenergy.compas.cim.mapping.mapper;
 
 import com.powsybl.cgmes.model.CgmesModel;
-import com.powsybl.iidm.network.Network;
 import com.powsybl.triplestore.api.PropertyBag;
 import com.powsybl.triplestore.api.PropertyBags;
 import com.powsybl.triplestore.api.TripleStore;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.lfenergy.compas.scl2007b4.model.SCL;
 import org.lfenergy.compas.scl2007b4.model.TSubstation;
 import org.lfenergy.compas.scl2007b4.model.TVoltageLevel;
 import org.mockito.InjectMocks;
@@ -29,19 +27,58 @@ import static org.mockito.Mockito.when;
 class CimToSclMapperContextTest {
     @Mock
     private CgmesModel cgmesModel;
-    @Mock
-    private Network network;
-    @Mock
-    private SCL scl;
 
     @InjectMocks
     private CimToSclMapperContext context;
 
     @Test
-    void constructorAndGetters_WhenConstructorCalled_ThenGettersShouldReturnObjects() {
-        // Constructor is called by the @InjectMocks.
-        assertEquals(network, context.getNetwork());
-        assertEquals(scl, context.getScl());
+    void getSubstations_WhenCalled_ThenPropertyBagsIsConvertedToCgmesSubstation() {
+        var substationId = "SubstationId";
+        var substationName = "Name Substation";
+        var bags = new PropertyBags();
+        var bag = new PropertyBag(List.of("Substation", "name"));
+        bag.put("Substation", substationId);
+        bag.put("name", substationName);
+        bags.add(bag);
+
+        when(cgmesModel.substations()).thenReturn(bags);
+
+        var result = context.getSubstations();
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        var substation = result.get(0);
+        assertEquals(substationId, substation.getId());
+        assertEquals(substationName, substation.getName());
+    }
+
+    @Test
+    void getVoltageLevelsBySubstation_WhenCalledWithKnownId_ThenPropertyBagsIsFilteredOnIdAndConvertedToCgmesVoltageLevel() {
+        var voltageLevelId = "VoltageLevelId";
+        var voltageLevelName = "Name VoltageLevel";
+        var substationId = "Known Substation ID";
+        var bags = new PropertyBags();
+        var bag = new PropertyBag(List.of("VoltageLevel", "name", "nominalVoltage", "Substation"));
+        bag.put("VoltageLevel", voltageLevelId);
+        bag.put("name", voltageLevelName);
+        bag.put("nominalVoltage", "1.0");
+        bag.put("Substation", substationId);
+        bags.add(bag);
+
+        bag = new PropertyBag(List.of("VoltageLevel", "name", "nominalVoltage", "Substation"));
+        bag.put("VoltageLevel", "Other ID");
+        bag.put("name", "Other Name");
+        bag.put("nominalVoltage", "1.1");
+        bag.put("Substation", "Unknown Container ID");
+        bags.add(bag);
+
+        when(cgmesModel.voltageLevels()).thenReturn(bags);
+
+        var result = context.getVoltageLevelsBySubstation(substationId);
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        var voltageLevel = result.get(0);
+        assertEquals(voltageLevelId, voltageLevel.getId());
+        assertEquals(voltageLevelName, voltageLevel.getName());
     }
 
     @Test

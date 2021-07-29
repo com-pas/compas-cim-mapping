@@ -3,8 +3,6 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.compas.cim.mapping.mapper;
 
-import com.powsybl.iidm.network.Substation;
-import com.powsybl.iidm.network.VoltageLevel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,9 +34,9 @@ class CimToSclMapperTest {
     private CimToSclMapperContext context;
 
     @Mock
-    private Substation substation;
+    private CgmesSubstation cgmesSubstation;
     @Mock
-    private VoltageLevel voltageLevel;
+    private CgmesVoltageLevel cgmesVoltageLevel;
     @Mock
     private CgmesBay cgmesBay;
     @Mock
@@ -61,10 +59,10 @@ class CimToSclMapperTest {
         var cimData = new CimData();
         cimData.setName("MiniGridTestConfiguration_BC_EQ_v3.0.0.xml");
         cimData.setRdf(converter.convertToElement(readFile(), "RDF", "http://www.w3.org/1999/02/22-rdf-syntax-ns#"));
-        var data = reader.readModel(List.of(cimData));
+        var cgmesModel = reader.readModel(List.of(cimData));
 
         var result = new SCL();
-        mapper.map(new CimToSclMapperContext(data.getCgmesModel(), data.getNetwork(), result));
+        mapper.mapToScl(result, new CimToSclMapperContext(cgmesModel));
 
         assertNotNull(result);
 
@@ -105,20 +103,18 @@ class CimToSclMapperTest {
         var expectedId = UUID.randomUUID().toString();
         var expectedDesc = "Some description";
 
-        when(substation.getId()).thenReturn(expectedId);
-        when(substation.getOptionalName()).thenReturn(Optional.of(expectedDesc));
-        when(substation.getVoltageLevelStream()).thenReturn(null);
+        when(cgmesSubstation.getId()).thenReturn(expectedId);
+        when(cgmesSubstation.getOptionalName()).thenReturn(Optional.of(expectedDesc));
 
-        var sclSubstation = mapper.mapSubstationToTSubstation(substation, context);
+        var sclSubstation = mapper.mapSubstationToTSubstation(cgmesSubstation, context);
 
         assertNotNull(sclSubstation);
         assertEquals(expectedId, sclSubstation.getName());
         assertEquals(expectedDesc, sclSubstation.getDesc());
-        verify(substation, atLeastOnce()).getId();
-        verify(substation, atLeastOnce()).getOptionalName();
-        verify(substation, atLeastOnce()).getVoltageLevelStream();
+        verify(cgmesSubstation, atLeastOnce()).getId();
+        verify(cgmesSubstation, atLeastOnce()).getOptionalName();
         verify(context, times(1)).addLast(sclSubstation);
-        verifyNoMoreInteractions(substation);
+        verifyNoMoreInteractions(cgmesSubstation);
     }
 
     @Test
@@ -126,19 +122,19 @@ class CimToSclMapperTest {
         var expectedName = "TheName";
         var expectedVoltage = BigDecimal.valueOf(100.0);
 
-        when(voltageLevel.getNameOrId()).thenReturn(expectedName);
-        when(voltageLevel.getNominalV()).thenReturn(expectedVoltage.doubleValue());
+        when(cgmesVoltageLevel.getNameOrId()).thenReturn(expectedName);
+        when(cgmesVoltageLevel.getNominalV()).thenReturn(expectedVoltage.doubleValue());
 
-        var sclVoltageLevel = mapper.mapVoltageLevelToTVoltageLevel(voltageLevel, context);
+        var sclVoltageLevel = mapper.mapVoltageLevelToTVoltageLevel(cgmesVoltageLevel, context);
 
         assertNotNull(sclVoltageLevel);
         assertEquals(expectedName, sclVoltageLevel.getName());
         assertEquals(expectedVoltage, sclVoltageLevel.getVoltage().getValue());
-        verify(voltageLevel, atLeastOnce()).getId();
-        verify(voltageLevel, atLeastOnce()).getNameOrId();
-        verify(voltageLevel, atLeastOnce()).getNominalV();
+        verify(cgmesVoltageLevel, atLeastOnce()).getId();
+        verify(cgmesVoltageLevel, atLeastOnce()).getNameOrId();
+        verify(cgmesVoltageLevel, atLeastOnce()).getNominalV();
         verify(context, times(1)).addLast(sclVoltageLevel);
-        verifyNoMoreInteractions(voltageLevel);
+        verifyNoMoreInteractions(cgmesVoltageLevel);
     }
 
     @Test

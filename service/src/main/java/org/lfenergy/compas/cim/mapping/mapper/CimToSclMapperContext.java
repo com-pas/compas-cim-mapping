@@ -4,11 +4,7 @@
 package org.lfenergy.compas.cim.mapping.mapper;
 
 import com.powsybl.cgmes.model.CgmesModel;
-import com.powsybl.iidm.network.Network;
-import org.lfenergy.compas.cim.mapping.model.CgmesBay;
-import org.lfenergy.compas.cim.mapping.model.CgmesConnectivityNode;
-import org.lfenergy.compas.cim.mapping.model.CgmesSwitch;
-import org.lfenergy.compas.scl2007b4.model.SCL;
+import org.lfenergy.compas.cim.mapping.model.*;
 import org.lfenergy.compas.scl2007b4.model.TNaming;
 
 import java.util.LinkedList;
@@ -17,21 +13,40 @@ import java.util.stream.Collectors;
 
 public class CimToSclMapperContext {
     private final CgmesModel cgmesModel;
-    private final Network network;
-    private final SCL scl;
 
-    public CimToSclMapperContext(CgmesModel cgmesModel, Network network, SCL scl) {
+    public CimToSclMapperContext(CgmesModel cgmesModel) {
         this.cgmesModel = cgmesModel;
-        this.network = network;
-        this.scl = scl;
     }
 
-    public Network getNetwork() {
-        return network;
+    /**
+     * Search the CGMES Model for all Substations that below to the network.
+     *
+     * @return The List of converted CGMES Substation that were found.
+     */
+    public List<CgmesSubstation> getSubstations() {
+        return cgmesModel.substations()
+                .stream()
+                .map(propertyBag -> new CgmesSubstation(
+                        propertyBag.getId("Substation"),
+                        propertyBag.get("name")))
+                .collect(Collectors.toList());
     }
 
-    public SCL getScl() {
-        return scl;
+    /**
+     * Search the CGMES Model for VoltageLevels that below to a specific substation.
+     *
+     * @param substationId The ID of the Substation.
+     * @return The List of converted CGMES VoltageLevel that were found.
+     */
+    public List<CgmesVoltageLevel> getVoltageLevelsBySubstation(String substationId) {
+        return cgmesModel.voltageLevels()
+                .stream()
+                .filter(propertyBag -> substationId.equals(propertyBag.getId("Substation")))
+                .map(propertyBag -> new CgmesVoltageLevel(
+                        propertyBag.getId("VoltageLevel"),
+                        propertyBag.get("name"),
+                        propertyBag.asDouble("nominalVoltage")))
+                .collect(Collectors.toList());
     }
 
     /**

@@ -3,12 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.compas.cim.mapping.mapper;
 
-import com.powsybl.iidm.network.Network;
-import com.powsybl.iidm.network.Substation;
-import com.powsybl.iidm.network.VoltageLevel;
-import org.lfenergy.compas.cim.mapping.model.CgmesBay;
-import org.lfenergy.compas.cim.mapping.model.CgmesConnectivityNode;
-import org.lfenergy.compas.cim.mapping.model.CgmesSwitch;
+import org.lfenergy.compas.cim.mapping.model.*;
 import org.lfenergy.compas.scl2007b4.model.*;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
@@ -36,9 +31,12 @@ public abstract class CimToSclMapper {
      *
      * @param context Holding all data from which the SCL (also passed) needs to be filled.
      */
-    public void map(CimToSclMapperContext context) {
+    public void mapToScl(SCL scl, CimToSclMapperContext context) {
         LOGGER.info("Mapping the CIM Content to SCL Content");
-        mapNetworkToScl(context.getNetwork(), context.getScl(), context);
+        context.getSubstations()
+                .stream()
+                .map(substation -> mapSubstationToTSubstation(substation, context))
+                .forEach(tSubstation -> scl.getSubstation().add(tSubstation));
     }
 
     @BeforeMapping
@@ -49,24 +47,30 @@ public abstract class CimToSclMapper {
         context.addLast(tNaming);
     }
 
-    @Mapping(source = "substationStream", target = "substation")
-    protected abstract void mapNetworkToScl(Network network,
-                                            @MappingTarget SCL scl,
-                                            @Context CimToSclMapperContext context);
-
     @Mapping(target = "name", source = "id")
     @Mapping(target = "desc", source = "optionalName")
-    @Mapping(target = "voltageLevel", source = "voltageLevelStream")
-    protected abstract TSubstation mapSubstationToTSubstation(Substation substation,
+    protected abstract TSubstation mapSubstationToTSubstation(CgmesSubstation substation,
                                                               @Context CimToSclMapperContext context);
+
+    @AfterMapping
+    protected void afterSubstationToTSubstation(CgmesSubstation substation,
+                                                @MappingTarget TSubstation tSubstation,
+                                                @Context CimToSclMapperContext context) {
+        // The bays need to be mapped in a special way, because IIDM doesn't know them.
+        context.getVoltageLevelsBySubstation(substation.getId())
+                .stream()
+                .map(voltageLevel -> mapVoltageLevelToTVoltageLevel(voltageLevel, context))
+                .forEach(tVoltageLevel -> tSubstation.getVoltageLevel().add(tVoltageLevel));
+
+    }
 
     @Mapping(target = "name", source = "nameOrId")
     @Mapping(target = "voltage.value", source = "nominalV")
-    protected abstract TVoltageLevel mapVoltageLevelToTVoltageLevel(VoltageLevel voltageLevel,
+    protected abstract TVoltageLevel mapVoltageLevelToTVoltageLevel(CgmesVoltageLevel voltageLevel,
                                                                     @Context CimToSclMapperContext context);
 
     @AfterMapping
-    protected void afterVoltageLevelToTVoltageLevel(VoltageLevel voltageLevel,
+    protected void afterVoltageLevelToTVoltageLevel(CgmesVoltageLevel voltageLevel,
                                                     @MappingTarget TVoltageLevel tVoltageLevel,
                                                     @Context CimToSclMapperContext context) {
         // The bays need to be mapped in a special way, because IIDM doesn't know them.

@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.compas.cim.mapping.cgmes;
 
-import com.powsybl.cgmes.conversion.Conversion;
+import com.powsybl.cgmes.model.CgmesModel;
 import com.powsybl.cgmes.model.CgmesModelFactory;
 import com.powsybl.commons.datasource.ReadOnlyMemDataSource;
 import com.powsybl.triplestore.api.TripleStoreFactory;
@@ -44,7 +44,7 @@ public class CgmesCimReader {
      * @param cimData The different InputStream Objects that combined define the CIM Model.
      * @return The IIDM Network model that can be used to convert further to IEC 61850.
      */
-    public CgmesCimReaderResult readModel(List<CimData> cimData) {
+    public CgmesModel readModel(List<CimData> cimData) {
         LOGGER.info("Check the data passed, PowSyBl is quite sensitive about naming.");
         cgmesDataValidator.validateData(cimData);
         var cimContents = convertCimDataToMap(cimData);
@@ -55,15 +55,7 @@ public class CgmesCimReader {
 
         LOGGER.debug("First create a CgmesModel from the InputStream (RDF File).");
         var tripStoreImpl = TripleStoreFactory.defaultImplementation();
-        var cgmesModel = CgmesModelFactory.create(source, tripStoreImpl);
-
-        LOGGER.debug("Next create a Network Model (IIDM) from the CgmesModel.");
-        var config = new Conversion.Config();
-        config.setConvertSvInjections(true);
-        config.setProfileUsedForInitialStateValues(Conversion.Config.StateProfile.SSH.name());
-        var conversion = new Conversion(cgmesModel, config);
-        var network = conversion.convert();
-        return new CgmesCimReaderResult(cgmesModel, network);
+        return CgmesModelFactory.create(source, tripStoreImpl);
     }
 
     Map<String, InputStream> convertCimDataToMap(List<CimData> cimData) {
