@@ -16,7 +16,7 @@ class CompasCimMappingConfigurationTest {
     }
 
     @Test
-    void createSubstationMapper_WhenCalled_ThenObjectReturned() {
-        assertNotNull(configuration.createSubstationMapper());
+    void createCimToSclMapper_WhenCalled_ThenObjectReturned() {
+        assertNotNull(configuration.createCimToSclMapper());
     }
 }

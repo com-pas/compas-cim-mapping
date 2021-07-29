@@ -41,9 +41,9 @@ class CgmesCimReaderTest {
 
         when(converter.convertToString(any(), eq(false))).thenReturn(readFile());
 
-        var network = cgmesCimReader.readModel(cimDataList);
+        var result = cgmesCimReader.readModel(cimDataList);
 
-        assertEquals(5, network.getSubstationStream().count());
+        assertEquals(5, result.getNetwork().getSubstationStream().count());
         verify(cgmesDataValidator, times(1)).validateData(cimDataList);
         verifyNoMoreInteractions(cgmesDataValidator, converter);
     }

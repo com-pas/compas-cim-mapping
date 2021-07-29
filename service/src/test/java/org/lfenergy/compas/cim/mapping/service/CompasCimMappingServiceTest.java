@@ -3,11 +3,14 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.compas.cim.mapping.service;
 
+import com.powsybl.cgmes.model.CgmesModel;
 import com.powsybl.iidm.network.Network;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.lfenergy.compas.cim.mapping.cgmes.CgmesCimReader;
+import org.lfenergy.compas.cim.mapping.cgmes.CgmesCimReaderResult;
 import org.lfenergy.compas.cim.mapping.mapper.CimToSclMapper;
+import org.lfenergy.compas.cim.mapping.mapper.CimToSclMapperContext;
 import org.lfenergy.compas.cim.mapping.model.CimData;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -24,6 +27,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class CompasCimMappingServiceTest {
     @Mock
+    private CgmesModel cgmesModel;
+    @Mock
     private Network network;
 
     @Mock
@@ -36,13 +41,15 @@ class CompasCimMappingServiceTest {
 
     @Test
     void map_WhenCalledWithData_ThenReaderAndMapperAreCalled() {
-        when(cgmesCimReader.readModel(any())).thenReturn(network);
+        when(cgmesCimReader.readModel(any())).thenReturn(new CgmesCimReaderResult(cgmesModel, network));
 
-        var scl = compasCimMappingService.map(List.of(new CimData()));
+        var cimDataList = List.of(new CimData());
+        var scl = compasCimMappingService.map(cimDataList);
 
         assertNotNull(scl);
-        verify(cgmesCimReader, times(1)).readModel(any());
-        verify(cimToSclMapper, times(1)).mapCimToScl(network, scl);
+        verify(cgmesCimReader, times(1)).readModel(cimDataList);
+        verify(cimToSclMapper, times(1)).map(any(CimToSclMapperContext.class));
+        verifyNoMoreInteractions(cgmesCimReader, cimToSclMapper);
     }
 
     @Test
