@@ -5,10 +5,13 @@ package org.lfenergy.compas.cim.mapping.mapper;
 
 import com.powsybl.cgmes.model.CgmesModel;
 import org.lfenergy.compas.cim.mapping.model.*;
+import org.lfenergy.compas.scl2007b4.model.TConnectivityNode;
 import org.lfenergy.compas.scl2007b4.model.TNaming;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class CimToSclMapperContext {
@@ -21,7 +24,7 @@ public class CimToSclMapperContext {
     /**
      * Search the CGMES Model for all Substations that below to the network.
      *
-     * @return The List of converted CGMES Substation that were found.
+     * @return The List of converted CGMES Substations that were found.
      */
     public List<CgmesSubstation> getSubstations() {
         return cgmesModel.substations()
@@ -36,7 +39,7 @@ public class CimToSclMapperContext {
      * Search the CGMES Model for VoltageLevels that below to a specific substation.
      *
      * @param substationId The ID of the Substation.
-     * @return The List of converted CGMES VoltageLevel that were found.
+     * @return The List of converted CGMES VoltageLevels that were found.
      */
     public List<CgmesVoltageLevel> getVoltageLevelsBySubstation(String substationId) {
         return cgmesModel.voltageLevels()
@@ -54,7 +57,7 @@ public class CimToSclMapperContext {
      * a SparQL is executed against the TripleStore.
      *
      * @param voltageLevelId The ID of the Voltage Level to filter on.
-     * @return The list of converted CGMES Bay that were found.
+     * @return The list of converted CGMES Bays that were found.
      */
     public List<CgmesBay> getBaysByVoltageLevel(String voltageLevelId) {
         return cgmesModel.tripleStore().query(
@@ -75,7 +78,7 @@ public class CimToSclMapperContext {
      * Search the CGMES Model for Connectivity Nodes that below to a specific container.
      *
      * @param containerId The ID of the Container.
-     * @return The List of converted CGMES ConnectivityNode that were found.
+     * @return The List of converted CGMES Connectivity Nodes that were found.
      */
     public List<CgmesConnectivityNode> getConnectivityNode(String containerId) {
         return cgmesModel.connectivityNodes()
@@ -103,6 +106,23 @@ public class CimToSclMapperContext {
                         propertyBag.getLocal("type"),
                         propertyBag.getId("Terminal1"),
                         propertyBag.getId("Terminal2")))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Search the CGMES Model for Terminals that below to a specific Conducting Equipment.
+     *
+     * @param conductingEquipmentId The ID of the Conducting Equipment.
+     * @return The List of converted CGMES Terminals that were found.
+     */
+    public List<CgmesTerminal> getTerminals(String conductingEquipmentId) {
+        return cgmesModel.terminals()
+                .stream()
+                .filter(propertyBag -> conductingEquipmentId.equals(propertyBag.getId("ConductingEquipment")))
+                .map(propertyBag -> new CgmesTerminal(
+                        propertyBag.getId("Terminal"),
+                        propertyBag.get("name"),
+                        propertyBag.getId("ConnectivityNode")))
                 .collect(Collectors.toList());
     }
 
@@ -138,5 +158,33 @@ public class CimToSclMapperContext {
         return namingLevels.stream()
                 .map(TNaming::getName)
                 .collect(Collectors.joining("/"));
+    }
+
+    /*
+     * Because there needs to be a link between the terminal and the Connectivity Node, we need to store
+     * the TConnectivityNode with his ID. The ID is not copied to the IEC SCL, so this way the link can be
+     * made between those two elements.
+     */
+    // Map with Connectivity Nodes with the ID as Key.
+    private Map<String, TConnectivityNode> connectivityNodeIdMap = new HashMap<>();
+
+    public void saveTConnectivityNode(String id, TConnectivityNode tConnectivityNode) {
+        connectivityNodeIdMap.put(id, tConnectivityNode);
+    }
+
+    public String getPathnameFromConnectivityNode(String id) {
+        var tConnectivityNode = connectivityNodeIdMap.get(id);
+        if (tConnectivityNode != null) {
+            return tConnectivityNode.getPathName();
+        }
+        return null;
+    }
+
+    public String getNameFromConnectivityNode(String id) {
+        var tConnectivityNode = connectivityNodeIdMap.get(id);
+        if (tConnectivityNode != null) {
+            return tConnectivityNode.getName();
+        }
+        return null;
     }
 }

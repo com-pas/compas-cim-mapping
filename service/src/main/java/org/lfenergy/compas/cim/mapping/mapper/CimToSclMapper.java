@@ -70,32 +70,51 @@ public abstract class CimToSclMapper {
                                                                     @Context CimToSclMapperContext context);
 
     @AfterMapping
-    protected void afterVoltageLevelToTVoltageLevel(CgmesVoltageLevel voltageLevel,
+    protected void afterVoltageLevelToTVoltageLevel(CgmesVoltageLevel cgmesVoltageLevel,
                                                     @MappingTarget TVoltageLevel tVoltageLevel,
                                                     @Context CimToSclMapperContext context) {
         // The bays need to be mapped in a special way, because IIDM doesn't know them.
-        context.getBaysByVoltageLevel(voltageLevel.getId())
+        context.getBaysByVoltageLevel(cgmesVoltageLevel.getId())
                 .stream()
-                .map(bay -> mapBayToTBay(bay, context))
+                .map(bay -> mapBayToTBay(bay, cgmesVoltageLevel, context))
                 .forEach(tBay -> tVoltageLevel.getBay().add(tBay));
     }
 
     @Mapping(target = "name", source = "nameOrId")
     protected abstract TBay mapBayToTBay(CgmesBay cgmesBay,
+                                         @Context CgmesVoltageLevel cgmesVoltageLevel,
                                          @Context CimToSclMapperContext context);
 
     @AfterMapping
     protected void afterBayToTBay(CgmesBay cgmesBay,
                                   @MappingTarget TBay tBay,
+                                  @Context CgmesVoltageLevel cgmesVoltageLevel,
                                   @Context CimToSclMapperContext context) {
+        // First we will process the Connectivity Nodes, because their path names are needed in the Terminal
+        // of a Conduction Equipment.
+        var cgmesConnectivityNodes = context.getConnectivityNode(cgmesVoltageLevel.getId());
+        cgmesConnectivityNodes.addAll(context.getConnectivityNode(cgmesBay.getId()));
+        cgmesConnectivityNodes.stream()
+                .map(cn -> mapConnectivityNodeToTConnectivityNode(cn, context))
+                .forEach(tConnectivityNode -> tBay.getConnectivityNode().add(tConnectivityNode));
+        // Now we can process the Conduction Equipment with their terminals.
         context.getSwitches(cgmesBay.getId())
                 .stream()
                 .map(cgmesSwitch -> mapSwitchToTConductingEquipment(cgmesSwitch, context))
                 .forEach(tConductingEquipment -> tBay.getConductingEquipment().add(tConductingEquipment));
-        context.getConnectivityNode(cgmesBay.getId())
-                .stream()
-                .map(cn -> mapConnectivityNodeToTConnectivityNode(cn, context))
-                .forEach(tConnectivityNode -> tBay.getConnectivityNode().add(tConnectivityNode));
+    }
+
+    @Mapping(target = "name", source = "nameOrId")
+    protected abstract TConnectivityNode mapConnectivityNodeToTConnectivityNode(CgmesConnectivityNode cgmesConnectivityNode,
+                                                                                @Context CimToSclMapperContext context);
+
+    @AfterMapping
+    protected void afterConnectivityNodeToTConnectivityNode(CgmesConnectivityNode cgmesConnectivityNode,
+                                                            @MappingTarget TConnectivityNode tConnectivityNode,
+                                                            @Context CimToSclMapperContext context) {
+        var pathName = context.createPathName();
+        tConnectivityNode.setPathName(pathName);
+        context.saveTConnectivityNode(cgmesConnectivityNode.getId(), tConnectivityNode);
     }
 
     @Mapping(target = "name", source = "nameOrId")
@@ -103,15 +122,22 @@ public abstract class CimToSclMapper {
     protected abstract TConductingEquipment mapSwitchToTConductingEquipment(CgmesSwitch cgmesSwitch,
                                                                             @Context CimToSclMapperContext context);
 
-    @Mapping(target = "name", source = "nameOrId")
-    protected abstract TConnectivityNode mapConnectivityNodeToTConnectivityNode(CgmesConnectivityNode cgmesConnectivityNode,
-                                                                                @Context CimToSclMapperContext context);
-
     @AfterMapping
-    protected void afterConnectivityNodeToTConnectivityNode(@MappingTarget TConnectivityNode tConnectivityNode,
-                                                            @Context CimToSclMapperContext context) {
-        tConnectivityNode.setPathName(context.createPathName());
+    protected void afterSwitchToTConductingEquipment(CgmesSwitch cgmesSwitch,
+                                                     @MappingTarget TConductingEquipment tConductingEquipment,
+                                                     @Context CimToSclMapperContext context) {
+        context.getTerminals(cgmesSwitch.getId())
+                .stream()
+                .map(cgmesTerminal -> mapTerminalToTTerminal(cgmesTerminal, context))
+                .forEach(tTerminal -> tConductingEquipment.getTerminal().add(tTerminal));
     }
+
+
+    @Mapping(target = "name", source = "nameOrId")
+    @Mapping(target = "connectivityNode", expression = "java( context.getPathnameFromConnectivityNode(cgmesTerminal.getConnectivityNodeId()) )")
+    @Mapping(target = "CNodeName", expression = "java( context.getNameFromConnectivityNode(cgmesTerminal.getConnectivityNodeId()) )")
+    protected abstract TTerminal mapTerminalToTTerminal(CgmesTerminal cgmesTerminal,
+                                                        @Context CimToSclMapperContext context);
 
     protected String optionalString(Optional<String> value) {
         return value.orElse("");

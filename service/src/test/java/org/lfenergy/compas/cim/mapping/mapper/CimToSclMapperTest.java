@@ -11,6 +11,7 @@ import org.lfenergy.compas.cim.mapping.cgmes.CgmesDataValidator;
 import org.lfenergy.compas.cim.mapping.model.*;
 import org.lfenergy.compas.core.commons.ElementConverter;
 import org.lfenergy.compas.scl2007b4.model.SCL;
+import org.lfenergy.compas.scl2007b4.model.TConnectivityNode;
 import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -81,10 +82,10 @@ class CimToSclMapperTest {
         var bay = voltageLevel.getBay().get(0);
         assertEquals("BAY_T4_2", bay.getName());
 
-        assertEquals(3, bay.getConnectivityNode().size());
+        assertEquals(4, bay.getConnectivityNode().size());
         var connectivityNode = bay.getConnectivityNode().get(0);
-        assertEquals("CONNECTIVITY_NODE83", connectivityNode.getName());
-        assertEquals("_af9a4ae3-ba2e-4c34-8e47-5af894ee20f4/S1 380kV/BAY_T4_2/CONNECTIVITY_NODE83", connectivityNode.getPathName());
+        assertEquals("CONNECTIVITY_NODE82", connectivityNode.getName());
+        assertEquals("_af9a4ae3-ba2e-4c34-8e47-5af894ee20f4/S1 380kV/BAY_T4_2/CONNECTIVITY_NODE82", connectivityNode.getPathName());
 
         assertEquals(3, bay.getConductingEquipment().size());
         var conductingEquipment = bay.getConductingEquipment().get(0);
@@ -143,7 +144,7 @@ class CimToSclMapperTest {
 
         when(cgmesBay.getNameOrId()).thenReturn(expectedName);
 
-        var sclBay = mapper.mapBayToTBay(cgmesBay, context);
+        var sclBay = mapper.mapBayToTBay(cgmesBay, cgmesVoltageLevel, context);
 
         assertNotNull(sclBay);
         assertEquals(expectedName, sclBay.getName());
@@ -155,9 +156,11 @@ class CimToSclMapperTest {
 
     @Test
     void mapConnectivityNodeToTConnectivityNode_WhenCalledWithCgmesConnectivityNode_ThenPropertiesMappedToTConnectivityNode() {
+        var expectedId = "Id";
         var expectedName = "TheName";
         var expectedPathName = "ThePathName";
 
+        when(cgmesConnectivityNode.getId()).thenReturn(expectedId);
         when(cgmesConnectivityNode.getNameOrId()).thenReturn(expectedName);
         when(context.createPathName()).thenReturn(expectedPathName);
 
@@ -166,8 +169,10 @@ class CimToSclMapperTest {
         assertNotNull(sclConnectivityNode);
         assertEquals(expectedName, sclConnectivityNode.getName());
         assertEquals(expectedPathName, sclConnectivityNode.getPathName());
+        verify(cgmesConnectivityNode, atLeastOnce()).getId();
         verify(cgmesConnectivityNode, atLeastOnce()).getNameOrId();
         verify(context, times(1)).addLast(sclConnectivityNode);
+        verify(context, times(1)).saveTConnectivityNode(eq(expectedId), any(TConnectivityNode.class));
         verifyNoMoreInteractions(cgmesConnectivityNode);
     }
 
@@ -184,6 +189,7 @@ class CimToSclMapperTest {
         assertNotNull(sclConductingEquipment);
         assertEquals(expectedName, sclConductingEquipment.getName());
         assertEquals(expectedType, sclConductingEquipment.getType());
+        verify(cgmesSwitch, atLeastOnce()).getId();
         verify(cgmesSwitch, atLeastOnce()).getNameOrId();
         verify(cgmesSwitch, atLeastOnce()).getType();
         verify(context, times(1)).addLast(sclConductingEquipment);
