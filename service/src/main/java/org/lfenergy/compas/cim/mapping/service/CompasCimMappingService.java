@@ -43,12 +43,8 @@ public class CompasCimMappingService {
 
         if (cimData != null && !cimData.isEmpty()) {
             // Convert the Data to the Network Model from PowSyBl
-            var result = cgmesCimReader.readModel(cimData);
-            cimToSclMapper.map(
-                    new CimToSclMapperContext(
-                            result.getCgmesModel(),
-                            result.getNetwork(),
-                            scl));
+            var cgmesModel = cgmesCimReader.readModel(cimData);
+            cimToSclMapper.mapToScl(scl, new CimToSclMapperContext(cgmesModel));
         }
 
         return scl;

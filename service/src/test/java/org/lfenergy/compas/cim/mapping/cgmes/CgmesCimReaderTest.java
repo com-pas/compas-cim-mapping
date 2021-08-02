@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.compas.cim.mapping.cgmes;
 
-import com.powsybl.cgmes.model.CgmesModelException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.lfenergy.compas.cim.mapping.model.CimData;
@@ -20,7 +19,6 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,7 +32,7 @@ class CgmesCimReaderTest {
     private CgmesCimReader cgmesCimReader;
 
     @Test
-    void readModel_WhenReadingCimModel_ThenNetWorkObjectReturnedWithSubstations() throws IOException {
+    void readModel_WhenReadingCimModel_ThenCgmesModelReturnedWithSubstations() throws IOException {
         var cimData = new CimData();
         cimData.setName("MiniGridTestConfiguration_BC_EQ_v3.0.0.xml");
         var cimDataList = List.of(cimData);
@@ -43,18 +41,18 @@ class CgmesCimReaderTest {
 
         var result = cgmesCimReader.readModel(cimDataList);
 
-        assertEquals(5, result.getNetwork().getSubstationStream().count());
+        assertEquals(5, result.substations().size());
         verify(cgmesDataValidator, times(1)).validateData(cimDataList);
         verifyNoMoreInteractions(cgmesDataValidator, converter);
     }
 
     @Test
-    void readModel_WhenReadingWithoutCimModel_ThenNetWorkObjectReturnedWithSubstations() throws IOException {
+    void readModel_WhenReadingWithoutCimModel_ThenCgmesModelReturnedWithoutSubstations() {
         List<CimData> cimDataList = Collections.emptyList();
 
-        assertThrows(CgmesModelException.class,
-                () -> cgmesCimReader.readModel(cimDataList));
+        var result = cgmesCimReader.readModel(cimDataList);
 
+        assertEquals(0, result.substations().size());
         verify(cgmesDataValidator, times(1)).validateData(cimDataList);
         verifyNoMoreInteractions(cgmesDataValidator, converter);
     }

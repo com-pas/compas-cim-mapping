@@ -4,33 +4,49 @@
 package org.lfenergy.compas.cim.mapping.mapper;
 
 import com.powsybl.cgmes.model.CgmesModel;
-import com.powsybl.iidm.network.Network;
-import org.lfenergy.compas.cim.mapping.model.CgmesBay;
-import org.lfenergy.compas.cim.mapping.model.CgmesConnectivityNode;
-import org.lfenergy.compas.scl2007b4.model.SCL;
+import org.lfenergy.compas.cim.mapping.model.*;
+import org.lfenergy.compas.scl2007b4.model.TConnectivityNode;
 import org.lfenergy.compas.scl2007b4.model.TNaming;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CimToSclMapperContext {
     private final CgmesModel cgmesModel;
-    private final Network network;
-    private final SCL scl;
 
-    public CimToSclMapperContext(CgmesModel cgmesModel, Network network, SCL scl) {
+    public CimToSclMapperContext(CgmesModel cgmesModel) {
         this.cgmesModel = cgmesModel;
-        this.network = network;
-        this.scl = scl;
     }
 
-    public Network getNetwork() {
-        return network;
+    /**
+     * Search the CGMES Model for all Substations that below to the network.
+     *
+     * @return The List of converted CGMES Substations that were found.
+     */
+    public List<CgmesSubstation> getSubstations() {
+        return cgmesModel.substations()
+                .stream()
+                .map(propertyBag -> new CgmesSubstation(
+                        propertyBag.getId("Substation"),
+                        propertyBag.get("name")))
+                .collect(Collectors.toList());
     }
 
-    public SCL getScl() {
-        return scl;
+    /**
+     * Search the CGMES Model for VoltageLevels that below to a specific substation.
+     *
+     * @param substationId The ID of the Substation.
+     * @return The List of converted CGMES VoltageLevels that were found.
+     */
+    public List<CgmesVoltageLevel> getVoltageLevelsBySubstation(String substationId) {
+        return cgmesModel.voltageLevels()
+                .stream()
+                .filter(propertyBag -> substationId.equals(propertyBag.getId("Substation")))
+                .map(propertyBag -> new CgmesVoltageLevel(
+                        propertyBag.getId("VoltageLevel"),
+                        propertyBag.get("name"),
+                        propertyBag.asDouble("nominalVoltage")))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -38,7 +54,7 @@ public class CimToSclMapperContext {
      * a SparQL is executed against the TripleStore.
      *
      * @param voltageLevelId The ID of the Voltage Level to filter on.
-     * @return The list of converted CGMES Bay that were found.
+     * @return The list of converted CGMES Bays that were found.
      */
     public List<CgmesBay> getBaysByVoltageLevel(String voltageLevelId) {
         return cgmesModel.tripleStore().query(
@@ -58,14 +74,52 @@ public class CimToSclMapperContext {
     /**
      * Search the CGMES Model for Connectivity Nodes that below to a specific container.
      *
-     * @param id The ID of the Container.
-     * @return The List of converted CGMES ConnectivityNode that were found.
+     * @param containerId The ID of the Container.
+     * @return The List of converted CGMES Connectivity Nodes that were found.
      */
-    public List<CgmesConnectivityNode> getConnectivityNode(String id) {
+    public List<CgmesConnectivityNode> getConnectivityNode(String containerId) {
         return cgmesModel.connectivityNodes()
                 .stream()
-                .filter(bag -> id.equals(bag.getId("ConnectivityNodeContainer")))
-                .map(bag -> new CgmesConnectivityNode(bag.getId("ConnectivityNode"), bag.get("name")))
+                .filter(propertyBag -> containerId.equals(propertyBag.getId("ConnectivityNodeContainer")))
+                .map(propertyBag -> new CgmesConnectivityNode(
+                        propertyBag.getId("ConnectivityNode"),
+                        propertyBag.get("name")))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Search the CGMES Model for Switches (Breakers, Disconnector and more) that below to a specific container.
+     *
+     * @param containerId The ID of the Container.
+     * @return The List of converted CGMES Switches that were found.
+     */
+    public List<CgmesSwitch> getSwitches(String containerId) {
+        return cgmesModel.switches()
+                .stream()
+                .filter(propertyBag -> containerId.equals(propertyBag.getId("EquipmentContainer")))
+                .map(propertyBag -> new CgmesSwitch(
+                        propertyBag.getId("Switch"),
+                        propertyBag.get("name"),
+                        propertyBag.getLocal("type"),
+                        propertyBag.getId("Terminal1"),
+                        propertyBag.getId("Terminal2")))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Search the CGMES Model for Terminals that below to a specific Conducting Equipment.
+     *
+     * @param conductingEquipmentId The ID of the Conducting Equipment.
+     * @return The List of converted CGMES Terminals that were found.
+     */
+    public List<CgmesTerminal> getTerminals(String conductingEquipmentId) {
+        return cgmesModel.terminals()
+                .stream()
+                .filter(propertyBag -> conductingEquipmentId.equals(propertyBag.getId("ConductingEquipment")))
+                .map(propertyBag -> new CgmesTerminal(
+                        propertyBag.getId("Terminal"),
+                        propertyBag.get("name"),
+                        propertyBag.getId("ConnectivityNode")))
                 .collect(Collectors.toList());
     }
 
@@ -101,5 +155,33 @@ public class CimToSclMapperContext {
         return namingLevels.stream()
                 .map(TNaming::getName)
                 .collect(Collectors.joining("/"));
+    }
+
+    /*
+     * Because there needs to be a link between the terminal and the Connectivity Node, we need to store
+     * the TConnectivityNode with his ID. The ID is not copied to the IEC SCL, so this way the link can be
+     * made between those two elements.
+     */
+    // Map with Connectivity Nodes with the ID as Key.
+    private Map<String, TConnectivityNode> connectivityNodeIdMap = new HashMap<>();
+
+    public void saveTConnectivityNode(String id, TConnectivityNode tConnectivityNode) {
+        connectivityNodeIdMap.put(id, tConnectivityNode);
+    }
+
+    public Optional<String> getPathnameFromConnectivityNode(String id) {
+        var tConnectivityNode = connectivityNodeIdMap.get(id);
+        if (tConnectivityNode != null) {
+            return Optional.ofNullable(tConnectivityNode.getPathName());
+        }
+        return Optional.empty();
+    }
+
+    public Optional<String> getNameFromConnectivityNode(String id) {
+        var tConnectivityNode = connectivityNodeIdMap.get(id);
+        if (tConnectivityNode != null) {
+            return Optional.ofNullable(tConnectivityNode.getName());
+        }
+        return Optional.empty();
     }
 }
