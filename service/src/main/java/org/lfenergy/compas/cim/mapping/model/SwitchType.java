@@ -10,11 +10,39 @@ import java.util.List;
 
 import static org.lfenergy.compas.cim.mapping.exception.CompasCimMappingErrorCode.UNKNOWN_TYPE_ERROR_CODE;
 
+/**
+ * Mapping between CIM Switch Types and IEC Conducting Equipment Type.
+ * <p>
+ * Remark: Some CIM Switch Type are coupled to more than 1 IEC Code, that's why some are commented.
+ */
 public enum SwitchType {
     BSH("Connector"),
-    CAB("ACLineSegment", "DCLineSegment"),
+    // CAB("ACLineSegment", "DCLineSegment"),
+    CAP("ShuntCompensator", "SeriesCompensator"),
     CBR("ProtectedSwitch", "Breaker", "Recloser"),
-    DIS("Switch", "Disconnector", "Fuse", "Jumper", "LoadBreakSwitch", "GroundDisconnector", "Sectionaliser");
+    CON("FrequencyConverter"),
+    CTR("CurrentTransformer"),
+    DIS("Switch", "Disconnector", "Fuse", "Jumper", "LoadBreakSwitch", "GroundDisconnector", "Sectionaliser"),
+    EFN("PetersenCoil"),
+    GEN("GeneratingUnit"),
+    // GIL("ACLineSegment", "DCLineSegment"),
+    IFL("ACLineSegment", "DCLineSegment", "EquivalentBranch"),
+    // LIN("ACLineSegment", "DCLineSegment"),
+    LTC("TapChanger", "RatioTapChanger", "PhaseTapChanger"),
+    MOT("AsynchronousMachine"),
+    PSH("GroundingImpedance"),
+    PTR("PowerTransformer"),
+    PTW("TransformerEnd", "PowerTransformerEnd", "TransformerTankEnd"),
+    // REA("ShuntCompensator", "SeriesCompensator"),
+    RES("EarthFaultCompensator"),
+    // RRC("SynchronousMachine"),
+    SAR("SurgeArrester"),
+    SCR("ACDCConverter"),
+    SMC("SynchronousMachine"),
+    // TCF("FrequencyConverter"),
+    TCR("StaticVarCompensator"),
+    TNK("TransformerTank"),
+    VTR("PotentialTransformer");
 
     private List<String> cimTypes;
 
