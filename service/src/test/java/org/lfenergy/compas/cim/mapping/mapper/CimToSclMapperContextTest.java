@@ -9,6 +9,7 @@ import com.powsybl.triplestore.api.PropertyBags;
 import com.powsybl.triplestore.api.TripleStore;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.lfenergy.compas.scl2007b4.model.TConnectivityNode;
 import org.lfenergy.compas.scl2007b4.model.TSubstation;
 import org.lfenergy.compas.scl2007b4.model.TVoltageLevel;
 import org.mockito.InjectMocks;
@@ -17,8 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -132,10 +132,9 @@ class CimToSclMapperContextTest {
         assertEquals(ccnName, ccn.getName());
     }
 
-
     @Test
     void getSwitches_WhenCalledWithKnownId_ThenPropertyBagsIsFilteredOnIdAndConvertedToCgmesSwitch() {
-        var switchId = "CcnId";
+        var switchId = "SwitchId";
         var switchName = "Name Switch";
         var containerId = "Known Container ID";
         var bags = new PropertyBags();
@@ -160,9 +159,41 @@ class CimToSclMapperContextTest {
         var result = context.getSwitches(containerId);
         assertNotNull(result);
         assertEquals(1, result.size());
-        var ccn = result.get(0);
-        assertEquals(switchId, ccn.getId());
-        assertEquals(switchName, ccn.getName());
+        var switchEquipment = result.get(0);
+        assertEquals(switchId, switchEquipment.getId());
+        assertEquals(switchName, switchEquipment.getName());
+    }
+
+    @Test
+    void getTerminals_WhenCalledWithKnownId_ThenPropertyBagsIsFilteredOnIdAndConvertedToCgmesTerminal() {
+        var terminalId = "TerminalId";
+        var terminalName = "Name Terminal";
+        var ccnNode = "Connectivity Node ID";
+        var containerId = "Known Container ID";
+        var bags = new PropertyBags();
+        var bag = new PropertyBag(List.of("Terminal", "name", "ConnectivityNode", "ConductingEquipment"));
+        bag.put("Terminal", terminalId);
+        bag.put("name", terminalName);
+        bag.put("ConnectivityNode", ccnNode);
+        bag.put("ConductingEquipment", containerId);
+        bags.add(bag);
+
+        bag = new PropertyBag(List.of("Terminal", "name", "ConnectivityNode", "ConductingEquipment"));
+        bag.put("Terminal", "Other ID");
+        bag.put("name", "Other Name");
+        bag.put("ConnectivityNode", "Some Other ID");
+        bag.put("ConductingEquipment", "Unknown Container ID");
+        bags.add(bag);
+
+        when(cgmesModel.terminals()).thenReturn(bags);
+
+        var result = context.getTerminals(containerId);
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        var terminal = result.get(0);
+        assertEquals(terminalId, terminal.getId());
+        assertEquals(terminalName, terminal.getName());
+        assertEquals(ccnNode, terminal.getConnectivityNodeId());
     }
 
     @Test
@@ -188,5 +219,57 @@ class CimToSclMapperContextTest {
         // Now pop one from the stack and see what the name is then.
         context.removeLast();
         assertEquals(firstPartname, context.createPathName());
+    }
+
+    @Test
+    void getPathnameFromConnectivityNode_WhenCalledWithKnownId_ThenPathNameOfCNReturned() {
+        var cnId = "CN ID";
+        var cnPathName = "CN PATH NAME";
+        var cn = new TConnectivityNode();
+        cn.setPathName(cnPathName);
+
+        context.saveTConnectivityNode(cnId, cn);
+        context.saveTConnectivityNode("Other ID", new TConnectivityNode());
+        var result = context.getPathnameFromConnectivityNode(cnId);
+
+        assertTrue(result.isPresent());
+        assertEquals(cnPathName, result.get());
+    }
+
+    @Test
+    void getPathnameFromConnectivityNode_WhenCalledWithUnKnownId_ThenEmptyOptionalReturned() {
+        var cnId = "CN ID";
+
+        context.saveTConnectivityNode("Unknown ID", new TConnectivityNode());
+        context.saveTConnectivityNode("Other ID", new TConnectivityNode());
+        var result = context.getPathnameFromConnectivityNode(cnId);
+
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    void getNameFromConnectivityNode_WhenCalledWithKnownId_ThenPathNameOfCNReturned() {
+        var cnId = "CN ID";
+        var cnName = "CN NAME";
+        var cn = new TConnectivityNode();
+        cn.setName(cnName);
+
+        context.saveTConnectivityNode(cnId, cn);
+        context.saveTConnectivityNode("Other ID", new TConnectivityNode());
+        var result = context.getNameFromConnectivityNode(cnId);
+
+        assertTrue(result.isPresent());
+        assertEquals(cnName, result.get());
+    }
+
+    @Test
+    void getNameFromConnectivityNode_WhenCalledWithUnKnownId_ThenEmptyOptionalReturned() {
+        var cnId = "CN ID";
+
+        context.saveTConnectivityNode("Unknown ID", new TConnectivityNode());
+        context.saveTConnectivityNode("Other ID", new TConnectivityNode());
+        var result = context.getNameFromConnectivityNode(cnId);
+
+        assertFalse(result.isPresent());
     }
 }

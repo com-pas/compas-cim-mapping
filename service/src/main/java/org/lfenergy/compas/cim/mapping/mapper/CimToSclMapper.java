@@ -134,13 +134,13 @@ public abstract class CimToSclMapper {
 
 
     @Mapping(target = "name", source = "nameOrId")
-    @Mapping(target = "connectivityNode", expression = "java( context.getPathnameFromConnectivityNode(cgmesTerminal.getConnectivityNodeId()) )")
-    @Mapping(target = "CNodeName", expression = "java( context.getNameFromConnectivityNode(cgmesTerminal.getConnectivityNodeId()) )")
+    @Mapping(target = "connectivityNode", expression = "java( context.getPathnameFromConnectivityNode(cgmesTerminal.getConnectivityNodeId()).orElse(null) )")
+    @Mapping(target = "CNodeName", expression = "java( context.getNameFromConnectivityNode(cgmesTerminal.getConnectivityNodeId()).orElse(null) )")
     protected abstract TTerminal mapTerminalToTTerminal(CgmesTerminal cgmesTerminal,
                                                         @Context CimToSclMapperContext context);
 
     protected String optionalString(Optional<String> value) {
-        return value.orElse("");
+        return value.orElse(null);
     }
 
     @AfterMapping

@@ -8,10 +8,7 @@ import org.lfenergy.compas.cim.mapping.model.*;
 import org.lfenergy.compas.scl2007b4.model.TConnectivityNode;
 import org.lfenergy.compas.scl2007b4.model.TNaming;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CimToSclMapperContext {
@@ -172,19 +169,19 @@ public class CimToSclMapperContext {
         connectivityNodeIdMap.put(id, tConnectivityNode);
     }
 
-    public String getPathnameFromConnectivityNode(String id) {
+    public Optional<String> getPathnameFromConnectivityNode(String id) {
         var tConnectivityNode = connectivityNodeIdMap.get(id);
         if (tConnectivityNode != null) {
-            return tConnectivityNode.getPathName();
+            return Optional.ofNullable(tConnectivityNode.getPathName());
         }
-        return null;
+        return Optional.empty();
     }
 
-    public String getNameFromConnectivityNode(String id) {
+    public Optional<String> getNameFromConnectivityNode(String id) {
         var tConnectivityNode = connectivityNodeIdMap.get(id);
         if (tConnectivityNode != null) {
-            return tConnectivityNode.getName();
+            return Optional.ofNullable(tConnectivityNode.getName());
         }
-        return null;
+        return Optional.empty();
     }
 }

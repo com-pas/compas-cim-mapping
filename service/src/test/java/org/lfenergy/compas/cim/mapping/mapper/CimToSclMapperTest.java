@@ -25,8 +25,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -44,6 +43,8 @@ class CimToSclMapperTest {
     private CgmesConnectivityNode cgmesConnectivityNode;
     @Mock
     private CgmesSwitch cgmesSwitch;
+    @Mock
+    private CgmesTerminal cgmesTerminal;
 
     private CimToSclMapper mapper;
 
@@ -91,6 +92,12 @@ class CimToSclMapperTest {
         var conductingEquipment = bay.getConductingEquipment().get(0);
         assertEquals("BREAKER25", conductingEquipment.getName());
         assertEquals("CBR", conductingEquipment.getType());
+
+        assertEquals(2, conductingEquipment.getTerminal().size());
+        var terminal = conductingEquipment.getTerminal().get(0);
+        assertEquals("T4_2_ADDB1", terminal.getName());
+        assertEquals("CONNECTIVITY_NODE83", terminal.getCNodeName());
+        assertEquals("_af9a4ae3-ba2e-4c34-8e47-5af894ee20f4/S1 380kV/BAY_T4_2/CONNECTIVITY_NODE83", terminal.getConnectivityNode());
     }
 
     private String readFile() throws IOException {
@@ -112,8 +119,8 @@ class CimToSclMapperTest {
         assertNotNull(sclSubstation);
         assertEquals(expectedId, sclSubstation.getName());
         assertEquals(expectedDesc, sclSubstation.getDesc());
-        verify(cgmesSubstation, atLeastOnce()).getId();
-        verify(cgmesSubstation, atLeastOnce()).getOptionalName();
+        verify(cgmesSubstation, times(2)).getId();
+        verify(cgmesSubstation, times(1)).getOptionalName();
         verify(context, times(1)).addLast(sclSubstation);
         verifyNoMoreInteractions(cgmesSubstation);
     }
@@ -131,9 +138,9 @@ class CimToSclMapperTest {
         assertNotNull(sclVoltageLevel);
         assertEquals(expectedName, sclVoltageLevel.getName());
         assertEquals(expectedVoltage, sclVoltageLevel.getVoltage().getValue());
-        verify(cgmesVoltageLevel, atLeastOnce()).getId();
-        verify(cgmesVoltageLevel, atLeastOnce()).getNameOrId();
-        verify(cgmesVoltageLevel, atLeastOnce()).getNominalV();
+        verify(cgmesVoltageLevel, times(1)).getId();
+        verify(cgmesVoltageLevel, times(1)).getNameOrId();
+        verify(cgmesVoltageLevel, times(1)).getNominalV();
         verify(context, times(1)).addLast(sclVoltageLevel);
         verifyNoMoreInteractions(cgmesVoltageLevel);
     }
@@ -148,8 +155,8 @@ class CimToSclMapperTest {
 
         assertNotNull(sclBay);
         assertEquals(expectedName, sclBay.getName());
-        verify(cgmesBay, atLeastOnce()).getId();
-        verify(cgmesBay, atLeastOnce()).getNameOrId();
+        verify(cgmesBay, times(2)).getId();
+        verify(cgmesBay, times(1)).getNameOrId();
         verify(context, times(1)).addLast(sclBay);
         verifyNoMoreInteractions(cgmesBay);
     }
@@ -169,8 +176,8 @@ class CimToSclMapperTest {
         assertNotNull(sclConnectivityNode);
         assertEquals(expectedName, sclConnectivityNode.getName());
         assertEquals(expectedPathName, sclConnectivityNode.getPathName());
-        verify(cgmesConnectivityNode, atLeastOnce()).getId();
-        verify(cgmesConnectivityNode, atLeastOnce()).getNameOrId();
+        verify(cgmesConnectivityNode, times(1)).getId();
+        verify(cgmesConnectivityNode, times(1)).getNameOrId();
         verify(context, times(1)).addLast(sclConnectivityNode);
         verify(context, times(1)).saveTConnectivityNode(eq(expectedId), any(TConnectivityNode.class));
         verifyNoMoreInteractions(cgmesConnectivityNode);
@@ -189,11 +196,37 @@ class CimToSclMapperTest {
         assertNotNull(sclConductingEquipment);
         assertEquals(expectedName, sclConductingEquipment.getName());
         assertEquals(expectedType, sclConductingEquipment.getType());
-        verify(cgmesSwitch, atLeastOnce()).getId();
-        verify(cgmesSwitch, atLeastOnce()).getNameOrId();
-        verify(cgmesSwitch, atLeastOnce()).getType();
+        verify(cgmesSwitch, times(1)).getId();
+        verify(cgmesSwitch, times(1)).getNameOrId();
+        verify(cgmesSwitch, times(1)).getType();
         verify(context, times(1)).addLast(sclConductingEquipment);
         verifyNoMoreInteractions(cgmesSwitch);
+    }
+
+    @Test
+    void mapTerminalToTTerminal_WhenCalledWithCgmesTerminal_ThenPropertiesMappedToTTerminal() {
+        var expectedName = "TheName";
+        var expectedConnectivityNode = "CN ID";
+        var expectedCNPathName = "CN Pathname";
+        var expectedCNodeName = "CN Name";
+
+        when(cgmesTerminal.getNameOrId()).thenReturn(expectedName);
+        when(cgmesTerminal.getConnectivityNodeId()).thenReturn(expectedConnectivityNode);
+        when(context.getPathnameFromConnectivityNode(expectedConnectivityNode)).thenReturn(Optional.of(expectedCNPathName));
+        when(context.getNameFromConnectivityNode(expectedConnectivityNode)).thenReturn(Optional.of(expectedCNodeName));
+
+        var sclTerminal = mapper.mapTerminalToTTerminal(cgmesTerminal, context);
+
+        assertNotNull(sclTerminal);
+        assertEquals(expectedName, sclTerminal.getName());
+        assertEquals(expectedCNPathName, sclTerminal.getConnectivityNode());
+        assertEquals(expectedCNodeName, sclTerminal.getCNodeName());
+        verify(cgmesTerminal, times(1)).getNameOrId();
+        verify(cgmesTerminal, times(2)).getConnectivityNodeId();
+        verify(context, times(1)).getPathnameFromConnectivityNode(expectedConnectivityNode);
+        verify(context, times(1)).getNameFromConnectivityNode(expectedConnectivityNode);
+        verifyNoMoreInteractions(cgmesTerminal, context);
+
     }
 
     @Test
@@ -207,10 +240,8 @@ class CimToSclMapperTest {
 
     @Test
     void optionalString_WhenCalledWithEmptyOptional_ThenBlankStringReturned() {
-        var expectedValue = "";
-
         var value = mapper.optionalString(Optional.empty());
 
-        assertEquals(expectedValue, value);
+        assertNull(value);
     }
 }
