@@ -222,6 +222,22 @@ class CimToSclMapperContextTest {
     }
 
     @Test
+    void resetTConnectivityNodeMap_WhenCalledAfterRest_ThenPathNameOfCNCannotBeFoundAnymore() {
+        var cnId = "CN ID";
+        var cnPathName = "CN PATH NAME";
+        var cn = new TConnectivityNode();
+        cn.setPathName(cnPathName);
+
+        context.saveTConnectivityNode(cnId, cn);
+        context.saveTConnectivityNode("Other ID", new TConnectivityNode());
+
+        context.resetTConnectivityNodeMap();
+        var result = context.getPathnameFromConnectivityNode(cnId);
+
+        assertFalse(result.isPresent());
+    }
+
+    @Test
     void getPathnameFromConnectivityNode_WhenCalledWithKnownId_ThenPathNameOfCNReturned() {
         var cnId = "CN ID";
         var cnPathName = "CN PATH NAME";
