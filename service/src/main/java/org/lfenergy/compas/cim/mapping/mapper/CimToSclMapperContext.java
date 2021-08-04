@@ -165,6 +165,10 @@ public class CimToSclMapperContext {
     // Map with Connectivity Nodes with the ID as Key.
     private Map<String, TConnectivityNode> connectivityNodeIdMap = new HashMap<>();
 
+    public void resetTConnectivityNodeMap() {
+        connectivityNodeIdMap = new HashMap<>();
+    }
+
     public void saveTConnectivityNode(String id, TConnectivityNode tConnectivityNode) {
         connectivityNodeIdMap.put(id, tConnectivityNode);
     }

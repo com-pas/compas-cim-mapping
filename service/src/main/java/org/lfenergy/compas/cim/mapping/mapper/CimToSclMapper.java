@@ -80,6 +80,13 @@ public abstract class CimToSclMapper {
                 .forEach(tBay -> tVoltageLevel.getBay().add(tBay));
     }
 
+    @BeforeMapping
+    protected void beforeBayToTBay(@MappingTarget TBay tBay,
+                                   @Context CimToSclMapperContext context) {
+        // Reset the Map of ConnectivityNodes, because we only need them inside processing of the Bay.
+        context.resetTConnectivityNodeMap();
+    }
+
     @Mapping(target = "name", source = "nameOrId")
     protected abstract TBay mapBayToTBay(CgmesBay cgmesBay,
                                          @Context CgmesVoltageLevel cgmesVoltageLevel,
@@ -97,6 +104,7 @@ public abstract class CimToSclMapper {
         cgmesConnectivityNodes.stream()
                 .map(cn -> mapConnectivityNodeToTConnectivityNode(cn, context))
                 .forEach(tConnectivityNode -> tBay.getConnectivityNode().add(tConnectivityNode));
+
         // Now we can process the Conduction Equipment with their terminals.
         context.getSwitches(cgmesBay.getId())
                 .stream()
