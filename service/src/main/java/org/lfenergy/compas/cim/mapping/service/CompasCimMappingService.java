@@ -65,6 +65,7 @@ public class CompasCimMappingService {
 
         THeader header = factory.createTHeader();
         header.setId(UUID.randomUUID().toString());
+        header.setVersion("1.0.0");
         header.setHistory(new THeader.History());
         scl.setHeader(header);
 

@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-package org.lfenergy.compas.cim.mapping.rest.model;
+package org.lfenergy.compas.cim.mapping.rest.v1.model;
 
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.lfenergy.compas.scl2007b4.model.SCL;
@@ -12,10 +12,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import static org.lfenergy.compas.cim.mapping.Constants.CIM_MAPPING_SERVICE_NS_URI;
-import static org.lfenergy.compas.cim.mapping.Constants.SCL_NS_URI;
+import static org.lfenergy.compas.cim.mapping.CimMappingConstants.CIM_MAPPING_SERVICE_V1_NS_URI;
+import static org.lfenergy.compas.cim.mapping.CimMappingConstants.SCL_NS_URI;
 
-@XmlRootElement(name = "MapResponse", namespace = CIM_MAPPING_SERVICE_NS_URI)
+@XmlRootElement(name = "MapResponse", namespace = CIM_MAPPING_SERVICE_V1_NS_URI)
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MapResponse {
     @Schema(example = "SCL XML")

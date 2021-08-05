@@ -7,9 +7,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ConstantsTest {
+class CimMappingConstantsTest {
     @Test
     void constructor_WhenConstructorCalled_ThenShouldThrowExceptionCauseForbidden() {
-        assertThrows(UnsupportedOperationException.class, Constants::new);
+        assertThrows(UnsupportedOperationException.class, CimMappingConstants::new);
     }
 }
