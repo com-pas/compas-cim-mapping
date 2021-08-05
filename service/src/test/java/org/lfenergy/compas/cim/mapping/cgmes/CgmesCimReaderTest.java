@@ -58,6 +58,7 @@ class CgmesCimReaderTest {
     void readModel_WhenReadingWithoutRdfElement_ThenCgmesModelReturnedWithoutSubstations() {
         var cimData = new CimData();
         cimData.setName("MiniGridTestConfiguration_BC_EQ_v3.0.0.xml");
+        cimData.setRdf(null);
         var cimDataList = List.of(cimData);
 
         var result = cgmesCimReader.readModel(cimDataList);
