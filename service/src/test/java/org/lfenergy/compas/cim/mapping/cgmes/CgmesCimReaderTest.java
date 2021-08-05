@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,6 +34,8 @@ class CgmesCimReaderTest {
     void readModel_WhenReadingCimModel_ThenCgmesModelReturnedWithSubstations() throws IOException {
         var cimData = new CimData();
         cimData.setName("MiniGridTestConfiguration_BC_EQ_v3.0.0.xml");
+        cimData.setRdf(new ArrayList<>());
+        cimData.getRdf().add(null); // Fake added a Element, will be fixed bij mocking below.
         var cimDataList = List.of(cimData);
 
         when(converter.convertToString(any(), eq(false))).thenReturn(readFile());
