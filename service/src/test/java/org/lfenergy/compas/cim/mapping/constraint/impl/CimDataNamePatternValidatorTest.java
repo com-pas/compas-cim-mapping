@@ -62,7 +62,7 @@ class CimDataNamePatternValidatorTest {
 
     private static final class SimplePojo {
         @CimDataNamePattern
-        private String name;
+        private final String name;
 
         public SimplePojo(String name) {
             this.name = name;
