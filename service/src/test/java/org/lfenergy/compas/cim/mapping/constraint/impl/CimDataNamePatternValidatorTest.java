@@ -24,26 +24,22 @@ class CimDataNamePatternValidatorTest {
 
     @Test
     void isValid_WhenCalledWithCorrectName_ThenNoViolations() {
-        var simplePojo = new SimplePojo();
-        simplePojo.setName("MiniGridTestConfiguration_BC_EQ_v3.0.0.xml");
-
-        var violations = validator.validate(simplePojo);
-        assertTrue(violations.isEmpty());
+        isValid_WithNoViolations("MiniGridTestConfiguration_BC_EQ_v3.0.0.xml");
     }
-
+    
     @Test
     void isValid_WhenCalledWithNullName_ThenNoViolations() {
-        var simplePojo = new SimplePojo();
-        simplePojo.setName(null);
-
-        var violations = validator.validate(simplePojo);
-        assertTrue(violations.isEmpty());
+        isValid_WithNoViolations(null);
     }
 
     @Test
     void isValid_WhenCalledWithBlankName_ThenNoViolations() {
+        isValid_WithNoViolations("");
+    }
+
+    private void isValid_WithNoViolations(String name) {
         var simplePojo = new SimplePojo();
-        simplePojo.setName("");
+        simplePojo.setName(name);
 
         var violations = validator.validate(simplePojo);
         assertTrue(violations.isEmpty());
