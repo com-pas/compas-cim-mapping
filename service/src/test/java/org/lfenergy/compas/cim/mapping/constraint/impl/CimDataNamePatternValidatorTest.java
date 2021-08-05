@@ -9,7 +9,6 @@ import org.lfenergy.compas.cim.mapping.constraint.CimDataNamePattern;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
-import javax.xml.parsers.ParserConfigurationException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -18,7 +17,7 @@ class CimDataNamePatternValidatorTest {
     private Validator validator;
 
     @BeforeEach
-    void setupValidator() throws ParserConfigurationException {
+    void setupValidator() {
         var factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
     }
@@ -33,9 +32,18 @@ class CimDataNamePatternValidatorTest {
     }
 
     @Test
-    void isValid_WhenCalledWithNoName_ThenNoViolations() {
+    void isValid_WhenCalledWithNullName_ThenNoViolations() {
         var simplePojo = new SimplePojo();
         simplePojo.setName(null);
+
+        var violations = validator.validate(simplePojo);
+        assertTrue(violations.isEmpty());
+    }
+
+    @Test
+    void isValid_WhenCalledWithBlankName_ThenNoViolations() {
+        var simplePojo = new SimplePojo();
+        simplePojo.setName("");
 
         var violations = validator.validate(simplePojo);
         assertTrue(violations.isEmpty());
