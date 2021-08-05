@@ -20,13 +20,14 @@ SPDX-License-Identifier: Apache-2.0
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-
         <compiler-plugin.version>3.8.1</compiler-plugin.version>
         <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
         <sonarqube-plugin.version>3.2.0</sonarqube-plugin.version>
 
+        <compas.core.version>0.2.0</compas.core.version>
         <jakarta-cdi-api.version>2.0.2</jakarta-cdi-api.version>
-        <slf4j.version>1.7.30</slf4j.version>
+        <slf4j.version>1.7.31</slf4j.version>
+        <powsybl.version>4.3.1</powsybl.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
 
         <!-- Test -->
@@ -59,6 +60,39 @@ SPDX-License-Identifier: Apache-2.0
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>org.lfenergy.compas.cim.mapping</groupId>
+                <artifactId>service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.lfenergy.compas.core</groupId>
+                <artifactId>scl2007b4</artifactId>
+                <version>${compas.core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.lfenergy.compas.core</groupId>
+                <artifactId>commons</artifactId>
+                <version>${compas.core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.lfenergy.compas.core</groupId>
+                <artifactId>rest-commons</artifactId>
+                <version>${compas.core.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.powsybl</groupId>
+                <artifactId>powsybl-cgmes-conversion</artifactId>
+                <version>${powsybl.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.powsybl</groupId>
+                <artifactId>powsybl-triple-store-impl-rdf4j</artifactId>
+                <version>${powsybl.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.mapstruct</groupId>
                 <artifactId>mapstruct</artifactId>
                 <version>${mapstruct.version}</version>
@@ -68,6 +102,11 @@ SPDX-License-Identifier: Apache-2.0
                 <groupId>jakarta.enterprise</groupId>
                 <artifactId>jakarta.enterprise.cdi-api</artifactId>
                 <version>${jakarta-cdi-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.microprofile.openapi</groupId>
+                <artifactId>microprofile-openapi-api</artifactId>
+                <version>2.0</version>
             </dependency>
 
             <dependency>
@@ -106,6 +145,19 @@ SPDX-License-Identifier: Apache-2.0
                 <groupId>com.openpojo</groupId>
                 <artifactId>openpojo</artifactId>
                 <version>${openpojo.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hibernate.validator</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>6.2.0.Final</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish</groupId>
+                <artifactId>jakarta.el</artifactId>
+                <version>3.0.3</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

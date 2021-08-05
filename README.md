@@ -12,6 +12,9 @@ SPDX-License-Identifier: Apache-2.0
 
 # compas-cim-mapping
 
+## Mapping between IEC CIM and IEC 61850
+
+The Mapping between IEC CIM and IEC 61850 is described in [Mapping](MAPPING.md).
 
 ## Running the application in dev mode
 
