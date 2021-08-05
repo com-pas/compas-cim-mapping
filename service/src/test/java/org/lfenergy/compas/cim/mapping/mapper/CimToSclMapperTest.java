@@ -25,6 +25,7 @@ import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.lfenergy.compas.cim.mapping.CimMappingConstants.RDF_NS_URI;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -60,7 +61,7 @@ class CimToSclMapperTest {
         var cimData = new CimData();
         cimData.setName("MiniGridTestConfiguration_BC_EQ_v3.0.0.xml");
         cimData.setRdf(
-                List.of(converter.convertToElement(readFile(), "RDF", "http://www.w3.org/1999/02/22-rdf-syntax-ns#")));
+                List.of(converter.convertToElement(readFile(), "RDF", RDF_NS_URI)));
         var cgmesModel = reader.readModel(List.of(cimData));
 
         var result = new SCL();

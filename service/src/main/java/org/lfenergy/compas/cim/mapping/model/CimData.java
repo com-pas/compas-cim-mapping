@@ -11,6 +11,7 @@ import org.w3c.dom.Element;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.lfenergy.compas.cim.mapping.CimMappingConstants.CIM_MAPPING_SERVICE_V1_NS_URI;
@@ -33,7 +34,7 @@ public class CimData {
     @XmlAnyElementValid(elementName = "RDF", elementNamespace = RDF_NS_URI)
     @Schema(example = "RDF XML...", implementation = String.class)
     @XmlAnyElement
-    protected List<Element> rdf;
+    protected List<Element> rdf = new ArrayList<>();
 
     public String getName() {
         return name;

@@ -11,16 +11,20 @@ import org.junit.jupiter.api.Test;
 import org.lfenergy.compas.cim.mapping.model.CimData;
 import org.lfenergy.compas.cim.mapping.rest.v1.model.MapRequest;
 import org.lfenergy.compas.cim.mapping.service.CompasCimMappingService;
+import org.lfenergy.compas.core.commons.ElementConverter;
 import org.lfenergy.compas.scl2007b4.model.SCL;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.path.xml.config.XmlPathConfig.xmlPathConfig;
+import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.lfenergy.compas.cim.mapping.CimMappingConstants.CIM_MAPPING_SERVICE_V1_NS_URI;
-import static org.lfenergy.compas.cim.mapping.CimMappingConstants.SCL_NS_URI;
+import static org.lfenergy.compas.cim.mapping.CimMappingConstants.*;
 import static org.mockito.Mockito.*;
 
 @QuarkusTest
@@ -30,9 +34,13 @@ class CompasCimMappingResourceTest {
     private CompasCimMappingService compasCimMappingService;
 
     @Test
-    void mapCimToScl_WhenCalled_ThenCorrectMessageIsRetrieved() {
+    void mapCimToScl_WhenCalled_ThenCorrectMessageIsRetrieved() throws IOException {
+        var converter = new ElementConverter();
+        var cimDate = new CimData();
+        cimDate.setName("MiniGridTestConfiguration_BC_EQ_v3.0.0.xml");
+        cimDate.setRdf(List.of(converter.convertToElement(readFile(), "RDF", RDF_NS_URI)));
         var request = new MapRequest();
-        request.setCimData(List.of(new CimData()));
+        request.setCimData(List.of(cimDate));
 
         var scl = new SCL();
         scl.setVersion("2007");
@@ -55,5 +63,11 @@ class CompasCimMappingResourceTest {
         assertNotNull(sclVersion);
         assertEquals("2007", sclVersion);
         verify(compasCimMappingService, times(1)).map(any());
+    }
+
+    private String readFile() throws IOException {
+        var resource = requireNonNull(getClass().getResource("/minigrid/MiniGridTestConfiguration_BC_EQ_v3.0.0.xml"));
+        var path = Paths.get(resource.getPath());
+        return String.join("\n", Files.readAllLines(path)).trim().replaceFirst("^([\\W]+)<", "<");
     }
 }
