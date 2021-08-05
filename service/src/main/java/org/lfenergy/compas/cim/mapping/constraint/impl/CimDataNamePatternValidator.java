@@ -13,6 +13,10 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Validator to check if a filename is correct for a CIM File,
+ * The PowSyBl Importer ignore entries that don't have the correct (file)name.
+ */
 public class CimDataNamePatternValidator implements ConstraintValidator<CimDataNamePattern, String> {
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
