@@ -24,8 +24,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class CgmesCimReaderTest {
     @Mock
-    private CgmesDataValidator cgmesDataValidator;
-    @Mock
     private ElementConverter converter;
 
     @InjectMocks
@@ -42,8 +40,7 @@ class CgmesCimReaderTest {
         var result = cgmesCimReader.readModel(cimDataList);
 
         assertEquals(5, result.substations().size());
-        verify(cgmesDataValidator, times(1)).validateData(cimDataList);
-        verifyNoMoreInteractions(cgmesDataValidator, converter);
+        verifyNoMoreInteractions(converter);
     }
 
     @Test
@@ -53,8 +50,7 @@ class CgmesCimReaderTest {
         var result = cgmesCimReader.readModel(cimDataList);
 
         assertEquals(0, result.substations().size());
-        verify(cgmesDataValidator, times(1)).validateData(cimDataList);
-        verifyNoMoreInteractions(cgmesDataValidator, converter);
+        verifyNoMoreInteractions(converter);
     }
 
     private String readFile() throws IOException {

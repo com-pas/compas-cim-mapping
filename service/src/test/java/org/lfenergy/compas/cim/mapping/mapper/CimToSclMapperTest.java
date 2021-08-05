@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.lfenergy.compas.cim.mapping.cgmes.CgmesCimReader;
-import org.lfenergy.compas.cim.mapping.cgmes.CgmesDataValidator;
 import org.lfenergy.compas.cim.mapping.model.*;
 import org.lfenergy.compas.core.commons.ElementConverter;
 import org.lfenergy.compas.scl2007b4.model.SCL;
@@ -57,10 +56,11 @@ class CimToSclMapperTest {
     void map_WhenWithCimData_ThenSclMapped() throws IOException {
         // This is a overall test to see the whole mapping working with a test CIM File.
         var converter = new ElementConverter();
-        var reader = new CgmesCimReader(new CgmesDataValidator(), converter);
+        var reader = new CgmesCimReader(converter);
         var cimData = new CimData();
         cimData.setName("MiniGridTestConfiguration_BC_EQ_v3.0.0.xml");
-        cimData.setRdf(converter.convertToElement(readFile(), "RDF", "http://www.w3.org/1999/02/22-rdf-syntax-ns#"));
+        cimData.setRdf(
+                List.of(converter.convertToElement(readFile(), "RDF", "http://www.w3.org/1999/02/22-rdf-syntax-ns#")));
         var cgmesModel = reader.readModel(List.of(cimData));
 
         var result = new SCL();

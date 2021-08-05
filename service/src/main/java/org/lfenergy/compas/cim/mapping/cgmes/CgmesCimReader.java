@@ -28,12 +28,10 @@ import java.util.stream.Collectors;
 public class CgmesCimReader {
     private static final Logger LOGGER = LoggerFactory.getLogger(CgmesCimReader.class);
 
-    private final CgmesDataValidator cgmesDataValidator;
     private final ElementConverter converter;
 
     @Inject
-    public CgmesCimReader(CgmesDataValidator cgmesDataValidator, ElementConverter converter) {
-        this.cgmesDataValidator = cgmesDataValidator;
+    public CgmesCimReader(ElementConverter converter) {
         this.converter = converter;
     }
 
@@ -45,11 +43,8 @@ public class CgmesCimReader {
      * @return The IIDM Network model that can be used to convert further to IEC 61850.
      */
     public CgmesModel readModel(List<CimData> cimData) {
-        LOGGER.info("Check the data passed, PowSyBl is quite sensitive about naming.");
-        cgmesDataValidator.validateData(cimData);
-        var cimContents = convertCimDataToMap(cimData);
-
         LOGGER.debug("Create a ReadOnlyDataSource from the input data.");
+        var cimContents = convertCimDataToMap(cimData);
         var source = new ReadOnlyMemDataSource();
         cimContents.forEach(source::putData);
 
@@ -59,13 +54,15 @@ public class CgmesCimReader {
     }
 
     Map<String, InputStream> convertCimDataToMap(List<CimData> cimData) {
-        return cimData.stream().collect(
-                Collectors.toMap(
-                        CimData::getName,
-                        cimRecord -> {
-                            var xml = converter.convertToString(cimRecord.getRdf(), false);
-                            return new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
-                        })
-        );
+        return cimData.stream()
+                .filter(cimRecord -> cimRecord.getRdf() != null && cimRecord.getRdf().size() == 1)
+                .collect(
+                        Collectors.toMap(
+                                CimData::getName,
+                                cimRecord -> {
+                                    var xml = converter.convertToString(cimRecord.getRdf().get(0), false);
+                                    return new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
+                                })
+                );
     }
 }

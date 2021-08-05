@@ -6,15 +6,15 @@ package org.lfenergy.compas.cim.mapping.exception;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.lfenergy.compas.cim.mapping.exception.CompasCimMappingErrorCode.INVALID_NAMES_ERROR_CODE;
+import static org.lfenergy.compas.cim.mapping.exception.CompasCimMappingErrorCode.UNKNOWN_TYPE_ERROR_CODE;
 
 class CompasCimMappingExceptionTest {
     @Test
     void constructor_WhenCalledWithOnlyMessage_ThenMessageCanBeRetrieved() {
         var expectedMessage = "The message";
-        var exception = new CompasCimMappingException(INVALID_NAMES_ERROR_CODE, expectedMessage);
+        var exception = new CompasCimMappingException(UNKNOWN_TYPE_ERROR_CODE, expectedMessage);
 
-        assertEquals(INVALID_NAMES_ERROR_CODE, exception.getErrorCode());
+        assertEquals(UNKNOWN_TYPE_ERROR_CODE, exception.getErrorCode());
         assertEquals(expectedMessage, exception.getMessage());
     }
 
@@ -22,9 +22,9 @@ class CompasCimMappingExceptionTest {
     void constructor_WhenCalledWithMessageAndThrowable_ThenMessageAndThrowableCanBeRetrieved() {
         var expectedMessage = "The message";
         var expectedThrowable = new NullPointerException();
-        var exception = new CompasCimMappingException(INVALID_NAMES_ERROR_CODE, expectedMessage, expectedThrowable);
+        var exception = new CompasCimMappingException(UNKNOWN_TYPE_ERROR_CODE, expectedMessage, expectedThrowable);
 
-        assertEquals(INVALID_NAMES_ERROR_CODE, exception.getErrorCode());
+        assertEquals(UNKNOWN_TYPE_ERROR_CODE, exception.getErrorCode());
         assertEquals(expectedMessage, exception.getMessage());
         assertEquals(expectedThrowable, exception.getCause());
     }

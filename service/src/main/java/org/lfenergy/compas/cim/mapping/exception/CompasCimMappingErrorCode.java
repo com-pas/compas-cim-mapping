@@ -11,6 +11,5 @@ public class CompasCimMappingErrorCode {
         throw new UnsupportedOperationException("CompasCimMappingErrorCode class");
     }
 
-    public static final String INVALID_NAMES_ERROR_CODE = "CIM-0001";
-    public static final String UNKNOWN_TYPE_ERROR_CODE = "CIM-0002";
+    public static final String UNKNOWN_TYPE_ERROR_CODE = "CIM-0001";
 }
