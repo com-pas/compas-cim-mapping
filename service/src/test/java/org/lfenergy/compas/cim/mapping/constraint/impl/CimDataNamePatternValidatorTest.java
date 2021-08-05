@@ -26,7 +26,7 @@ class CimDataNamePatternValidatorTest {
     void isValid_WhenCalledWithCorrectName_ThenNoViolations() {
         isValid_WithNoViolations("MiniGridTestConfiguration_BC_EQ_v3.0.0.xml");
     }
-    
+
     @Test
     void isValid_WhenCalledWithNullName_ThenNoViolations() {
         isValid_WithNoViolations(null);
@@ -38,8 +38,7 @@ class CimDataNamePatternValidatorTest {
     }
 
     private void isValid_WithNoViolations(String name) {
-        var simplePojo = new SimplePojo();
-        simplePojo.setName(name);
+        var simplePojo = new SimplePojo(name);
 
         var violations = validator.validate(simplePojo);
         assertTrue(violations.isEmpty());
@@ -47,8 +46,7 @@ class CimDataNamePatternValidatorTest {
 
     @Test
     void isValid_WhenCalledWithIncorrectNameWithoutExtension_ThenViolationFound() {
-        var simplePojo = new SimplePojo();
-        simplePojo.setName("MiniGridTestConfiguration_BC_EQ_v3.0.0");
+        var simplePojo = new SimplePojo("MiniGridTestConfiguration_BC_EQ_v3.0.0");
 
         var violations = validator.validate(simplePojo);
         assertEquals(1, violations.size());
@@ -56,8 +54,7 @@ class CimDataNamePatternValidatorTest {
 
     @Test
     void isValid_WhenCalledWithIncorrectNameWithoutEQ_ThenViolationFound() {
-        var simplePojo = new SimplePojo();
-        simplePojo.setName("MiniGridTestConfiguration_BCv3.0.0.XML");
+        var simplePojo = new SimplePojo("MiniGridTestConfiguration_BCv3.0.0.XML");
 
         var violations = validator.validate(simplePojo);
         assertEquals(1, violations.size());
@@ -67,12 +64,12 @@ class CimDataNamePatternValidatorTest {
         @CimDataNamePattern
         private String name;
 
-        public String getName() {
-            return name;
+        public SimplePojo(String name) {
+            this.name = name;
         }
 
-        public void setName(String name) {
-            this.name = name;
+        public String getName() {
+            return name;
         }
     }
 }
