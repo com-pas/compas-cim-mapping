@@ -79,6 +79,8 @@ class CimToSclMapperTest {
         assertEquals("S1 380kV", voltageLevel.getName());
         assertNotNull(voltageLevel.getVoltage());
         assertEquals(BigDecimal.valueOf(380.0), voltageLevel.getVoltage().getValue());
+        assertEquals("k", voltageLevel.getVoltage().getMultiplier());
+        assertEquals("V", voltageLevel.getVoltage().getUnit());
 
         assertEquals(3, voltageLevel.getBay().size());
         var bay = voltageLevel.getBay().get(0);

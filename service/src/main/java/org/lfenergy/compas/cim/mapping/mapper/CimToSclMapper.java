@@ -66,6 +66,8 @@ public abstract class CimToSclMapper {
 
     @Mapping(target = "name", source = "nameOrId")
     @Mapping(target = "voltage.value", source = "nominalV")
+    @Mapping(target = "voltage.multiplier", constant = "k")
+    @Mapping(target = "voltage.unit", constant = "V")
     protected abstract TVoltageLevel mapVoltageLevelToTVoltageLevel(CgmesVoltageLevel voltageLevel,
                                                                     @Context CimToSclMapperContext context);
 

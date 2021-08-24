@@ -6,6 +6,7 @@ package org.lfenergy.compas.cim.mapping.rest.v1;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
+import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 import org.lfenergy.compas.cim.mapping.model.CimData;
@@ -17,6 +18,7 @@ import org.lfenergy.compas.scl2007b4.model.SCL;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.Principal;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
@@ -29,6 +31,7 @@ import static org.mockito.Mockito.*;
 
 @QuarkusTest
 @TestHTTPEndpoint(CompasCimMappingResource.class)
+@TestSecurity(user = "test-mapper")
 class CompasCimMappingResourceTest {
     @InjectMock
     private CompasCimMappingService compasCimMappingService;
@@ -44,7 +47,7 @@ class CompasCimMappingResourceTest {
 
         var scl = new SCL();
         scl.setVersion("2007");
-        when(compasCimMappingService.map(any())).thenReturn(scl);
+        when(compasCimMappingService.map(any(), any(Principal.class))).thenReturn(scl);
 
         var response = given()
                 .contentType(ContentType.XML)
@@ -62,7 +65,7 @@ class CompasCimMappingResourceTest {
         var sclVersion = xmlPath.getString("cms:MapResponse.scl:SCL.@version");
         assertNotNull(sclVersion);
         assertEquals("2007", sclVersion);
-        verify(compasCimMappingService, times(1)).map(any());
+        verify(compasCimMappingService, times(1)).map(any(), any(Principal.class));
     }
 
     private String readFile() throws IOException {

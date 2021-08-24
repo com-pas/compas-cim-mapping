@@ -10,11 +10,16 @@ import org.lfenergy.compas.cim.mapping.model.CimData;
 import org.lfenergy.compas.scl2007b4.model.ObjectFactory;
 import org.lfenergy.compas.scl2007b4.model.SCL;
 import org.lfenergy.compas.scl2007b4.model.THeader;
+import org.lfenergy.compas.scl2007b4.model.THitem;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.security.Principal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Mapping Service to process the passed CIM XML(s) (RDF Format) and convert these to a IIDM Model
@@ -22,6 +27,9 @@ import java.util.UUID;
  */
 @ApplicationScoped
 public class CompasCimMappingService {
+    private static final String INITIAL_VERSION = "0.0.1";
+    private static final String INITIAL_REVISION = "";
+
     private final CgmesCimReader cgmesCimReader;
     private final CimToSclMapper cimToSclMapper;
 
@@ -35,11 +43,12 @@ public class CompasCimMappingService {
     /**
      * Map the passed CIM XML to IEC SCL Model.
      *
-     * @param cimData The CIM XML Data.
+     * @param cimData   The CIM XML Data.
+     * @param principal
      * @return The created SCL Model.
      */
-    public SCL map(List<CimData> cimData) {
-        var scl = createBasicSCL();
+    public SCL map(List<CimData> cimData, Principal principal) {
+        var scl = createBasicSCL(cimData, principal);
 
         if (cimData != null && !cimData.isEmpty()) {
             // Convert the Data to the Network Model from PowSyBl
@@ -55,19 +64,40 @@ public class CompasCimMappingService {
      *
      * @return The created SCL Model.
      */
-    SCL createBasicSCL() {
+    SCL createBasicSCL(List<CimData> cimData, Principal principal) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
         ObjectFactory factory = new ObjectFactory();
 
+        // Create the SCL and set some default values.
         var scl = factory.createSCL();
         scl.setVersion("2007");
         scl.setRevision("B");
         scl.setRelease((short) 4);
 
+        // Create the Header and set some default values.
         THeader header = factory.createTHeader();
         header.setId(UUID.randomUUID().toString());
-        header.setVersion("1.0.0");
+        header.setVersion(INITIAL_VERSION);
+        header.setRevision(INITIAL_REVISION);
         header.setHistory(new THeader.History());
         scl.setHeader(header);
+
+        // Add a History Item with info about who/when/what created the SCL.
+        var item = new THitem();
+        item.setVersion(INITIAL_VERSION);
+        item.setRevision(INITIAL_REVISION);
+        item.setWhen(formatter.format(new Date()));
+        item.setWho(principal.getName());
+
+        // Add all CIM filenames that where used to create the SCL Content.
+        String what = "SCL created from CIM File(s)";
+        if (cimData != null && !cimData.isEmpty()) {
+            what += ": " + cimData.stream()
+                    .map(CimData::getName)
+                    .collect(Collectors.joining(", "));
+        }
+        item.setWhat(what);
+        header.getHistory().getHitem().add(item);
 
         return scl;
     }
