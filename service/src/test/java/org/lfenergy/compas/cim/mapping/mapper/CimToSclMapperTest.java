@@ -11,6 +11,7 @@ import org.lfenergy.compas.cim.mapping.model.*;
 import org.lfenergy.compas.core.commons.ElementConverter;
 import org.lfenergy.compas.scl2007b4.model.SCL;
 import org.lfenergy.compas.scl2007b4.model.TConnectivityNode;
+import org.lfenergy.compas.scl2007b4.model.TVoltageLevel;
 import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -46,6 +47,9 @@ class CimToSclMapperTest {
     @Mock
     private CgmesTerminal cgmesTerminal;
 
+    @Mock
+    private TVoltageLevel tVoltageLevel;
+
     private CimToSclMapper mapper;
 
     @BeforeEach
@@ -78,6 +82,7 @@ class CimToSclMapperTest {
         var voltageLevel = substation.getVoltageLevel().get(0);
         assertEquals("S1 380kV", voltageLevel.getName());
         assertNotNull(voltageLevel.getVoltage());
+        assertNull(voltageLevel.getNomFreq());
         assertEquals(BigDecimal.valueOf(380.0), voltageLevel.getVoltage().getValue());
         assertEquals("k", voltageLevel.getVoltage().getMultiplier());
         assertEquals("V", voltageLevel.getVoltage().getUnit());
@@ -154,7 +159,7 @@ class CimToSclMapperTest {
 
         when(cgmesBay.getNameOrId()).thenReturn(expectedName);
 
-        var sclBay = mapper.mapBayToTBay(cgmesBay, cgmesVoltageLevel, context);
+        var sclBay = mapper.mapBayToTBay(cgmesBay, cgmesVoltageLevel, tVoltageLevel, context);
 
         assertNotNull(sclBay);
         assertEquals(expectedName, sclBay.getName());
@@ -187,21 +192,43 @@ class CimToSclMapperTest {
     }
 
     @Test
-    void mapSwitchToTConductingEquipment_WhenCalledWithCgmesSwitch_ThenPropertiesMappedToTConductingEquipment() {
+    void mapSwitchToTConductingEquipment_WhenCalledWithCgmesSwitchOtherType_ThenPropertiesMappedToTConductingEquipment() {
         var expectedName = "TheName";
         var expectedType = SwitchType.CBR.name();
 
         when(cgmesSwitch.getNameOrId()).thenReturn(expectedName);
         when(cgmesSwitch.getType()).thenReturn(SwitchType.CBR.getCimTypes().get(0));
 
-        var sclConductingEquipment = mapper.mapSwitchToTConductingEquipment(cgmesSwitch, context);
+        var sclConductingEquipment = mapper.mapSwitchToTConductingEquipment(cgmesSwitch, tVoltageLevel, context);
 
         assertNotNull(sclConductingEquipment);
         assertEquals(expectedName, sclConductingEquipment.getName());
         assertEquals(expectedType, sclConductingEquipment.getType());
         verify(cgmesSwitch, times(1)).getId();
         verify(cgmesSwitch, times(1)).getNameOrId();
-        verify(cgmesSwitch, times(1)).getType();
+        verify(cgmesSwitch, times(2)).getType();
+        verify(tVoltageLevel, never()).setNomFreq(any(BigDecimal.class));
+        verify(context, times(1)).addLast(sclConductingEquipment);
+        verifyNoMoreInteractions(cgmesSwitch);
+    }
+
+    @Test
+    void mapSwitchToTConductingEquipment_WhenCalledWithCgmesSwitchDCLineSegment_ThenPropertiesMappedToTConductingEquipment() {
+        var expectedName = "TheName";
+        var expectedType = SwitchType.CAB.name();
+
+        when(cgmesSwitch.getNameOrId()).thenReturn(expectedName);
+        when(cgmesSwitch.getType()).thenReturn("DCLineSegment");
+
+        var sclConductingEquipment = mapper.mapSwitchToTConductingEquipment(cgmesSwitch, tVoltageLevel, context);
+
+        assertNotNull(sclConductingEquipment);
+        assertEquals(expectedName, sclConductingEquipment.getName());
+        assertEquals(expectedType, sclConductingEquipment.getType());
+        verify(cgmesSwitch, times(1)).getId();
+        verify(cgmesSwitch, times(1)).getNameOrId();
+        verify(cgmesSwitch, times(2)).getType();
+        verify(tVoltageLevel, times(1)).setNomFreq(BigDecimal.ZERO);
         verify(context, times(1)).addLast(sclConductingEquipment);
         verifyNoMoreInteractions(cgmesSwitch);
     }

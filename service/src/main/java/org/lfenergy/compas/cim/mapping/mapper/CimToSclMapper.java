@@ -10,6 +10,7 @@ import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 /**
@@ -78,7 +79,7 @@ public abstract class CimToSclMapper {
         // The bays need to be mapped in a special way, because IIDM doesn't know them.
         context.getBaysByVoltageLevel(cgmesVoltageLevel.getId())
                 .stream()
-                .map(bay -> mapBayToTBay(bay, cgmesVoltageLevel, context))
+                .map(bay -> mapBayToTBay(bay, cgmesVoltageLevel, tVoltageLevel, context))
                 .forEach(tBay -> tVoltageLevel.getBay().add(tBay));
     }
 
@@ -92,12 +93,14 @@ public abstract class CimToSclMapper {
     @Mapping(target = "name", source = "nameOrId")
     protected abstract TBay mapBayToTBay(CgmesBay cgmesBay,
                                          @Context CgmesVoltageLevel cgmesVoltageLevel,
+                                         @Context TVoltageLevel tVoltageLevel,
                                          @Context CimToSclMapperContext context);
 
     @AfterMapping
     protected void afterBayToTBay(CgmesBay cgmesBay,
                                   @MappingTarget TBay tBay,
                                   @Context CgmesVoltageLevel cgmesVoltageLevel,
+                                  @Context TVoltageLevel tVoltageLevel,
                                   @Context CimToSclMapperContext context) {
         // First we will process the Connectivity Nodes, because their path names are needed in the Terminal
         // of a Conduction Equipment.
@@ -110,7 +113,7 @@ public abstract class CimToSclMapper {
         // Now we can process the Conduction Equipment with their terminals.
         context.getSwitches(cgmesBay.getId())
                 .stream()
-                .map(cgmesSwitch -> mapSwitchToTConductingEquipment(cgmesSwitch, context))
+                .map(cgmesSwitch -> mapSwitchToTConductingEquipment(cgmesSwitch, tVoltageLevel, context))
                 .forEach(tConductingEquipment -> tBay.getConductingEquipment().add(tConductingEquipment));
     }
 
@@ -130,12 +133,19 @@ public abstract class CimToSclMapper {
     @Mapping(target = "name", source = "nameOrId")
     @Mapping(target = "type", expression = "java( org.lfenergy.compas.cim.mapping.model.SwitchType.convertSwitchType(cgmesSwitch.getType()).name() )")
     protected abstract TConductingEquipment mapSwitchToTConductingEquipment(CgmesSwitch cgmesSwitch,
+                                                                            @Context TVoltageLevel tVoltageLevel,
                                                                             @Context CimToSclMapperContext context);
 
     @AfterMapping
     protected void afterSwitchToTConductingEquipment(CgmesSwitch cgmesSwitch,
                                                      @MappingTarget TConductingEquipment tConductingEquipment,
+                                                     @Context TVoltageLevel tVoltageLevel,
                                                      @Context CimToSclMapperContext context) {
+        // For DCLineSegment the nomFreq from the Voltage Level to 0
+        if ("DCLineSegment".equals(cgmesSwitch.getType())) {
+            tVoltageLevel.setNomFreq(BigDecimal.ZERO);
+        }
+
         context.getTerminals(cgmesSwitch.getId())
                 .stream()
                 .map(cgmesTerminal -> mapTerminalToTTerminal(cgmesTerminal, context))

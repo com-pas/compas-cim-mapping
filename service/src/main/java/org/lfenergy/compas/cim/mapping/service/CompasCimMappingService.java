@@ -65,7 +65,7 @@ public class CompasCimMappingService {
      * @return The created SCL Model.
      */
     SCL createBasicSCL(List<CimData> cimData, Principal principal) {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssXXX");
         ObjectFactory factory = new ObjectFactory();
 
         // Create the SCL and set some default values.

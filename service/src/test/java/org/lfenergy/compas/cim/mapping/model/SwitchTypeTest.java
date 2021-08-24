@@ -16,7 +16,7 @@ import static org.lfenergy.compas.cim.mapping.exception.CompasCimMappingErrorCod
 class SwitchTypeTest {
     @Test
     void convertSwitchType_WhenCalledWithKnownCimType_ThenSCLTypeIsReturned() {
-        var expectedType = SwitchType.IFL;
+        var expectedType = SwitchType.CAB;
 
         var result = SwitchType.convertSwitchType(expectedType.getCimTypes().get(0));
         assertEquals(expectedType, result);
