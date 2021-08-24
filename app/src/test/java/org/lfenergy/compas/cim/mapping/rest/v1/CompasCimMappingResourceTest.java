@@ -6,6 +6,7 @@ package org.lfenergy.compas.cim.mapping.rest.v1;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
+import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 import org.lfenergy.compas.cim.mapping.model.CimData;
@@ -29,6 +30,7 @@ import static org.mockito.Mockito.*;
 
 @QuarkusTest
 @TestHTTPEndpoint(CompasCimMappingResource.class)
+@TestSecurity(user = "test-mapper")
 class CompasCimMappingResourceTest {
     @InjectMock
     private CompasCimMappingService compasCimMappingService;
