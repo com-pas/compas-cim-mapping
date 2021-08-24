@@ -26,6 +26,7 @@ import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.lfenergy.compas.cim.mapping.CimMappingConstants.DC_LINE_SEGMENT_TYPE;
 import static org.lfenergy.compas.cim.mapping.CimMappingConstants.RDF_NS_URI;
 import static org.mockito.Mockito.*;
 
@@ -218,7 +219,7 @@ class CimToSclMapperTest {
         var expectedType = SwitchType.CAB.name();
 
         when(cgmesSwitch.getNameOrId()).thenReturn(expectedName);
-        when(cgmesSwitch.getType()).thenReturn("DCLineSegment");
+        when(cgmesSwitch.getType()).thenReturn(DC_LINE_SEGMENT_TYPE);
 
         var sclConductingEquipment = mapper.mapSwitchToTConductingEquipment(cgmesSwitch, tVoltageLevel, context);
 

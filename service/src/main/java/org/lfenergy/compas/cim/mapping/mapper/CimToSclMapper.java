@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.util.Optional;
 
+import static org.lfenergy.compas.cim.mapping.CimMappingConstants.DC_LINE_SEGMENT_TYPE;
+
 /**
  * Interface for MapStruct to configure how a Cim Model is Mapped to a SCL IEC Model,
  * including the objects, like Substation, VoltageLevel and more.
@@ -142,7 +144,7 @@ public abstract class CimToSclMapper {
                                                      @Context TVoltageLevel tVoltageLevel,
                                                      @Context CimToSclMapperContext context) {
         // For DCLineSegment the nomFreq from the Voltage Level to 0
-        if ("DCLineSegment".equals(cgmesSwitch.getType())) {
+        if (DC_LINE_SEGMENT_TYPE.equals(cgmesSwitch.getType())) {
             tVoltageLevel.setNomFreq(BigDecimal.ZERO);
         }
 

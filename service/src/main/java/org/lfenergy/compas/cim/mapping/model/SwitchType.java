@@ -8,6 +8,7 @@ import org.lfenergy.compas.cim.mapping.exception.CompasCimMappingException;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.lfenergy.compas.cim.mapping.CimMappingConstants.DC_LINE_SEGMENT_TYPE;
 import static org.lfenergy.compas.cim.mapping.exception.CompasCimMappingErrorCode.UNKNOWN_TYPE_ERROR_CODE;
 
 /**
@@ -17,7 +18,7 @@ import static org.lfenergy.compas.cim.mapping.exception.CompasCimMappingErrorCod
  */
 public enum SwitchType {
     BSH("Connector"),
-    CAB("ACLineSegment", "DCLineSegment"),
+    CAB("ACLineSegment", DC_LINE_SEGMENT_TYPE),
     CAP("ShuntCompensator", "SeriesCompensator"),
     CBR("ProtectedSwitch", "Breaker", "Recloser"),
     CON("FrequencyConverter"),
