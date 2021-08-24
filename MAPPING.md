@@ -25,6 +25,8 @@ There is an IEC document describing the mapping, namely IEC/TS 62361-102, but no
 | *cim:VoltageLevel*               | *TVoltageLevel*                  |           |
 | name or id                       | name                             |           |
 | nominalV                         | voltage.value                    |           |
+| 'k'                              | voltage.multiplier               |           |
+| 'V'                              | voltage.unit                     |           |
 | List&lt;Bay&gt;                  | List&lt;TBay&gt;                 | (1)       |
 
 (1): The list of Bays that belong to the VoltageLevel.
