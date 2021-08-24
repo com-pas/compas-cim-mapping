@@ -4,6 +4,7 @@
 package org.lfenergy.compas.cim.mapping.rest.v1;
 
 import io.quarkus.security.Authenticated;
+import io.quarkus.security.identity.SecurityIdentity;
 import org.lfenergy.compas.cim.mapping.rest.v1.model.MapRequest;
 import org.lfenergy.compas.cim.mapping.rest.v1.model.MapResponse;
 import org.lfenergy.compas.cim.mapping.service.CompasCimMappingService;
@@ -24,6 +25,9 @@ public class CompasCimMappingResource {
     private CompasCimMappingService compasCimMappingService;
 
     @Inject
+    SecurityIdentity securityIdentity;
+
+    @Inject
     public CompasCimMappingResource(CompasCimMappingService compasCimMappingService) {
         this.compasCimMappingService = compasCimMappingService;
     }
@@ -34,7 +38,7 @@ public class CompasCimMappingResource {
     @Produces(MediaType.APPLICATION_XML)
     public MapResponse mapCimToScl(@Valid MapRequest request) {
         var response = new MapResponse();
-        response.setScl(compasCimMappingService.map(request.getCimData()));
+        response.setScl(compasCimMappingService.map(request.getCimData(), securityIdentity.getPrincipal()));
         return response;
     }
 }
