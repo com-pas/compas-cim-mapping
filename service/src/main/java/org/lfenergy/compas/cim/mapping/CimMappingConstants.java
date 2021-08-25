@@ -13,4 +13,6 @@ public class CimMappingConstants {
     public static final String SCL_NS_URI = "http://www.iec.ch/61850/2003/SCL";
     public static final String RDF_NS_URI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 
+    public static final String DC_LINE_SEGMENT_TYPE = "DCLineSegment";
+
 }
