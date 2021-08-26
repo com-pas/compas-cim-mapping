@@ -24,7 +24,7 @@ SPDX-License-Identifier: Apache-2.0
         <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
         <sonarqube-plugin.version>3.2.0</sonarqube-plugin.version>
 
-        <compas.core.version>0.2.0</compas.core.version>
+        <compas.core.version>0.2.1</compas.core.version>
         <jakarta-cdi-api.version>2.0.2</jakarta-cdi-api.version>
         <slf4j.version>1.7.32</slf4j.version>
         <powsybl.version>4.3.1</powsybl.version>
@@ -32,7 +32,7 @@ SPDX-License-Identifier: Apache-2.0
 
         <!-- Test -->
         <junit-jupiter.version>5.7.2</junit-jupiter.version>
-        <mockito-junit-jupiter.version>3.11.2</mockito-junit-jupiter.version>
+        <mockito-junit-jupiter.version>3.12.4</mockito-junit-jupiter.version>
         <openpojo.version>0.9.1</openpojo.version>
     </properties>
 
