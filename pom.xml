@@ -32,7 +32,7 @@ SPDX-License-Identifier: Apache-2.0
 
         <!-- Test -->
         <junit-jupiter.version>5.7.2</junit-jupiter.version>
-        <mockito-junit-jupiter.version>3.11.2</mockito-junit-jupiter.version>
+        <mockito-junit-jupiter.version>3.12.4</mockito-junit-jupiter.version>
         <openpojo.version>0.9.1</openpojo.version>
     </properties>
 
@@ -265,7 +265,7 @@ SPDX-License-Identifier: Apache-2.0
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
                             <artifactId>maven-source-plugin</artifactId>
-                            <version>3.2.0</version>
+                            <version>3.2.1</version>
                             <executions>
                                 <execution>
                                     <id>attach-sources</id>
