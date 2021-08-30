@@ -156,7 +156,7 @@ SPDX-License-Identifier: Apache-2.0
             <dependency>
                 <groupId>org.glassfish</groupId>
                 <artifactId>jakarta.el</artifactId>
-                <version>4.0.1</version>
+                <version>3.0.3</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
