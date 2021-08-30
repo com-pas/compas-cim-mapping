@@ -27,3 +27,9 @@ updates:
     schedule:
       interval: "daily"
     open-pull-requests-limit: 5
+    allow:
+      # Next two dependencies shouldn't be upgrade, because RestEasy isn't using newer version. (2.3.X)
+      - dependency-name: org.hibernate.validator:hibernate-validator
+        versions: [ "6.x" ]
+      - dependency-name: org.glassfish:jakarta.el
+        versions: [ "3.x" ]
