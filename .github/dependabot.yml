@@ -30,6 +30,6 @@ updates:
     ignore:
       # Next two dependencies shouldn't be upgrade, because Quarkus isn't using newer version of EL.
       - dependency-name: org.hibernate.validator:hibernate-validator
-        versions: [ "7.x" ]
+        versions: [ "[7.0,)" ]
       - dependency-name: org.glassfish:jakarta.el
-        versions: [ "4.x" ]
+        versions: [ "[4.0,)" ]
