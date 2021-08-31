@@ -67,6 +67,13 @@ ProtectedSwitch.These classes are all mapped in the same way on IEC 61850
 
 | CIM Class                        | IEC Class                        | Remark    |
 | -------------------------------- | -------------------------------- | --------- |
+| *cim:RatioTapChanger*            | *TTapChanger*                    |           |
+| *cim:PhaseTapChanger*            | *TTapChanger*                    |           |
+| name or id                       | name                             |           |
+| 'LTC'                            | type                             |           |
+
+| CIM Class                        | IEC Class                        | Remark    |
+| -------------------------------- | -------------------------------- | --------- |
 | *cim:ConnectivityNode*           | *TConnectivityNode*              |           |
 | name or id                       | name                             |           |
 | -                                | pathName                         | (1)       |
