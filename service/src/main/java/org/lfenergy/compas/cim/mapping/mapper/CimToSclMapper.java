@@ -159,12 +159,25 @@ public abstract class CimToSclMapper {
     protected void afterTransformerEndToTTransformerWinding(CgmesTransformerEnd transformerEnd,
                                                             @MappingTarget TTransformerWinding tTransformerWinding,
                                                             @Context CimToSclMapperContext context) {
+        // Convert the Ratio-/PhaseTapChanger from IEC CIM to IEC 61850.
+        context.getTapChanger(transformerEnd.getId())
+                .ifPresent(cgmesTapChanger -> {
+                    var tTapChanger = mapTapChangerToTTapChanger(cgmesTapChanger, context);
+                    tTransformerWinding.setTapChanger(tTapChanger);
+                });
+
         context.getTerminal(transformerEnd.getTerminalId())
                 .ifPresent(cgmesTerminal -> {
                     var tTerminal = mapTerminalToTTerminal(cgmesTerminal, context);
                     tTransformerWinding.getTerminal().add(tTerminal);
                 });
+
     }
+
+    @Mapping(target = "name", source = "nameOrId")
+    @Mapping(target = "type", constant = "LTC")
+    protected abstract TTapChanger mapTapChangerToTTapChanger(CgmesTapChanger tapChanger,
+                                                              @Context CimToSclMapperContext context);
 
     @Mapping(target = "name", source = "nameOrId")
     protected abstract TConnectivityNode mapConnectivityNodeToTConnectivityNode(CgmesConnectivityNode cgmesConnectivityNode,
