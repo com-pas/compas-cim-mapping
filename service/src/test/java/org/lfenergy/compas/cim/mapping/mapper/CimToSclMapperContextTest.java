@@ -105,6 +105,41 @@ class CimToSclMapperContextTest {
     }
 
     @Test
+    void getTransformers_WhenSparQLReturnsBags_ThenPropertyBagIsConvertedToCgmesTransformer() {
+        var pwId = "PowertransformerId";
+        var pwName = "Name Powertransformer";
+        var pwDesc = "Desc Powertransformer";
+        var pwContainerId = "Known Container ID";
+        var bags = new PropertyBags();
+        var bag = new PropertyBag(List.of("PowerTransformer", "name", "description", "EquipmentContainer"));
+        bag.put("PowerTransformer", pwId);
+        bag.put("name", pwName);
+        bag.put("description", pwDesc);
+        bag.put("EquipmentContainer", pwContainerId);
+        bags.add(bag);
+
+        bag = new PropertyBag(List.of("PowerTransformer", "name", "description", "EquipmentContainer"));
+        bag.put("PowerTransformer", "Other ID");
+        bag.put("name", "Other name");
+        bag.put("description", "Other desc");
+        bag.put("EquipmentContainer", "Unknown Container ID");
+        bags.add(bag);
+
+        var tripleStore = mock(TripleStore.class);
+        when(cgmesModel.tripleStore()).thenReturn(tripleStore);
+        when(tripleStore.query(anyString())).thenReturn(bags);
+
+        var result = context.getTransformers(pwContainerId);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        var transformer = result.get(0);
+        assertEquals(pwId, transformer.getId());
+        assertEquals(pwName, transformer.getName());
+        assertEquals(pwDesc, transformer.getDescription());
+    }
+
+    @Test
     void getConnectivityNode_WhenCalledWithKnownId_ThenPropertyBagsIsFilteredOnIdAndConvertedToCgmesConnectivityNode() {
         var ccnId = "CcnId";
         var ccnName = "Name Ccn";

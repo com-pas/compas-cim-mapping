@@ -58,16 +58,41 @@ public class CimToSclMapperContext {
      */
     public List<CgmesBay> getBaysByVoltageLevel(String voltageLevelId) {
         return cgmesModel.tripleStore().query(
-                "SELECT *\n" +
-                        "WHERE {\n" +
-                        "GRAPH ?graph {\n" +
-                        "    ?Bay\n" +
-                        "        a cim:Bay ;\n" +
-                        "        cim:IdentifiedObject.name ?name ;\n" +
-                        "        cim:Bay.VoltageLevel ?VoltageLevel ;\n" +
-                        " FILTER (str(?VoltageLevel) = \"http://default-cgmes-model/#" + voltageLevelId + "\") " +
-                        "}}").stream()
+                        "SELECT *\n" +
+                                "WHERE {\n" +
+                                "GRAPH ?graph {\n" +
+                                "    ?Bay\n" +
+                                "        a cim:Bay ;\n" +
+                                "        cim:IdentifiedObject.name ?name ;\n" +
+                                "        cim:Bay.VoltageLevel ?VoltageLevel ;\n" +
+                                " FILTER (str(?VoltageLevel) = \"http://default-cgmes-model/#" + voltageLevelId + "\") " +
+                                "}}").stream()
                 .map(bag -> new CgmesBay(bag.getId("Bay"), bag.get("name")))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Search the CGMES Model for Power-Transformers that below to a specific container.
+     *
+     * @param containerId The ID of the Container.
+     * @return The List of converted CGMES Power-Transformers that were found.
+     */
+    public List<CgmesTransformer> getTransformers(String containerId) {
+        return cgmesModel.tripleStore().query(
+                        "SELECT *\n" +
+                                "{ GRAPH ?graph {\n" +
+                                "    ?PowerTransformer\n" +
+                                "        a cim:PowerTransformer ;\n" +
+                                "        cim:IdentifiedObject.name ?name ;\n" +
+                                "        cim:IdentifiedObject.description ?description ;\n" +
+                                "        cim:Equipment.EquipmentContainer ?EquipmentContainer .\n" +
+                                "}}")
+                .stream()
+                .filter(propertyBag -> containerId.equals(propertyBag.getId("EquipmentContainer")))
+                .map(propertyBag -> new CgmesTransformer(
+                        propertyBag.getId("PowerTransformer"),
+                        propertyBag.get("name"),
+                        propertyBag.get("description")))
                 .collect(Collectors.toList());
     }
 

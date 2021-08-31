@@ -9,9 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.lfenergy.compas.cim.mapping.cgmes.CgmesCimReader;
 import org.lfenergy.compas.cim.mapping.model.*;
 import org.lfenergy.compas.core.commons.ElementConverter;
-import org.lfenergy.compas.scl2007b4.model.SCL;
-import org.lfenergy.compas.scl2007b4.model.TConnectivityNode;
-import org.lfenergy.compas.scl2007b4.model.TVoltageLevel;
+import org.lfenergy.compas.scl2007b4.model.*;
 import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -41,6 +39,8 @@ class CimToSclMapperTest {
     private CgmesVoltageLevel cgmesVoltageLevel;
     @Mock
     private CgmesBay cgmesBay;
+    @Mock
+    private CgmesTransformer cgmesTransformer;
     @Mock
     private CgmesConnectivityNode cgmesConnectivityNode;
     @Mock
@@ -79,6 +79,9 @@ class CimToSclMapperTest {
         assertEquals("_af9a4ae3-ba2e-4c34-8e47-5af894ee20f4", substation.getName());
         assertEquals("Sub1", substation.getDesc());
 
+        assertEquals(1, substation.getPowerTransformer().size());
+        assertPowerTransformer(substation.getPowerTransformer().get(0));
+
         assertEquals(3, substation.getVoltageLevel().size());
         var voltageLevel = substation.getVoltageLevel().get(0);
         assertEquals("S1 380kV", voltageLevel.getName());
@@ -93,17 +96,33 @@ class CimToSclMapperTest {
         assertEquals("BAY_T4_2", bay.getName());
 
         assertEquals(4, bay.getConnectivityNode().size());
-        var connectivityNode = bay.getConnectivityNode().get(0);
-        assertEquals("CONNECTIVITY_NODE82", connectivityNode.getName());
-        assertEquals("_af9a4ae3-ba2e-4c34-8e47-5af894ee20f4/S1 380kV/BAY_T4_2/CONNECTIVITY_NODE82", connectivityNode.getPathName());
+        assertConnectivityNode(bay.getConnectivityNode().get(0));
 
         assertEquals(3, bay.getConductingEquipment().size());
         var conductingEquipment = bay.getConductingEquipment().get(0);
-        assertEquals("BREAKER25", conductingEquipment.getName());
-        assertEquals("CBR", conductingEquipment.getType());
+        assertConductingEquipment(conductingEquipment);
 
         assertEquals(2, conductingEquipment.getTerminal().size());
-        var terminal = conductingEquipment.getTerminal().get(0);
+        assertTerminal(conductingEquipment.getTerminal().get(0));
+    }
+
+    private void assertPowerTransformer(TPowerTransformer powerTransformer) {
+        assertEquals("T3", powerTransformer.getName());
+        assertEquals(TPowerTransformerEnum.PTR, powerTransformer.getType());
+        assertEquals("Trafo-5", powerTransformer.getDesc());
+    }
+
+    private void assertConnectivityNode(TConnectivityNode connectivityNode) {
+        assertEquals("CONNECTIVITY_NODE82", connectivityNode.getName());
+        assertEquals("_af9a4ae3-ba2e-4c34-8e47-5af894ee20f4/S1 380kV/BAY_T4_2/CONNECTIVITY_NODE82", connectivityNode.getPathName());
+    }
+
+    private void assertConductingEquipment(TConductingEquipment conductingEquipment) {
+        assertEquals("BREAKER25", conductingEquipment.getName());
+        assertEquals("CBR", conductingEquipment.getType());
+    }
+
+    private void assertTerminal(TTerminal terminal) {
         assertEquals("T4_2_ADDB1", terminal.getName());
         assertEquals("CONNECTIVITY_NODE83", terminal.getCNodeName());
         assertEquals("_af9a4ae3-ba2e-4c34-8e47-5af894ee20f4/S1 380kV/BAY_T4_2/CONNECTIVITY_NODE83", terminal.getConnectivityNode());
@@ -128,7 +147,7 @@ class CimToSclMapperTest {
         assertNotNull(sclSubstation);
         assertEquals(expectedId, sclSubstation.getName());
         assertEquals(expectedDesc, sclSubstation.getDesc());
-        verify(cgmesSubstation, times(2)).getId();
+        verify(cgmesSubstation, times(3)).getId();
         verify(cgmesSubstation, times(1)).getOptionalName();
         verify(context, times(1)).addLast(sclSubstation);
         verifyNoMoreInteractions(cgmesSubstation);
@@ -147,7 +166,7 @@ class CimToSclMapperTest {
         assertNotNull(sclVoltageLevel);
         assertEquals(expectedName, sclVoltageLevel.getName());
         assertEquals(expectedVoltage, sclVoltageLevel.getVoltage().getValue());
-        verify(cgmesVoltageLevel, times(1)).getId();
+        verify(cgmesVoltageLevel, times(2)).getId();
         verify(cgmesVoltageLevel, times(1)).getNameOrId();
         verify(cgmesVoltageLevel, times(1)).getNominalV();
         verify(context, times(1)).addLast(sclVoltageLevel);
@@ -164,10 +183,29 @@ class CimToSclMapperTest {
 
         assertNotNull(sclBay);
         assertEquals(expectedName, sclBay.getName());
-        verify(cgmesBay, times(2)).getId();
+        verify(cgmesBay, times(3)).getId();
         verify(cgmesBay, times(1)).getNameOrId();
         verify(context, times(1)).addLast(sclBay);
         verifyNoMoreInteractions(cgmesBay);
+    }
+
+    @Test
+    void mapTransformerToTPowerTransformer_WhenCalledWithCgmesTransformer_ThenPropertiesMappedToTPowerTransformer() {
+        var expectedName = "TheName";
+        var expectedDesc = "Desc";
+
+        when(cgmesTransformer.getNameOrId()).thenReturn(expectedName);
+        when(cgmesTransformer.getDescription()).thenReturn(expectedDesc);
+
+        var sclPowerTransformer = mapper.mapTransformerToTPowerTransformer(cgmesTransformer, context);
+
+        assertNotNull(sclPowerTransformer);
+        assertEquals(expectedName, sclPowerTransformer.getName());
+        assertEquals(expectedDesc, sclPowerTransformer.getDesc());
+        assertEquals(TPowerTransformerEnum.PTR, sclPowerTransformer.getType());
+        verify(cgmesTransformer, times(1)).getNameOrId();
+        verify(cgmesTransformer, times(1)).getDescription();
+        verifyNoMoreInteractions(cgmesTransformer);
     }
 
     @Test

@@ -30,7 +30,7 @@ public abstract class CimToSclMapper {
 
     /**
      * Top level mapping method to start the mapping of all known elements from Cgmes Model
-     * and IIDM Network Model to the IEC SCL Model.
+     * to the IEC SCL Model.
      *
      * @param context Holding all data from which the SCL (also passed) needs to be filled.
      */
@@ -59,12 +59,16 @@ public abstract class CimToSclMapper {
     protected void afterSubstationToTSubstation(CgmesSubstation substation,
                                                 @MappingTarget TSubstation tSubstation,
                                                 @Context CimToSclMapperContext context) {
-        // The bays need to be mapped in a special way, because IIDM doesn't know them.
         context.getVoltageLevelsBySubstation(substation.getId())
                 .stream()
                 .map(voltageLevel -> mapVoltageLevelToTVoltageLevel(voltageLevel, context))
                 .forEach(tVoltageLevel -> tSubstation.getVoltageLevel().add(tVoltageLevel));
 
+        // PowerTransformers coupled to the Bay Level.
+        context.getTransformers(substation.getId())
+                .stream()
+                .map(transformer -> mapTransformerToTPowerTransformer(transformer, context))
+                .forEach(tPowerTransformer -> tSubstation.getPowerTransformer().add(tPowerTransformer));
     }
 
     @Mapping(target = "name", source = "nameOrId")
@@ -78,11 +82,16 @@ public abstract class CimToSclMapper {
     protected void afterVoltageLevelToTVoltageLevel(CgmesVoltageLevel cgmesVoltageLevel,
                                                     @MappingTarget TVoltageLevel tVoltageLevel,
                                                     @Context CimToSclMapperContext context) {
-        // The bays need to be mapped in a special way, because IIDM doesn't know them.
         context.getBaysByVoltageLevel(cgmesVoltageLevel.getId())
                 .stream()
                 .map(bay -> mapBayToTBay(bay, cgmesVoltageLevel, tVoltageLevel, context))
                 .forEach(tBay -> tVoltageLevel.getBay().add(tBay));
+
+        // PowerTransformers coupled to the Bay Level.
+        context.getTransformers(cgmesVoltageLevel.getId())
+                .stream()
+                .map(transformer -> mapTransformerToTPowerTransformer(transformer, context))
+                .forEach(tPowerTransformer -> tVoltageLevel.getPowerTransformer().add(tPowerTransformer));
     }
 
     @BeforeMapping
@@ -117,7 +126,19 @@ public abstract class CimToSclMapper {
                 .stream()
                 .map(cgmesSwitch -> mapSwitchToTConductingEquipment(cgmesSwitch, tVoltageLevel, context))
                 .forEach(tConductingEquipment -> tBay.getConductingEquipment().add(tConductingEquipment));
+
+        // PowerTransformers coupled to the Bay Level.
+        context.getTransformers(cgmesBay.getId())
+                .stream()
+                .map(transformer -> mapTransformerToTPowerTransformer(transformer, context))
+                .forEach(tPowerTransformer -> tBay.getPowerTransformer().add(tPowerTransformer));
     }
+
+    @Mapping(target = "name", source = "nameOrId")
+    @Mapping(target = "desc", source = "description")
+    @Mapping(target = "type", constant = "PTR")
+    protected abstract TPowerTransformer mapTransformerToTPowerTransformer(CgmesTransformer transformer,
+                                                                           @Context CimToSclMapperContext context);
 
     @Mapping(target = "name", source = "nameOrId")
     protected abstract TConnectivityNode mapConnectivityNodeToTConnectivityNode(CgmesConnectivityNode cgmesConnectivityNode,

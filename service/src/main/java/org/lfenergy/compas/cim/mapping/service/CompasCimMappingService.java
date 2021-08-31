@@ -22,7 +22,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- * Mapping Service to process the passed CIM XML(s) (RDF Format) and convert these to a IIDM Model
+ * Mapping Service to process the passed CIM XML(s) (RDF Format) and convert these to a Cgmes Model
  * that is used to create a IEC SCL Model, including some basic data being filled in the Header.
  */
 @ApplicationScoped
