@@ -3,8 +3,6 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.compas.cim.mapping.model;
 
-import java.util.Optional;
-
 public abstract class AbstractCgmesEntity {
     private String id;
     private String name;
@@ -30,11 +28,7 @@ public abstract class AbstractCgmesEntity {
         this.name = name;
     }
 
-    public Optional<String> getOptionalName() {
-        return Optional.ofNullable(getName());
-    }
-
     public String getNameOrId() {
-        return getOptionalName().orElseGet(this::getId);
+        return getName() != null ? getName() : getId();
     }
 }

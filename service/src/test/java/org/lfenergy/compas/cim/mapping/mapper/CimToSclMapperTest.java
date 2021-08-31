@@ -42,6 +42,10 @@ class CimToSclMapperTest {
     @Mock
     private CgmesTransformer cgmesTransformer;
     @Mock
+    private CgmesTransformerEnd cgmesTransformerEnd;
+    @Mock
+    private CgmesTapChanger cgmesTapChanger;
+    @Mock
     private CgmesConnectivityNode cgmesConnectivityNode;
     @Mock
     private CgmesSwitch cgmesSwitch;
@@ -79,8 +83,16 @@ class CimToSclMapperTest {
         assertEquals("_af9a4ae3-ba2e-4c34-8e47-5af894ee20f4", substation.getName());
         assertEquals("Sub1", substation.getDesc());
 
-        assertEquals(1, substation.getPowerTransformer().size());
-        assertPowerTransformer(substation.getPowerTransformer().get(0));
+        assertEquals(2, substation.getPowerTransformer().size());
+        var powerTransformer = substation.getPowerTransformer().get(1);
+        assertPowerTransformer(powerTransformer);
+
+        assertEquals(3, powerTransformer.getTransformerWinding().size());
+        var transformerWinding = powerTransformer.getTransformerWinding().get(0);
+        assertTransformerWinding(transformerWinding);
+        assertTapChanger(transformerWinding.getTapChanger());
+        assertTerminal(transformerWinding.getTerminal(), 1, "T3_0", "CONNECTIVITY_NODE88",
+                "_af9a4ae3-ba2e-4c34-8e47-5af894ee20f4/S1 380kV/BAY_T3_0/CONNECTIVITY_NODE88");
 
         assertEquals(3, substation.getVoltageLevel().size());
         var voltageLevel = substation.getVoltageLevel().get(0);
@@ -102,30 +114,47 @@ class CimToSclMapperTest {
         var conductingEquipment = bay.getConductingEquipment().get(0);
         assertConductingEquipment(conductingEquipment);
 
-        assertEquals(2, conductingEquipment.getTerminal().size());
-        assertTerminal(conductingEquipment.getTerminal().get(0));
+        assertTerminal(conductingEquipment.getTerminal(), 2, "T4_2_ADDB1", "CONNECTIVITY_NODE83",
+                "_af9a4ae3-ba2e-4c34-8e47-5af894ee20f4/S1 380kV/BAY_T4_2/CONNECTIVITY_NODE83");
     }
 
     private void assertPowerTransformer(TPowerTransformer powerTransformer) {
+        assertNotNull(powerTransformer);
         assertEquals("T3", powerTransformer.getName());
         assertEquals(TPowerTransformerEnum.PTR, powerTransformer.getType());
         assertEquals("Trafo-5", powerTransformer.getDesc());
     }
 
+    private void assertTransformerWinding(TTransformerWinding powerTransformerEnd) {
+        assertNotNull(powerTransformerEnd);
+        assertEquals("T3", powerTransformerEnd.getName());
+        assertEquals(TTransformerWindingEnum.PTW, powerTransformerEnd.getType());
+    }
+
     private void assertConnectivityNode(TConnectivityNode connectivityNode) {
+        assertNotNull(connectivityNode);
         assertEquals("CONNECTIVITY_NODE82", connectivityNode.getName());
         assertEquals("_af9a4ae3-ba2e-4c34-8e47-5af894ee20f4/S1 380kV/BAY_T4_2/CONNECTIVITY_NODE82", connectivityNode.getPathName());
     }
 
     private void assertConductingEquipment(TConductingEquipment conductingEquipment) {
+        assertNotNull(conductingEquipment);
         assertEquals("BREAKER25", conductingEquipment.getName());
         assertEquals("CBR", conductingEquipment.getType());
     }
 
-    private void assertTerminal(TTerminal terminal) {
-        assertEquals("T4_2_ADDB1", terminal.getName());
-        assertEquals("CONNECTIVITY_NODE83", terminal.getCNodeName());
-        assertEquals("_af9a4ae3-ba2e-4c34-8e47-5af894ee20f4/S1 380kV/BAY_T4_2/CONNECTIVITY_NODE83", terminal.getConnectivityNode());
+    private void assertTapChanger(TTapChanger tapChanger) {
+        assertNotNull(tapChanger);
+        assertEquals("T3", tapChanger.getName());
+        assertEquals("LTC", tapChanger.getType());
+    }
+
+    private void assertTerminal(List<TTerminal> terminals, int size, String name, String nodeName, String connectivityNode) {
+        assertEquals(size, terminals.size());
+        var terminal = terminals.get(0);
+        assertEquals(name, terminal.getName());
+        assertEquals(nodeName, terminal.getCNodeName());
+        assertEquals(connectivityNode, terminal.getConnectivityNode());
     }
 
     private String readFile() throws IOException {
@@ -140,7 +169,7 @@ class CimToSclMapperTest {
         var expectedDesc = "Some description";
 
         when(cgmesSubstation.getId()).thenReturn(expectedId);
-        when(cgmesSubstation.getOptionalName()).thenReturn(Optional.of(expectedDesc));
+        when(cgmesSubstation.getName()).thenReturn(expectedDesc);
 
         var sclSubstation = mapper.mapSubstationToTSubstation(cgmesSubstation, context);
 
@@ -148,7 +177,7 @@ class CimToSclMapperTest {
         assertEquals(expectedId, sclSubstation.getName());
         assertEquals(expectedDesc, sclSubstation.getDesc());
         verify(cgmesSubstation, times(3)).getId();
-        verify(cgmesSubstation, times(1)).getOptionalName();
+        verify(cgmesSubstation, times(1)).getName();
         verify(context, times(1)).addLast(sclSubstation);
         verifyNoMoreInteractions(cgmesSubstation);
     }
@@ -203,9 +232,42 @@ class CimToSclMapperTest {
         assertEquals(expectedName, sclPowerTransformer.getName());
         assertEquals(expectedDesc, sclPowerTransformer.getDesc());
         assertEquals(TPowerTransformerEnum.PTR, sclPowerTransformer.getType());
+        verify(cgmesTransformer, times(1)).getId();
         verify(cgmesTransformer, times(1)).getNameOrId();
         verify(cgmesTransformer, times(1)).getDescription();
         verifyNoMoreInteractions(cgmesTransformer);
+    }
+
+    @Test
+    void mapTransformerEndToTTransformerWinding_WhenCalledWithCgmesTransformerEnd_ThenPropertiesMappedToTTransformerWinding() {
+        var expectedName = "TheName";
+
+        when(cgmesTransformerEnd.getNameOrId()).thenReturn(expectedName);
+
+        var sclTransformerWinding = mapper.mapTransformerEndToTTransformerWinding(cgmesTransformerEnd, context);
+
+        assertNotNull(sclTransformerWinding);
+        assertEquals(expectedName, sclTransformerWinding.getName());
+        assertEquals(TTransformerWindingEnum.PTW, sclTransformerWinding.getType());
+        verify(cgmesTransformerEnd, times(1)).getId();
+        verify(cgmesTransformerEnd, times(1)).getNameOrId();
+        verify(cgmesTransformerEnd, times(1)).getTerminalId();
+        verifyNoMoreInteractions(cgmesTransformerEnd);
+    }
+
+    @Test
+    void mapTapChangerToTTapChanger_WhenCalledWithCgmesTapChanger_ThenPropertiesMappedToTTapChanger() {
+        var expectedName = "TheName";
+
+        when(cgmesTapChanger.getNameOrId()).thenReturn(expectedName);
+
+        var sclTapChanger = mapper.mapTapChangerToTTapChanger(cgmesTapChanger, context);
+
+        assertNotNull(sclTapChanger);
+        assertEquals(expectedName, sclTapChanger.getName());
+        assertEquals("LTC", sclTapChanger.getType());
+        verify(cgmesTapChanger, times(1)).getNameOrId();
+        verifyNoMoreInteractions(cgmesTapChanger);
     }
 
     @Test
@@ -295,22 +357,5 @@ class CimToSclMapperTest {
         verify(context, times(1)).getPathnameFromConnectivityNode(expectedConnectivityNode);
         verify(context, times(1)).getNameFromConnectivityNode(expectedConnectivityNode);
         verifyNoMoreInteractions(cgmesTerminal, context);
-
-    }
-
-    @Test
-    void optionalString_WhenCalledWithFilledOptional_ThenStringValueReturned() {
-        var expectedValue = "Some string";
-
-        var value = mapper.optionalString(Optional.of(expectedValue));
-
-        assertEquals(expectedValue, value);
-    }
-
-    @Test
-    void optionalString_WhenCalledWithEmptyOptional_ThenBlankStringReturned() {
-        var value = mapper.optionalString(Optional.empty());
-
-        assertNull(value);
     }
 }

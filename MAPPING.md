@@ -17,6 +17,7 @@ There is an IEC document describing the mapping, namely IEC/TS 62361-102, but no
 | id                               | name                             |           |
 | name                             | desc                             |           |
 | List&lt;cim:VoltageLevel&gt;     | List&lt;TVoltageLevel&gt;        | (1)       |
+| List&lt;*PowerTransformer*&gt;   | List&lt;TPowerTransformer&gt;    |           |
 
 (1): The list of VoltageLevels that belong to the Substation.
 
@@ -29,6 +30,7 @@ There is an IEC document describing the mapping, namely IEC/TS 62361-102, but no
 | 'k'                              | voltage.multiplier               |           |
 | 'V'                              | voltage.unit                     |           |
 | List&lt;Bay&gt;                  | List&lt;TBay&gt;                 | (2)       |
+| List&lt;*PowerTransformer*&gt;   | List&lt;TPowerTransformer&gt;    |           |
 
 (1): The nomFreq will be set to 0 if there is a Switch connected to it of the type 'DCLineSegment'.  
 (2): The list of Bays that belong to the VoltageLevel.
@@ -39,6 +41,7 @@ There is an IEC document describing the mapping, namely IEC/TS 62361-102, but no
 | name or id                       | name                             |           |
 | List&lt;cim:ConnectivityNode&gt; | List&lt;TConnectivityNode&gt;    | (1)       |
 | List&lt;*Switches*&gt;           | List&lt;TConductingEquipment&gt; | (2)       |
+| List&lt;*PowerTransformer*&gt;   | List&lt;TPowerTransformer&gt;    |           |
 
 (1): ConnectivityNode in IEC CIM can be linked to a Bay, but also to the VoltageLevel. In IEC 61850 a ConnectivityNode
 can only be added to a Bay, so also the ConnectivityNode from the VoltageLevel are added to the Bay. This causes those
@@ -48,7 +51,30 @@ ProtectedSwitch.These classes are all mapped in the same way on IEC 61850
 
 | CIM Class                        | IEC Class                        | Remark    |
 | -------------------------------- | -------------------------------- | --------- |
-| *cim:ConnectivityNode*           | *TConnectivityNode               |           |
+| *cim:PowerTransformer*           | *TPowerTransformer*              |           |
+| name or id                       | name                             |           |
+| description                      | desc                             |           |
+| 'PTR'                            | type                             |           |
+
+| CIM Class                        | IEC Class                        | Remark    |
+| -------------------------------- | -------------------------------- | --------- |
+| *cim:PowerTransformerEnd*        | *TTransformerWinding*            |           |
+| name or id                       | name                             |           |
+| 'PTW'                            | type                             |           |
+| Terminal                         | List&lt;TTerminal&gt;            | (1)       |
+
+(1): The terminal found in IEC CIM will be added as List to IEC 61850.
+
+| CIM Class                        | IEC Class                        | Remark    |
+| -------------------------------- | -------------------------------- | --------- |
+| *cim:RatioTapChanger*            | *TTapChanger*                    |           |
+| *cim:PhaseTapChanger*            | *TTapChanger*                    |           |
+| name or id                       | name                             |           |
+| 'LTC'                            | type                             |           |
+
+| CIM Class                        | IEC Class                        | Remark    |
+| -------------------------------- | -------------------------------- | --------- |
+| *cim:ConnectivityNode*           | *TConnectivityNode*              |           |
 | name or id                       | name                             |           |
 | -                                | pathName                         | (1)       |
 
@@ -58,7 +84,7 @@ ConnectivityNode.
 
 | CIM Class                        | IEC Class                        | Remark    |
 | -------------------------------- | -------------------------------- | --------- |
-| *Switches*                       | *TConductingEquipment            | (1)       |
+| *Switches*                       | *TConductingEquipment*           | (1)       |
 | name or id                       | name                             |           |
 | type                             | type                             | (2)       |
 | List&lt;cim:Terminal&gt;         | List&lt;TTerminal&gt;            | (3)       |
@@ -71,7 +97,7 @@ implements this mapping.
 
 | CIM Class                        | IEC Class                        | Remark    |
 | -------------------------------- | -------------------------------- | --------- |
-| *cim:Terminal*                   | *TTerminal                       |           |
+| *cim:Terminal*                   | *TTerminal*                      |           |
 | name or id                       | name                             |           |
 | -                                | connectivityNode                 | (1)       |
 | -                                | CNodeName                        | (1)       |
