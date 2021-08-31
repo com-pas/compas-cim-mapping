@@ -140,6 +140,38 @@ class CimToSclMapperContextTest {
     }
 
     @Test
+    void getTransformerEnds_WhenCalledWithKnownId_ThenPropertyBagsIsFilteredOnIdAndConvertedToCgmesTransformerEnd() {
+        var tfeId = "TfeId";
+        var tfeName = "Name Tfe";
+        var terminalId = "Known Terminal ID";
+        var tfId = "Known Transformer ID";
+        var bags = new PropertyBags();
+        var bag = new PropertyBag(List.of("TransformerEnd", "name", "PowerTransformer", "Terminal"));
+        bag.put("TransformerEnd", tfeId);
+        bag.put("name", tfeName);
+        bag.put("PowerTransformer", tfId);
+        bag.put("Terminal", terminalId);
+        bags.add(bag);
+
+        bag = new PropertyBag(List.of("TransformerEnd", "name", "PowerTransformer", "Terminal"));
+        bag.put("TransformerEnd", "Other ID");
+        bag.put("name", "Other Name");
+        bag.put("PowerTransformer", "Unknown Transformer ID");
+        bag.put("Terminal", "Other Terminal ID");
+        bags.add(bag);
+
+        when(cgmesModel.transformerEnds()).thenReturn(bags);
+
+        var result = context.getTransformerEnds(tfId);
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        var ccn = result.get(0);
+        assertEquals(tfeId, ccn.getId());
+        assertEquals(tfeName, ccn.getName());
+        assertEquals(terminalId, ccn.getTerminalId());
+    }
+
+    @Test
     void getConnectivityNode_WhenCalledWithKnownId_ThenPropertyBagsIsFilteredOnIdAndConvertedToCgmesConnectivityNode() {
         var ccnId = "CcnId";
         var ccnName = "Name Ccn";
@@ -226,6 +258,37 @@ class CimToSclMapperContextTest {
         assertNotNull(result);
         assertEquals(1, result.size());
         var terminal = result.get(0);
+        assertEquals(terminalId, terminal.getId());
+        assertEquals(terminalName, terminal.getName());
+        assertEquals(ccnNode, terminal.getConnectivityNodeId());
+    }
+
+    @Test
+    void getTerminal_WhenCalledWithKnownId_ThenPropertyBagsIsFilteredOnIdAndConvertedToCgmesTerminal() {
+        var terminalId = "TerminalId";
+        var terminalName = "Name Terminal";
+        var ccnNode = "Connectivity Node ID";
+        var containerId = "Known Container ID";
+        var bags = new PropertyBags();
+        var bag = new PropertyBag(List.of("Terminal", "name", "ConnectivityNode", "ConductingEquipment"));
+        bag.put("Terminal", terminalId);
+        bag.put("name", terminalName);
+        bag.put("ConnectivityNode", ccnNode);
+        bag.put("ConductingEquipment", containerId);
+        bags.add(bag);
+
+        bag = new PropertyBag(List.of("Terminal", "name", "ConnectivityNode", "ConductingEquipment"));
+        bag.put("Terminal", "Other ID");
+        bag.put("name", "Other Name");
+        bag.put("ConnectivityNode", "Some Other ID");
+        bag.put("ConductingEquipment", "Unknown Container ID");
+        bags.add(bag);
+
+        when(cgmesModel.terminals()).thenReturn(bags);
+
+        var result = context.getTerminal(terminalId);
+        assertNotNull(result);
+        var terminal = result.get();
         assertEquals(terminalId, terminal.getId());
         assertEquals(terminalName, terminal.getName());
         assertEquals(ccnNode, terminal.getConnectivityNodeId());

@@ -97,6 +97,23 @@ public class CimToSclMapperContext {
     }
 
     /**
+     * Search the CGMES Model for Power-Transformer Ends that below to a specific Power-Transformer.
+     *
+     * @param powerTransformerId The ID of the Power-Transformer.
+     * @return The List of converted CGMES Power-Transformer Ends that were found.
+     */
+    public List<CgmesTransformerEnd> getTransformerEnds(String powerTransformerId) {
+        return cgmesModel.transformerEnds()
+                .stream()
+                .filter(propertyBag -> powerTransformerId.equals(propertyBag.getId("PowerTransformer")))
+                .map(propertyBag -> new CgmesTransformerEnd(
+                        propertyBag.getId("TransformerEnd"),
+                        propertyBag.get("name"),
+                        propertyBag.getId("Terminal")))
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Search the CGMES Model for Connectivity Nodes that below to a specific container.
      *
      * @param containerId The ID of the Container.
@@ -146,6 +163,23 @@ public class CimToSclMapperContext {
                         propertyBag.get("name"),
                         propertyBag.getId("ConnectivityNode")))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Search the CGMES Model for a Terminal with a specific ID.
+     *
+     * @param terminalId The ID of the Terminal.
+     * @return The converted CGMES Terminal that is found.
+     */
+    public Optional<CgmesTerminal> getTerminal(String terminalId) {
+        return cgmesModel.terminals()
+                .stream()
+                .filter(propertyBag -> terminalId.equals(propertyBag.getId("Terminal")))
+                .map(propertyBag -> new CgmesTerminal(
+                        propertyBag.getId("Terminal"),
+                        propertyBag.get("name"),
+                        propertyBag.getId("ConnectivityNode")))
+                .findFirst();
     }
 
     /*
