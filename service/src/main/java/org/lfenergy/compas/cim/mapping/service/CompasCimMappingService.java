@@ -42,8 +42,8 @@ public class CompasCimMappingService {
     /**
      * Map the passed CIM XML to IEC SCL Model.
      *
-     * @param cimData   The CIM XML Data.
-     * @param principal
+     * @param cimData The CIM XML Data.
+     * @param who     The name of the user who created the SCL from the CIM Data.
      * @return The created SCL Model.
      */
     public SCL map(List<CimData> cimData, String who) {
@@ -59,8 +59,10 @@ public class CompasCimMappingService {
     }
 
     /**
-     * Create a basic SCL Obejct with common values filled.
+     * Create a basic SCL Object with common values filled.
      *
+     * @param cimData The CIM XML Data.
+     * @param who     The name of the user who created the SCL from the CIM Data.
      * @return The created SCL Model.
      */
     SCL createBasicSCL(List<CimData> cimData, String who) {
