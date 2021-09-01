@@ -14,7 +14,6 @@ import org.lfenergy.compas.scl2007b4.model.THitem;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -47,8 +46,8 @@ public class CompasCimMappingService {
      * @param principal
      * @return The created SCL Model.
      */
-    public SCL map(List<CimData> cimData, Principal principal) {
-        var scl = createBasicSCL(cimData, principal);
+    public SCL map(List<CimData> cimData, String who) {
+        var scl = createBasicSCL(cimData, who);
 
         if (cimData != null && !cimData.isEmpty()) {
             // Convert the Data to the Network Model from PowSyBl
@@ -64,7 +63,7 @@ public class CompasCimMappingService {
      *
      * @return The created SCL Model.
      */
-    SCL createBasicSCL(List<CimData> cimData, Principal principal) {
+    SCL createBasicSCL(List<CimData> cimData, String who) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssXXX");
         ObjectFactory factory = new ObjectFactory();
 
@@ -87,7 +86,7 @@ public class CompasCimMappingService {
         item.setVersion(INITIAL_VERSION);
         item.setRevision(INITIAL_REVISION);
         item.setWhen(formatter.format(new Date()));
-        item.setWho(principal.getName());
+        item.setWho(who);
 
         // Add all CIM filenames that where used to create the SCL Content.
         String what = "SCL created from CIM File(s)";

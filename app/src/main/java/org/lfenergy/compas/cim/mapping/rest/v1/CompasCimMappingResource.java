@@ -4,7 +4,8 @@
 package org.lfenergy.compas.cim.mapping.rest.v1;
 
 import io.quarkus.security.Authenticated;
-import io.quarkus.security.identity.SecurityIdentity;
+import org.eclipse.microprofile.jwt.JsonWebToken;
+import org.lfenergy.compas.cim.mapping.rest.UserInfoProperties;
 import org.lfenergy.compas.cim.mapping.rest.v1.model.MapRequest;
 import org.lfenergy.compas.cim.mapping.rest.v1.model.MapResponse;
 import org.lfenergy.compas.cim.mapping.service.CompasCimMappingService;
@@ -25,7 +26,10 @@ public class CompasCimMappingResource {
     private CompasCimMappingService compasCimMappingService;
 
     @Inject
-    SecurityIdentity securityIdentity;
+    JsonWebToken jsonWebToken;
+
+    @Inject
+    UserInfoProperties userInfoProperties;
 
     @Inject
     public CompasCimMappingResource(CompasCimMappingService compasCimMappingService) {
@@ -37,8 +41,10 @@ public class CompasCimMappingResource {
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.APPLICATION_XML)
     public MapResponse mapCimToScl(@Valid MapRequest request) {
+        String username = jsonWebToken.getClaim(userInfoProperties.who());
+
         var response = new MapResponse();
-        response.setScl(compasCimMappingService.map(request.getCimData(), securityIdentity.getPrincipal()));
+        response.setScl(compasCimMappingService.map(request.getCimData(), username));
         return response;
     }
 }

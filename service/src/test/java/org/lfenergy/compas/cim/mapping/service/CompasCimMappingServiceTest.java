@@ -15,7 +15,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,8 +26,6 @@ import static org.mockito.Mockito.*;
 class CompasCimMappingServiceTest {
     @Mock
     private CgmesModel cgmesModel;
-    @Mock
-    private Principal principal;
 
     @Mock
     private CgmesCimReader cgmesCimReader;
@@ -43,7 +40,7 @@ class CompasCimMappingServiceTest {
         when(cgmesCimReader.readModel(any())).thenReturn(cgmesModel);
 
         var cimDataList = List.of(new CimData());
-        var scl = compasCimMappingService.map(cimDataList, principal);
+        var scl = compasCimMappingService.map(cimDataList, "username");
 
         assertNotNull(scl);
         verify(cgmesCimReader, times(1)).readModel(cimDataList);
@@ -53,7 +50,7 @@ class CompasCimMappingServiceTest {
 
     @Test
     void map_WhenCalledWithoutData_ThenReaderAndMapperAreNotCalled() {
-        var scl = compasCimMappingService.map(Collections.emptyList(), principal);
+        var scl = compasCimMappingService.map(Collections.emptyList(), "username");
 
         assertNotNull(scl);
         verifyNoInteractions(cgmesCimReader, cimToSclMapper);
@@ -61,7 +58,7 @@ class CompasCimMappingServiceTest {
 
     @Test
     void map_WhenCalledWithNullValue_ThenReaderAndMapperAreNotCalled() {
-        var scl = compasCimMappingService.map(null, principal);
+        var scl = compasCimMappingService.map(null, "username");
 
         assertNotNull(scl);
         verifyNoInteractions(cgmesCimReader, cimToSclMapper);
@@ -88,9 +85,8 @@ class CompasCimMappingServiceTest {
 
     private void createBasicSCL_WhenCalled_ThenExpectedName(List<CimData> cimDataList) {
         var expectedName = "Mr. Name";
-        when(principal.getName()).thenReturn(expectedName);
 
-        var scl = compasCimMappingService.createBasicSCL(cimDataList, principal);
+        var scl = compasCimMappingService.createBasicSCL(cimDataList, expectedName);
 
         assertNotNull(scl);
         assertEquals("2007", scl.getVersion());
