@@ -9,6 +9,8 @@ import org.lfenergy.compas.cim.mapping.rest.UserInfoProperties;
 import org.lfenergy.compas.cim.mapping.rest.v1.model.MapRequest;
 import org.lfenergy.compas.cim.mapping.rest.v1.model.MapResponse;
 import org.lfenergy.compas.cim.mapping.service.CompasCimMappingService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -23,6 +25,8 @@ import javax.ws.rs.core.MediaType;
 @RequestScoped
 @Path("/cim/v1/")
 public class CompasCimMappingResource {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CompasCimMappingResource.class);
+
     private CompasCimMappingService compasCimMappingService;
 
     @Inject
@@ -42,6 +46,7 @@ public class CompasCimMappingResource {
     @Produces(MediaType.APPLICATION_XML)
     public MapResponse mapCimToScl(@Valid MapRequest request) {
         String username = jsonWebToken.getClaim(userInfoProperties.who());
+        LOGGER.trace("Username used for Who {}", username);
 
         var response = new MapResponse();
         response.setScl(compasCimMappingService.map(request.getCimData(), username));
