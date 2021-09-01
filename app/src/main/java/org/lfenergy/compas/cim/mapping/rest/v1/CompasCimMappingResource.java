@@ -45,11 +45,11 @@ public class CompasCimMappingResource {
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.APPLICATION_XML)
     public MapResponse mapCimToScl(@Valid MapRequest request) {
-        String username = jsonWebToken.getClaim(userInfoProperties.who());
-        LOGGER.trace("Username used for Who {}", username);
+        String who = jsonWebToken.getClaim(userInfoProperties.who());
+        LOGGER.trace("Username used for Who {}", who);
 
         var response = new MapResponse();
-        response.setScl(compasCimMappingService.map(request.getCimData(), username));
+        response.setScl(compasCimMappingService.map(request.getCimData(), who));
         return response;
     }
 }
