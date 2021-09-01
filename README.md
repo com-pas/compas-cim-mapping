@@ -71,7 +71,7 @@ in History Record.
 
 | Environment variable             | Java Property                  | Description                                   | Example          |
 | -------------------------------- | ------------------------------ | --------------------------------------------- | ---------------- |
-| USERINFO_WHO_CLAIMNAME           | compas.userinfo.who.claimname  | The Name of the user use in the WHo History.  | name             |
+| USERINFO_WHO_CLAIMNAME           | compas.userinfo.who.claimname  | The Name of the user used in the Who History. | name             |
 
 ## Security
 
