@@ -4,10 +4,13 @@
 package org.lfenergy.compas.cim.mapping.rest.v1;
 
 import io.quarkus.security.Authenticated;
-import io.quarkus.security.identity.SecurityIdentity;
+import org.eclipse.microprofile.jwt.JsonWebToken;
+import org.lfenergy.compas.cim.mapping.rest.UserInfoProperties;
 import org.lfenergy.compas.cim.mapping.rest.v1.model.MapRequest;
 import org.lfenergy.compas.cim.mapping.rest.v1.model.MapResponse;
 import org.lfenergy.compas.cim.mapping.service.CompasCimMappingService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -22,10 +25,15 @@ import javax.ws.rs.core.MediaType;
 @RequestScoped
 @Path("/cim/v1/")
 public class CompasCimMappingResource {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CompasCimMappingResource.class);
+
     private CompasCimMappingService compasCimMappingService;
 
     @Inject
-    SecurityIdentity securityIdentity;
+    JsonWebToken jsonWebToken;
+
+    @Inject
+    UserInfoProperties userInfoProperties;
 
     @Inject
     public CompasCimMappingResource(CompasCimMappingService compasCimMappingService) {
@@ -37,8 +45,11 @@ public class CompasCimMappingResource {
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.APPLICATION_XML)
     public MapResponse mapCimToScl(@Valid MapRequest request) {
+        String who = jsonWebToken.getClaim(userInfoProperties.who());
+        LOGGER.trace("Username used for Who {}", who);
+
         var response = new MapResponse();
-        response.setScl(compasCimMappingService.map(request.getCimData(), securityIdentity.getPrincipal()));
+        response.setScl(compasCimMappingService.map(request.getCimData(), who));
         return response;
     }
 }

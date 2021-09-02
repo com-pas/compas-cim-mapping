@@ -7,6 +7,8 @@ import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
 import io.quarkus.test.security.TestSecurity;
+import io.quarkus.test.security.jwt.Claim;
+import io.quarkus.test.security.jwt.JwtSecurity;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 import org.lfenergy.compas.cim.mapping.model.CimData;
@@ -18,7 +20,6 @@ import org.lfenergy.compas.scl2007b4.model.SCL;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.Principal;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
@@ -32,6 +33,10 @@ import static org.mockito.Mockito.*;
 @QuarkusTest
 @TestHTTPEndpoint(CompasCimMappingResource.class)
 @TestSecurity(user = "test-mapper")
+@JwtSecurity(claims = {
+        // Default the claim "name" is configured for Who, so we will set this claim for the test.
+        @Claim(key = "name", value = "Test User")
+})
 class CompasCimMappingResourceTest {
     @InjectMock
     private CompasCimMappingService compasCimMappingService;
@@ -47,7 +52,7 @@ class CompasCimMappingResourceTest {
 
         var scl = new SCL();
         scl.setVersion("2007");
-        when(compasCimMappingService.map(any(), any(Principal.class))).thenReturn(scl);
+        when(compasCimMappingService.map(any(), eq("Test User"))).thenReturn(scl);
 
         var response = given()
                 .contentType(ContentType.XML)
@@ -65,7 +70,7 @@ class CompasCimMappingResourceTest {
         var sclVersion = xmlPath.getString("cms:MapResponse.scl:SCL.@version");
         assertNotNull(sclVersion);
         assertEquals("2007", sclVersion);
-        verify(compasCimMappingService, times(1)).map(any(), any(Principal.class));
+        verify(compasCimMappingService, times(1)).map(any(), eq("Test User"));
     }
 
     private String readFile() throws IOException {

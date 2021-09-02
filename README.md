@@ -64,6 +64,15 @@ You can then execute your native executable with: `./app/target/code-with-quarku
 If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.html
 .
 
+## Environment variables
+
+Below environment variable(s) can be used to configure which claims are used to fill user information, for instance Who
+in History Record.
+
+| Environment variable             | Java Property                  | Description                                   | Example          |
+| -------------------------------- | ------------------------------ | --------------------------------------------- | ---------------- |
+| USERINFO_WHO_CLAIMNAME           | compas.userinfo.who.claimname  | The Name of the user used in the Who History. | name             |
+
 ## Security
 
 To use most of the endpoints the users needs to be authenticated using JWT in the authorization header. There are 4
