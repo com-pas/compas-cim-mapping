@@ -10,7 +10,9 @@ import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Optional;
+import java.math.BigDecimal;
+
+import static org.lfenergy.compas.cim.mapping.CimMappingConstants.DC_LINE_SEGMENT_TYPE;
 
 /**
  * Interface for MapStruct to configure how a Cim Model is Mapped to a SCL IEC Model,
@@ -27,7 +29,7 @@ public abstract class CimToSclMapper {
 
     /**
      * Top level mapping method to start the mapping of all known elements from Cgmes Model
-     * and IIDM Network Model to the IEC SCL Model.
+     * to the IEC SCL Model.
      *
      * @param context Holding all data from which the SCL (also passed) needs to be filled.
      */
@@ -47,8 +49,15 @@ public abstract class CimToSclMapper {
         context.addLast(tNaming);
     }
 
+    @BeforeMapping
+    protected void beforeSubstationToTSubstation(@MappingTarget TSubstation tSubstation,
+                                                 @Context CimToSclMapperContext context) {
+        // Reset the Map of ConnectivityNodes, because we only need them inside processing of the Substation.
+        context.resetTConnectivityNodeMap();
+    }
+
     @Mapping(target = "name", source = "id")
-    @Mapping(target = "desc", source = "optionalName")
+    @Mapping(target = "desc", source = "name")
     protected abstract TSubstation mapSubstationToTSubstation(CgmesSubstation substation,
                                                               @Context CimToSclMapperContext context);
 
@@ -56,12 +65,16 @@ public abstract class CimToSclMapper {
     protected void afterSubstationToTSubstation(CgmesSubstation substation,
                                                 @MappingTarget TSubstation tSubstation,
                                                 @Context CimToSclMapperContext context) {
-        // The bays need to be mapped in a special way, because IIDM doesn't know them.
         context.getVoltageLevelsBySubstation(substation.getId())
                 .stream()
                 .map(voltageLevel -> mapVoltageLevelToTVoltageLevel(voltageLevel, context))
                 .forEach(tVoltageLevel -> tSubstation.getVoltageLevel().add(tVoltageLevel));
 
+        // PowerTransformers coupled to the Bay Level.
+        context.getTransformers(substation.getId())
+                .stream()
+                .map(transformer -> mapTransformerToTPowerTransformer(transformer, context))
+                .forEach(tPowerTransformer -> tSubstation.getPowerTransformer().add(tPowerTransformer));
     }
 
     @Mapping(target = "name", source = "nameOrId")
@@ -75,29 +88,29 @@ public abstract class CimToSclMapper {
     protected void afterVoltageLevelToTVoltageLevel(CgmesVoltageLevel cgmesVoltageLevel,
                                                     @MappingTarget TVoltageLevel tVoltageLevel,
                                                     @Context CimToSclMapperContext context) {
-        // The bays need to be mapped in a special way, because IIDM doesn't know them.
         context.getBaysByVoltageLevel(cgmesVoltageLevel.getId())
                 .stream()
-                .map(bay -> mapBayToTBay(bay, cgmesVoltageLevel, context))
+                .map(bay -> mapBayToTBay(bay, cgmesVoltageLevel, tVoltageLevel, context))
                 .forEach(tBay -> tVoltageLevel.getBay().add(tBay));
-    }
 
-    @BeforeMapping
-    protected void beforeBayToTBay(@MappingTarget TBay tBay,
-                                   @Context CimToSclMapperContext context) {
-        // Reset the Map of ConnectivityNodes, because we only need them inside processing of the Bay.
-        context.resetTConnectivityNodeMap();
+        // PowerTransformers coupled to the Bay Level.
+        context.getTransformers(cgmesVoltageLevel.getId())
+                .stream()
+                .map(transformer -> mapTransformerToTPowerTransformer(transformer, context))
+                .forEach(tPowerTransformer -> tVoltageLevel.getPowerTransformer().add(tPowerTransformer));
     }
 
     @Mapping(target = "name", source = "nameOrId")
     protected abstract TBay mapBayToTBay(CgmesBay cgmesBay,
                                          @Context CgmesVoltageLevel cgmesVoltageLevel,
+                                         @Context TVoltageLevel tVoltageLevel,
                                          @Context CimToSclMapperContext context);
 
     @AfterMapping
     protected void afterBayToTBay(CgmesBay cgmesBay,
                                   @MappingTarget TBay tBay,
                                   @Context CgmesVoltageLevel cgmesVoltageLevel,
+                                  @Context TVoltageLevel tVoltageLevel,
                                   @Context CimToSclMapperContext context) {
         // First we will process the Connectivity Nodes, because their path names are needed in the Terminal
         // of a Conduction Equipment.
@@ -110,9 +123,61 @@ public abstract class CimToSclMapper {
         // Now we can process the Conduction Equipment with their terminals.
         context.getSwitches(cgmesBay.getId())
                 .stream()
-                .map(cgmesSwitch -> mapSwitchToTConductingEquipment(cgmesSwitch, context))
+                .map(cgmesSwitch -> mapSwitchToTConductingEquipment(cgmesSwitch, tVoltageLevel, context))
                 .forEach(tConductingEquipment -> tBay.getConductingEquipment().add(tConductingEquipment));
+
+        // PowerTransformers coupled to the Bay Level.
+        context.getTransformers(cgmesBay.getId())
+                .stream()
+                .map(transformer -> mapTransformerToTPowerTransformer(transformer, context))
+                .forEach(tPowerTransformer -> tBay.getPowerTransformer().add(tPowerTransformer));
     }
+
+    @Mapping(target = "name", source = "nameOrId")
+    @Mapping(target = "desc", source = "description")
+    @Mapping(target = "type", constant = "PTR")
+    protected abstract TPowerTransformer mapTransformerToTPowerTransformer(CgmesTransformer transformer,
+                                                                           @Context CimToSclMapperContext context);
+
+    @AfterMapping
+    protected void afterTransformerToTPowerTransformer(CgmesTransformer transformer,
+                                                       @MappingTarget TPowerTransformer tPowerTransformer,
+                                                       @Context CimToSclMapperContext context) {
+        // PowerTransformer Ends coupled to the PowerTransformer.
+        context.getTransformerEnds(transformer.getId())
+                .stream()
+                .map(transformerEnd -> mapTransformerEndToTTransformerWinding(transformerEnd, context))
+                .forEach(tTransformerWinding -> tPowerTransformer.getTransformerWinding().add(tTransformerWinding));
+    }
+
+    @Mapping(target = "name", source = "nameOrId")
+    @Mapping(target = "type", constant = "PTW")
+    protected abstract TTransformerWinding mapTransformerEndToTTransformerWinding(CgmesTransformerEnd transformerEnd,
+                                                                                  @Context CimToSclMapperContext context);
+
+    @AfterMapping
+    protected void afterTransformerEndToTTransformerWinding(CgmesTransformerEnd transformerEnd,
+                                                            @MappingTarget TTransformerWinding tTransformerWinding,
+                                                            @Context CimToSclMapperContext context) {
+        // Convert the Ratio-/PhaseTapChanger from IEC CIM to IEC 61850.
+        context.getTapChanger(transformerEnd.getId())
+                .ifPresent(cgmesTapChanger -> {
+                    var tTapChanger = mapTapChangerToTTapChanger(cgmesTapChanger, context);
+                    tTransformerWinding.setTapChanger(tTapChanger);
+                });
+
+        context.getTerminal(transformerEnd.getTerminalId())
+                .ifPresent(cgmesTerminal -> {
+                    var tTerminal = mapTerminalToTTerminal(cgmesTerminal, context);
+                    tTransformerWinding.getTerminal().add(tTerminal);
+                });
+
+    }
+
+    @Mapping(target = "name", source = "nameOrId")
+    @Mapping(target = "type", constant = "LTC")
+    protected abstract TTapChanger mapTapChangerToTTapChanger(CgmesTapChanger tapChanger,
+                                                              @Context CimToSclMapperContext context);
 
     @Mapping(target = "name", source = "nameOrId")
     protected abstract TConnectivityNode mapConnectivityNodeToTConnectivityNode(CgmesConnectivityNode cgmesConnectivityNode,
@@ -130,12 +195,19 @@ public abstract class CimToSclMapper {
     @Mapping(target = "name", source = "nameOrId")
     @Mapping(target = "type", expression = "java( org.lfenergy.compas.cim.mapping.model.SwitchType.convertSwitchType(cgmesSwitch.getType()).name() )")
     protected abstract TConductingEquipment mapSwitchToTConductingEquipment(CgmesSwitch cgmesSwitch,
+                                                                            @Context TVoltageLevel tVoltageLevel,
                                                                             @Context CimToSclMapperContext context);
 
     @AfterMapping
     protected void afterSwitchToTConductingEquipment(CgmesSwitch cgmesSwitch,
                                                      @MappingTarget TConductingEquipment tConductingEquipment,
+                                                     @Context TVoltageLevel tVoltageLevel,
                                                      @Context CimToSclMapperContext context) {
+        // For DCLineSegment the nomFreq from the Voltage Level to 0
+        if (DC_LINE_SEGMENT_TYPE.equals(cgmesSwitch.getType())) {
+            tVoltageLevel.setNomFreq(BigDecimal.ZERO);
+        }
+
         context.getTerminals(cgmesSwitch.getId())
                 .stream()
                 .map(cgmesTerminal -> mapTerminalToTTerminal(cgmesTerminal, context))
@@ -148,10 +220,6 @@ public abstract class CimToSclMapper {
     @Mapping(target = "CNodeName", expression = "java( context.getNameFromConnectivityNode(cgmesTerminal.getConnectivityNodeId()).orElse(null) )")
     protected abstract TTerminal mapTerminalToTTerminal(CgmesTerminal cgmesTerminal,
                                                         @Context CimToSclMapperContext context);
-
-    protected String optionalString(Optional<String> value) {
-        return value.orElse(null);
-    }
 
     @AfterMapping
     protected void afterTNaming(@MappingTarget TNaming tNaming,

@@ -18,7 +18,7 @@ SPDX-License-Identifier: Apache-2.0
     <packaging>jar</packaging>
 
     <properties>
-        <quarkus.platform.version>2.0.0.Final</quarkus.platform.version>
+        <quarkus.platform.version>2.2.1.Final</quarkus.platform.version>
     </properties>
 
     <dependencyManagement>
@@ -94,7 +94,7 @@ SPDX-License-Identifier: Apache-2.0
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-test-security</artifactId>
+            <artifactId>quarkus-test-security-jwt</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

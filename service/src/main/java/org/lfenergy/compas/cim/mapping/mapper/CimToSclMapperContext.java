@@ -4,6 +4,7 @@
 package org.lfenergy.compas.cim.mapping.mapper;
 
 import com.powsybl.cgmes.model.CgmesModel;
+import com.powsybl.triplestore.api.PropertyBags;
 import org.lfenergy.compas.cim.mapping.model.*;
 import org.lfenergy.compas.scl2007b4.model.TConnectivityNode;
 import org.lfenergy.compas.scl2007b4.model.TNaming;
@@ -12,6 +13,26 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class CimToSclMapperContext {
+    public static final String SUBSTATION_PROP = "Substation";
+    public static final String VOLTAGE_LEVEL_PROP = "VoltageLevel";
+    public static final String BAY_PROP = "Bay";
+    public static final String POWER_TRANSFORMER_PROP = "PowerTransformer";
+    public static final String TRANSFORMER_END_PROP = "TransformerEnd";
+    public static final String RATIO_TAP_CHANGER_PROP = "RatioTapChanger";
+    public static final String PHASE_TAP_CHANGER_PROP = "PhaseTapChanger";
+    public static final String SWITCH_PROP = "Switch";
+    public static final String TERMINAL_PROP = "Terminal";
+    public static final String CONNECTIVITY_NODE_PROP = "ConnectivityNode";
+    public static final String CONNECTIVITY_NODE_CONTAINER_PROP = "ConnectivityNodeContainer";
+    public static final String CONDUCTING_EQUIPMENT_PROP = "ConductingEquipment";
+    public static final String EQUIPMENT_CONTAINER_PROP = "EquipmentContainer";
+    public static final String NAME_PROP = "name";
+    public static final String DESCRIPTION_PROP = "description";
+    public static final String NOMINAL_VOLTAGE_PROP = "nominalVoltage";
+    public static final String TYPE_PROP = "type";
+    public static final String TERMINAL_1_PROP = "Terminal1";
+    public static final String TERMINAL_2_PROP = "Terminal2";
+
     private final CgmesModel cgmesModel;
 
     public CimToSclMapperContext(CgmesModel cgmesModel) {
@@ -19,7 +40,7 @@ public class CimToSclMapperContext {
     }
 
     /**
-     * Search the CGMES Model for all Substations that below to the network.
+     * Search the CGMES Model for all Substations.
      *
      * @return The List of converted CGMES Substations that were found.
      */
@@ -27,13 +48,13 @@ public class CimToSclMapperContext {
         return cgmesModel.substations()
                 .stream()
                 .map(propertyBag -> new CgmesSubstation(
-                        propertyBag.getId("Substation"),
-                        propertyBag.get("name")))
+                        propertyBag.getId(SUBSTATION_PROP),
+                        propertyBag.get(NAME_PROP)))
                 .collect(Collectors.toList());
     }
 
     /**
-     * Search the CGMES Model for VoltageLevels that below to a specific substation.
+     * Search the CGMES Model for VoltageLevels that are coupled to a specific substation.
      *
      * @param substationId The ID of the Substation.
      * @return The List of converted CGMES VoltageLevels that were found.
@@ -41,16 +62,16 @@ public class CimToSclMapperContext {
     public List<CgmesVoltageLevel> getVoltageLevelsBySubstation(String substationId) {
         return cgmesModel.voltageLevels()
                 .stream()
-                .filter(propertyBag -> substationId.equals(propertyBag.getId("Substation")))
+                .filter(propertyBag -> substationId.equals(propertyBag.getId(SUBSTATION_PROP)))
                 .map(propertyBag -> new CgmesVoltageLevel(
-                        propertyBag.getId("VoltageLevel"),
-                        propertyBag.get("name"),
-                        propertyBag.asDouble("nominalVoltage")))
+                        propertyBag.getId(VOLTAGE_LEVEL_PROP),
+                        propertyBag.get(NAME_PROP),
+                        propertyBag.asDouble(NOMINAL_VOLTAGE_PROP)))
                 .collect(Collectors.toList());
     }
 
     /**
-     * Search for bays that belong to a specific Voltage Level. Because CGMES Model doesn't support this
+     * Search for bays that are coupled to a specific Voltage Level. Because CGMES Model doesn't support this,
      * a SparQL is executed against the TripleStore.
      *
      * @param voltageLevelId The ID of the Voltage Level to filter on.
@@ -58,21 +79,90 @@ public class CimToSclMapperContext {
      */
     public List<CgmesBay> getBaysByVoltageLevel(String voltageLevelId) {
         return cgmesModel.tripleStore().query(
-                "SELECT *\n" +
-                        "WHERE {\n" +
-                        "GRAPH ?graph {\n" +
-                        "    ?Bay\n" +
-                        "        a cim:Bay ;\n" +
-                        "        cim:IdentifiedObject.name ?name ;\n" +
-                        "        cim:Bay.VoltageLevel ?VoltageLevel ;\n" +
-                        " FILTER (str(?VoltageLevel) = \"http://default-cgmes-model/#" + voltageLevelId + "\") " +
-                        "}}").stream()
-                .map(bag -> new CgmesBay(bag.getId("Bay"), bag.get("name")))
+                        "SELECT *\n" +
+                                "WHERE {\n" +
+                                "GRAPH ?graph {\n" +
+                                "    ?Bay\n" +
+                                "        a cim:Bay ;\n" +
+                                "        cim:IdentifiedObject.name ?name ;\n" +
+                                "        cim:Bay.VoltageLevel ?VoltageLevel ;\n" +
+                                " FILTER (str(?VoltageLevel) = \"http://default-cgmes-model/#" + voltageLevelId + "\") " +
+                                "}}").stream()
+                .map(bag -> new CgmesBay(bag.getId(BAY_PROP), bag.get(NAME_PROP)))
                 .collect(Collectors.toList());
     }
 
     /**
-     * Search the CGMES Model for Connectivity Nodes that below to a specific container.
+     * Search the CGMES Model for Power-Transformers that are coupled to a specific container. Because CGMES Model
+     * doesn't support filtering on Container ID, a SparQL is executed against the TripleStore.
+     *
+     * @param containerId The ID of the Container.
+     * @return The List of converted CGMES Power-Transformers that were found.
+     */
+    public List<CgmesTransformer> getTransformers(String containerId) {
+        return cgmesModel.tripleStore().query(
+                        "SELECT *\n" +
+                                "{ GRAPH ?graph {\n" +
+                                "    ?PowerTransformer\n" +
+                                "        a cim:PowerTransformer ;\n" +
+                                "        cim:IdentifiedObject.name ?name ;\n" +
+                                "        cim:Equipment.EquipmentContainer ?EquipmentContainer .\n" +
+                                "        OPTIONAL { ?PowerTransformer cim:IdentifiedObject.description ?description } \n" +
+                                " FILTER (str(?EquipmentContainer) = \"http://default-cgmes-model/#" + containerId + "\") " +
+                                "}}")
+                .stream()
+                .map(propertyBag -> new CgmesTransformer(
+                        propertyBag.getId(POWER_TRANSFORMER_PROP),
+                        propertyBag.get(NAME_PROP),
+                        propertyBag.get(DESCRIPTION_PROP)))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Search the CGMES Model for Power-Transformer Ends that are coupled to a specific Power-Transformer.
+     *
+     * @param powerTransformerId The ID of the Power-Transformer.
+     * @return The List of converted CGMES Power-Transformer Ends that were found.
+     */
+    public List<CgmesTransformerEnd> getTransformerEnds(String powerTransformerId) {
+        return cgmesModel.transformerEnds()
+                .stream()
+                .filter(propertyBag -> powerTransformerId.equals(propertyBag.getId(POWER_TRANSFORMER_PROP)))
+                .map(propertyBag -> new CgmesTransformerEnd(
+                        propertyBag.getId(TRANSFORMER_END_PROP),
+                        propertyBag.get(NAME_PROP),
+                        propertyBag.getId(TERMINAL_PROP)))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Search the CGMES Model for a RatioTapChanger or PhaseTapChanger that are coupled to a Power-Transformer End.
+     *
+     * @param powerTransformerEndId The ID of the Power-Transformer End.
+     * @return The converted CGMEs TapChanger found, or Empty Optional if non.
+     */
+    public Optional<CgmesTapChanger> getTapChanger(String powerTransformerEndId) {
+        // Convert all the RatioTapChangers from CIM.
+        var tapChanger = getTapChanger(cgmesModel.ratioTapChangers(), powerTransformerEndId, RATIO_TAP_CHANGER_PROP);
+        if (!tapChanger.isPresent()) {
+            // Convert all the PhaseTapChangers from CIM.
+            tapChanger = getTapChanger(cgmesModel.phaseTapChangers(), powerTransformerEndId, PHASE_TAP_CHANGER_PROP);
+        }
+        return tapChanger;
+    }
+
+    private Optional<CgmesTapChanger> getTapChanger(PropertyBags tapChangers, String powerTransformerEndId, String idName) {
+        return tapChangers
+                .stream()
+                .filter(propertyBag -> powerTransformerEndId.equals(propertyBag.getId(TRANSFORMER_END_PROP)))
+                .map(propertyBag -> new CgmesTapChanger(
+                        propertyBag.getId(idName),
+                        propertyBag.get(NAME_PROP)))
+                .findFirst();
+    }
+
+    /**
+     * Search the CGMES Model for Connectivity Nodes that are coupled to a specific container.
      *
      * @param containerId The ID of the Container.
      * @return The List of converted CGMES Connectivity Nodes that were found.
@@ -80,15 +170,15 @@ public class CimToSclMapperContext {
     public List<CgmesConnectivityNode> getConnectivityNode(String containerId) {
         return cgmesModel.connectivityNodes()
                 .stream()
-                .filter(propertyBag -> containerId.equals(propertyBag.getId("ConnectivityNodeContainer")))
+                .filter(propertyBag -> containerId.equals(propertyBag.getId(CONNECTIVITY_NODE_CONTAINER_PROP)))
                 .map(propertyBag -> new CgmesConnectivityNode(
-                        propertyBag.getId("ConnectivityNode"),
-                        propertyBag.get("name")))
+                        propertyBag.getId(CONNECTIVITY_NODE_PROP),
+                        propertyBag.get(NAME_PROP)))
                 .collect(Collectors.toList());
     }
 
     /**
-     * Search the CGMES Model for Switches (Breakers, Disconnector and more) that below to a specific container.
+     * Search the CGMES Model for Switches (Breakers, Disconnector and more) that are coupled to a specific container.
      *
      * @param containerId The ID of the Container.
      * @return The List of converted CGMES Switches that were found.
@@ -96,18 +186,18 @@ public class CimToSclMapperContext {
     public List<CgmesSwitch> getSwitches(String containerId) {
         return cgmesModel.switches()
                 .stream()
-                .filter(propertyBag -> containerId.equals(propertyBag.getId("EquipmentContainer")))
+                .filter(propertyBag -> containerId.equals(propertyBag.getId(EQUIPMENT_CONTAINER_PROP)))
                 .map(propertyBag -> new CgmesSwitch(
-                        propertyBag.getId("Switch"),
-                        propertyBag.get("name"),
-                        propertyBag.getLocal("type"),
-                        propertyBag.getId("Terminal1"),
-                        propertyBag.getId("Terminal2")))
+                        propertyBag.getId(SWITCH_PROP),
+                        propertyBag.get(NAME_PROP),
+                        propertyBag.getLocal(TYPE_PROP),
+                        propertyBag.getId(TERMINAL_1_PROP),
+                        propertyBag.getId(TERMINAL_2_PROP)))
                 .collect(Collectors.toList());
     }
 
     /**
-     * Search the CGMES Model for Terminals that below to a specific Conducting Equipment.
+     * Search the CGMES Model for Terminals that are coupled to a specific Conducting Equipment.
      *
      * @param conductingEquipmentId The ID of the Conducting Equipment.
      * @return The List of converted CGMES Terminals that were found.
@@ -115,12 +205,29 @@ public class CimToSclMapperContext {
     public List<CgmesTerminal> getTerminals(String conductingEquipmentId) {
         return cgmesModel.terminals()
                 .stream()
-                .filter(propertyBag -> conductingEquipmentId.equals(propertyBag.getId("ConductingEquipment")))
+                .filter(propertyBag -> conductingEquipmentId.equals(propertyBag.getId(CONDUCTING_EQUIPMENT_PROP)))
                 .map(propertyBag -> new CgmesTerminal(
-                        propertyBag.getId("Terminal"),
-                        propertyBag.get("name"),
-                        propertyBag.getId("ConnectivityNode")))
+                        propertyBag.getId(TERMINAL_PROP),
+                        propertyBag.get(NAME_PROP),
+                        propertyBag.getId(CONNECTIVITY_NODE_PROP)))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Search the CGMES Model for a Terminal with a specific ID.
+     *
+     * @param terminalId The ID of the Terminal.
+     * @return The converted CGMES Terminal that is found.
+     */
+    public Optional<CgmesTerminal> getTerminal(String terminalId) {
+        return cgmesModel.terminals()
+                .stream()
+                .filter(propertyBag -> terminalId.equals(propertyBag.getId(TERMINAL_PROP)))
+                .map(propertyBag -> new CgmesTerminal(
+                        propertyBag.getId(TERMINAL_PROP),
+                        propertyBag.get(NAME_PROP),
+                        propertyBag.getId(CONNECTIVITY_NODE_PROP)))
+                .findFirst();
     }
 
     /*

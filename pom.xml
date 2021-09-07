@@ -24,15 +24,15 @@ SPDX-License-Identifier: Apache-2.0
         <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
         <sonarqube-plugin.version>3.2.0</sonarqube-plugin.version>
 
-        <compas.core.version>0.2.0</compas.core.version>
+        <compas.core.version>0.2.1</compas.core.version>
         <jakarta-cdi-api.version>2.0.2</jakarta-cdi-api.version>
-        <slf4j.version>1.7.31</slf4j.version>
+        <slf4j.version>1.7.32</slf4j.version>
         <powsybl.version>4.3.1</powsybl.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
 
         <!-- Test -->
         <junit-jupiter.version>5.7.2</junit-jupiter.version>
-        <mockito-junit-jupiter.version>3.11.2</mockito-junit-jupiter.version>
+        <mockito-junit-jupiter.version>3.12.4</mockito-junit-jupiter.version>
         <openpojo.version>0.9.1</openpojo.version>
     </properties>
 
@@ -156,7 +156,7 @@ SPDX-License-Identifier: Apache-2.0
             <dependency>
                 <groupId>org.glassfish</groupId>
                 <artifactId>jakarta.el</artifactId>
-                <version>3.0.3</version>
+                <version>3.0.4</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
@@ -183,7 +183,7 @@ SPDX-License-Identifier: Apache-2.0
                 <plugin>
                     <groupId>org.jboss.jandex</groupId>
                     <artifactId>jandex-maven-plugin</artifactId>
-                    <version>1.1.0</version>
+                    <version>1.1.1</version>
                     <executions>
                         <execution>
                             <id>make-index</id>
@@ -211,7 +211,7 @@ SPDX-License-Identifier: Apache-2.0
                 <sonar.language>java</sonar.language>
 
                 <!-- JaCoCo Properties -->
-                <jacoco.version>0.8.6</jacoco.version>
+                <jacoco.version>0.8.7</jacoco.version>
                 <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
                 <sonar.coverage.jacoco.xmlReportPaths>
                     target/site/jacoco/jacoco.xml,
@@ -265,7 +265,7 @@ SPDX-License-Identifier: Apache-2.0
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
                             <artifactId>maven-source-plugin</artifactId>
-                            <version>3.2.0</version>
+                            <version>3.2.1</version>
                             <executions>
                                 <execution>
                                     <id>attach-sources</id>

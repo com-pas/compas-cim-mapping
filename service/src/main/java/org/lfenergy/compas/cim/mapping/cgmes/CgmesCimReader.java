@@ -36,11 +36,11 @@ public class CgmesCimReader {
     }
 
     /**
-     * Use PowSyBl to convert a CIM XML InputStream to the PowSyBl IIDM Model.
+     * Use PowSyBl to convert a CIM XML InputStream to the PowSyBl Cgmes Model.
      * Multiple InputStream Objects can be passed if needed.
      *
      * @param cimData The different InputStream Objects that combined define the CIM Model.
-     * @return The IIDM Network model that can be used to convert further to IEC 61850.
+     * @return The Cgmes Model that can be used to convert further to IEC 61850.
      */
     public CgmesModel readModel(List<CimData> cimData) {
         LOGGER.debug("Create a ReadOnlyDataSource from the input data.");

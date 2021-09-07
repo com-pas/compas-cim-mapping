@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.lfenergy.compas.cim.mapping.mapper.CimToSclMapperContext.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -36,9 +37,9 @@ class CimToSclMapperContextTest {
         var substationId = "SubstationId";
         var substationName = "Name Substation";
         var bags = new PropertyBags();
-        var bag = new PropertyBag(List.of("Substation", "name"));
-        bag.put("Substation", substationId);
-        bag.put("name", substationName);
+        var bag = new PropertyBag(List.of(SUBSTATION_PROP, NAME_PROP));
+        bag.put(SUBSTATION_PROP, substationId);
+        bag.put(NAME_PROP, substationName);
         bags.add(bag);
 
         when(cgmesModel.substations()).thenReturn(bags);
@@ -57,18 +58,18 @@ class CimToSclMapperContextTest {
         var voltageLevelName = "Name VoltageLevel";
         var substationId = "Known Substation ID";
         var bags = new PropertyBags();
-        var bag = new PropertyBag(List.of("VoltageLevel", "name", "nominalVoltage", "Substation"));
-        bag.put("VoltageLevel", voltageLevelId);
-        bag.put("name", voltageLevelName);
-        bag.put("nominalVoltage", "1.0");
-        bag.put("Substation", substationId);
+        var bag = new PropertyBag(List.of(VOLTAGE_LEVEL_PROP, NAME_PROP, NOMINAL_VOLTAGE_PROP, SUBSTATION_PROP));
+        bag.put(VOLTAGE_LEVEL_PROP, voltageLevelId);
+        bag.put(NAME_PROP, voltageLevelName);
+        bag.put(NOMINAL_VOLTAGE_PROP, "1.0");
+        bag.put(SUBSTATION_PROP, substationId);
         bags.add(bag);
 
-        bag = new PropertyBag(List.of("VoltageLevel", "name", "nominalVoltage", "Substation"));
-        bag.put("VoltageLevel", "Other ID");
-        bag.put("name", "Other Name");
-        bag.put("nominalVoltage", "1.1");
-        bag.put("Substation", "Unknown Container ID");
+        bag = new PropertyBag(List.of(VOLTAGE_LEVEL_PROP, NAME_PROP, NOMINAL_VOLTAGE_PROP, SUBSTATION_PROP));
+        bag.put(VOLTAGE_LEVEL_PROP, "Other ID");
+        bag.put(NAME_PROP, "Other Name");
+        bag.put(NOMINAL_VOLTAGE_PROP, "1.1");
+        bag.put(SUBSTATION_PROP, "Unknown Container ID");
         bags.add(bag);
 
         when(cgmesModel.voltageLevels()).thenReturn(bags);
@@ -86,9 +87,9 @@ class CimToSclMapperContextTest {
         var bayId = "BayId";
         var bayName = "Name Bay";
         var bags = new PropertyBags();
-        var bag = new PropertyBag(List.of("Bay", "name"));
-        bag.put("Bay", bayId);
-        bag.put("name", bayName);
+        var bag = new PropertyBag(List.of(BAY_PROP, NAME_PROP));
+        bag.put(BAY_PROP, bayId);
+        bag.put(NAME_PROP, bayName);
         bags.add(bag);
 
         var tripleStore = mock(TripleStore.class);
@@ -105,21 +106,136 @@ class CimToSclMapperContextTest {
     }
 
     @Test
+    void getTransformers_WhenSparQLReturnsBags_ThenPropertyBagIsConvertedToCgmesTransformer() {
+        var pwId = "PowertransformerId";
+        var pwName = "Name Powertransformer";
+        var pwDesc = "Desc Powertransformer";
+        var pwContainerId = "Known Container ID";
+        var bags = new PropertyBags();
+        var bag = new PropertyBag(List.of(POWER_TRANSFORMER_PROP, NAME_PROP, DESCRIPTION_PROP, EQUIPMENT_CONTAINER_PROP));
+        bag.put(POWER_TRANSFORMER_PROP, pwId);
+        bag.put(NAME_PROP, pwName);
+        bag.put(DESCRIPTION_PROP, pwDesc);
+        bag.put(EQUIPMENT_CONTAINER_PROP, pwContainerId);
+        bags.add(bag);
+
+        var tripleStore = mock(TripleStore.class);
+        when(cgmesModel.tripleStore()).thenReturn(tripleStore);
+        when(tripleStore.query(anyString())).thenReturn(bags);
+
+        var result = context.getTransformers(pwContainerId);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        var transformer = result.get(0);
+        assertEquals(pwId, transformer.getId());
+        assertEquals(pwName, transformer.getName());
+        assertEquals(pwDesc, transformer.getDescription());
+    }
+
+    @Test
+    void getTransformerEnds_WhenCalledWithKnownId_ThenPropertyBagsIsFilteredOnIdAndConvertedToCgmesTransformerEnd() {
+        var tfeId = "TfeId";
+        var tfeName = "Name Tfe";
+        var terminalId = "Known Terminal ID";
+        var tfId = "Known Transformer ID";
+        var bags = new PropertyBags();
+        var bag = new PropertyBag(List.of(TRANSFORMER_END_PROP, NAME_PROP, POWER_TRANSFORMER_PROP, TERMINAL_PROP));
+        bag.put(TRANSFORMER_END_PROP, tfeId);
+        bag.put(NAME_PROP, tfeName);
+        bag.put(POWER_TRANSFORMER_PROP, tfId);
+        bag.put(TERMINAL_PROP, terminalId);
+        bags.add(bag);
+
+        bag = new PropertyBag(List.of(TRANSFORMER_END_PROP, NAME_PROP, POWER_TRANSFORMER_PROP, TERMINAL_PROP));
+        bag.put(TRANSFORMER_END_PROP, "Other ID");
+        bag.put(NAME_PROP, "Other Name");
+        bag.put(POWER_TRANSFORMER_PROP, "Unknown Transformer ID");
+        bag.put(TERMINAL_PROP, "Other Terminal ID");
+        bags.add(bag);
+
+        when(cgmesModel.transformerEnds()).thenReturn(bags);
+
+        var result = context.getTransformerEnds(tfId);
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        var ccn = result.get(0);
+        assertEquals(tfeId, ccn.getId());
+        assertEquals(tfeName, ccn.getName());
+        assertEquals(terminalId, ccn.getTerminalId());
+    }
+
+    @Test
+    void getTapChanger_WhenNoTapChangersFound_ThenEmptyOptionalReturned() {
+        var tfeId = "Known Transformer End ID";
+
+        when(cgmesModel.ratioTapChangers()).thenReturn(new PropertyBags());
+        when(cgmesModel.phaseTapChangers()).thenReturn(new PropertyBags());
+
+        var result = context.getTapChanger(tfeId);
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    void getTapChanger_WhenRatioTapChangersFound_ThenConvertedRatioTapChangerReturned() {
+        var tcId = "TapChangerId";
+        var tcName = "Name TapChanger";
+        var tfeId = "Known Transformer End ID";
+
+        var bags = new PropertyBags();
+        var bag = new PropertyBag(List.of(RATIO_TAP_CHANGER_PROP, NAME_PROP, TRANSFORMER_END_PROP));
+        bag.put(RATIO_TAP_CHANGER_PROP, tcId);
+        bag.put(NAME_PROP, tcName);
+        bag.put(TRANSFORMER_END_PROP, tfeId);
+        bags.add(bag);
+        when(cgmesModel.ratioTapChangers()).thenReturn(bags);
+
+        var result = context.getTapChanger(tfeId);
+        assertTrue(result.isPresent());
+        var tapChanger = result.get();
+        assertEquals(tcId, tapChanger.getId());
+        assertEquals(tcName, tapChanger.getName());
+    }
+
+    @Test
+    void getTapChanger_WhenNoRatioTapChangerFoundButPhaseTapChangersFound_ThenConvertedPhaseTapChangerReturned() {
+        var tcId = "TapChangerId";
+        var tcName = "Name TapChanger";
+        var tfeId = "Known Transformer End ID";
+
+        when(cgmesModel.ratioTapChangers()).thenReturn(new PropertyBags());
+
+        var bags = new PropertyBags();
+        var bag = new PropertyBag(List.of(PHASE_TAP_CHANGER_PROP, NAME_PROP, TRANSFORMER_END_PROP));
+        bag.put(PHASE_TAP_CHANGER_PROP, tcId);
+        bag.put(NAME_PROP, tcName);
+        bag.put(TRANSFORMER_END_PROP, tfeId);
+        bags.add(bag);
+        when(cgmesModel.phaseTapChangers()).thenReturn(bags);
+
+        var result = context.getTapChanger(tfeId);
+        assertTrue(result.isPresent());
+        var tapChanger = result.get();
+        assertEquals(tcId, tapChanger.getId());
+        assertEquals(tcName, tapChanger.getName());
+    }
+
+    @Test
     void getConnectivityNode_WhenCalledWithKnownId_ThenPropertyBagsIsFilteredOnIdAndConvertedToCgmesConnectivityNode() {
         var ccnId = "CcnId";
         var ccnName = "Name Ccn";
         var ccnContainerId = "Known Container ID";
         var bags = new PropertyBags();
-        var bag = new PropertyBag(List.of("ConnectivityNode", "name", "ConnectivityNodeContainer"));
-        bag.put("ConnectivityNode", ccnId);
-        bag.put("name", ccnName);
-        bag.put("ConnectivityNodeContainer", ccnContainerId);
+        var bag = new PropertyBag(List.of(CONNECTIVITY_NODE_PROP, NAME_PROP, CONNECTIVITY_NODE_CONTAINER_PROP));
+        bag.put(CONNECTIVITY_NODE_PROP, ccnId);
+        bag.put(NAME_PROP, ccnName);
+        bag.put(CONNECTIVITY_NODE_CONTAINER_PROP, ccnContainerId);
         bags.add(bag);
 
-        bag = new PropertyBag(List.of("ConnectivityNode", "name", "ConnectivityNodeContainer"));
-        bag.put("ConnectivityNode", "Other ID");
-        bag.put("name", "Other Name");
-        bag.put("ConnectivityNodeContainer", "Unknown Container ID");
+        bag = new PropertyBag(List.of(CONNECTIVITY_NODE_PROP, NAME_PROP, CONNECTIVITY_NODE_CONTAINER_PROP));
+        bag.put(CONNECTIVITY_NODE_PROP, "Other ID");
+        bag.put(NAME_PROP, "Other Name");
+        bag.put(CONNECTIVITY_NODE_CONTAINER_PROP, "Unknown Container ID");
         bags.add(bag);
 
         when(cgmesModel.connectivityNodes()).thenReturn(bags);
@@ -138,20 +254,20 @@ class CimToSclMapperContextTest {
         var switchName = "Name Switch";
         var containerId = "Known Container ID";
         var bags = new PropertyBags();
-        var bag = new PropertyBag(List.of("Switch", "name", "type", "EquipmentContainer", "Terminal1", "Terminal2"));
-        bag.put("Switch", switchId);
-        bag.put("name", switchName);
-        bag.put("type", "Breaker");
-        bag.put("EquipmentContainer", containerId);
-        bag.put("Terminal1", "Terminal1 ID");
-        bag.put("Terminal2", "Terminal2 ID");
+        var bag = new PropertyBag(List.of(SWITCH_PROP, NAME_PROP, TYPE_PROP, EQUIPMENT_CONTAINER_PROP, TERMINAL_1_PROP, TERMINAL_2_PROP));
+        bag.put(SWITCH_PROP, switchId);
+        bag.put(NAME_PROP, switchName);
+        bag.put(TYPE_PROP, "Breaker");
+        bag.put(EQUIPMENT_CONTAINER_PROP, containerId);
+        bag.put(TERMINAL_1_PROP, "Terminal1 ID");
+        bag.put(TERMINAL_2_PROP, "Terminal2 ID");
         bags.add(bag);
 
-        bag = new PropertyBag(List.of("Switch", "name", "type", "EquipmentContainer", "Terminal1", "Terminal2"));
-        bag.put("Switch", "Other ID");
-        bag.put("name", "Other Name");
-        bag.put("type", "Breaker");
-        bag.put("EquipmentContainer", "Unknown Container ID");
+        bag = new PropertyBag(List.of(SWITCH_PROP, NAME_PROP, TYPE_PROP, EQUIPMENT_CONTAINER_PROP, TERMINAL_1_PROP, TERMINAL_2_PROP));
+        bag.put(SWITCH_PROP, "Other ID");
+        bag.put(NAME_PROP, "Other Name");
+        bag.put(TYPE_PROP, "Breaker");
+        bag.put(EQUIPMENT_CONTAINER_PROP, "Unknown Container ID");
         bags.add(bag);
 
         when(cgmesModel.switches()).thenReturn(bags);
@@ -171,18 +287,18 @@ class CimToSclMapperContextTest {
         var ccnNode = "Connectivity Node ID";
         var containerId = "Known Container ID";
         var bags = new PropertyBags();
-        var bag = new PropertyBag(List.of("Terminal", "name", "ConnectivityNode", "ConductingEquipment"));
-        bag.put("Terminal", terminalId);
-        bag.put("name", terminalName);
-        bag.put("ConnectivityNode", ccnNode);
-        bag.put("ConductingEquipment", containerId);
+        var bag = new PropertyBag(List.of(TERMINAL_PROP, NAME_PROP, CONNECTIVITY_NODE_PROP, CONDUCTING_EQUIPMENT_PROP));
+        bag.put(TERMINAL_PROP, terminalId);
+        bag.put(NAME_PROP, terminalName);
+        bag.put(CONNECTIVITY_NODE_PROP, ccnNode);
+        bag.put(CONDUCTING_EQUIPMENT_PROP, containerId);
         bags.add(bag);
 
-        bag = new PropertyBag(List.of("Terminal", "name", "ConnectivityNode", "ConductingEquipment"));
-        bag.put("Terminal", "Other ID");
-        bag.put("name", "Other Name");
-        bag.put("ConnectivityNode", "Some Other ID");
-        bag.put("ConductingEquipment", "Unknown Container ID");
+        bag = new PropertyBag(List.of(TERMINAL_PROP, NAME_PROP, CONNECTIVITY_NODE_PROP, CONDUCTING_EQUIPMENT_PROP));
+        bag.put(TERMINAL_PROP, "Other ID");
+        bag.put(NAME_PROP, "Other Name");
+        bag.put(CONNECTIVITY_NODE_PROP, "Some Other ID");
+        bag.put(CONDUCTING_EQUIPMENT_PROP, "Unknown Container ID");
         bags.add(bag);
 
         when(cgmesModel.terminals()).thenReturn(bags);
@@ -191,6 +307,37 @@ class CimToSclMapperContextTest {
         assertNotNull(result);
         assertEquals(1, result.size());
         var terminal = result.get(0);
+        assertEquals(terminalId, terminal.getId());
+        assertEquals(terminalName, terminal.getName());
+        assertEquals(ccnNode, terminal.getConnectivityNodeId());
+    }
+
+    @Test
+    void getTerminal_WhenCalledWithKnownId_ThenPropertyBagsIsFilteredOnIdAndConvertedToCgmesTerminal() {
+        var terminalId = "TerminalId";
+        var terminalName = "Name Terminal";
+        var ccnNode = "Connectivity Node ID";
+        var containerId = "Known Container ID";
+        var bags = new PropertyBags();
+        var bag = new PropertyBag(List.of(TERMINAL_PROP, NAME_PROP, CONNECTIVITY_NODE_PROP, CONDUCTING_EQUIPMENT_PROP));
+        bag.put(TERMINAL_PROP, terminalId);
+        bag.put(NAME_PROP, terminalName);
+        bag.put(CONNECTIVITY_NODE_PROP, ccnNode);
+        bag.put(CONDUCTING_EQUIPMENT_PROP, containerId);
+        bags.add(bag);
+
+        bag = new PropertyBag(List.of(TERMINAL_PROP, NAME_PROP, CONNECTIVITY_NODE_PROP, CONDUCTING_EQUIPMENT_PROP));
+        bag.put(TERMINAL_PROP, "Other ID");
+        bag.put(NAME_PROP, "Other Name");
+        bag.put(CONNECTIVITY_NODE_PROP, "Some Other ID");
+        bag.put(CONDUCTING_EQUIPMENT_PROP, "Unknown Container ID");
+        bags.add(bag);
+
+        when(cgmesModel.terminals()).thenReturn(bags);
+
+        var result = context.getTerminal(terminalId);
+        assertNotNull(result);
+        var terminal = result.get();
         assertEquals(terminalId, terminal.getId());
         assertEquals(terminalName, terminal.getName());
         assertEquals(ccnNode, terminal.getConnectivityNodeId());
