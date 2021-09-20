@@ -66,8 +66,8 @@ public class CompasCimMappingService {
      * @return The created SCL Model.
      */
     SCL createBasicSCL(List<CimData> cimData, String who) {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssXXX");
-        ObjectFactory factory = new ObjectFactory();
+        var formatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssXXX");
+        var factory = new ObjectFactory();
 
         // Create the SCL and set some default values.
         var scl = factory.createSCL();
@@ -76,7 +76,7 @@ public class CompasCimMappingService {
         scl.setRelease((short) 4);
 
         // Create the Header and set some default values.
-        THeader header = factory.createTHeader();
+        var header = factory.createTHeader();
         header.setId(UUID.randomUUID().toString());
         header.setVersion(INITIAL_VERSION);
         header.setRevision(INITIAL_REVISION);
@@ -91,7 +91,7 @@ public class CompasCimMappingService {
         item.setWho(who);
 
         // Add all CIM filenames that where used to create the SCL Content.
-        String what = "SCL created from CIM File(s)";
+        var what = "SCL created from CIM File(s)";
         if (cimData != null && !cimData.isEmpty()) {
             what += ": " + cimData.stream()
                     .map(CimData::getName)

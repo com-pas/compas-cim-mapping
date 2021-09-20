@@ -139,12 +139,14 @@ class CimToSclMapperContextTest {
         var tfeName = "Name Tfe";
         var terminalId = "Known Terminal ID";
         var tfId = "Known Transformer ID";
+        var endNumber = "1";
         var bags = new PropertyBags();
-        var bag = new PropertyBag(List.of(TRANSFORMER_END_PROP, NAME_PROP, POWER_TRANSFORMER_PROP, TERMINAL_PROP));
+        var bag = new PropertyBag(List.of(TRANSFORMER_END_PROP, NAME_PROP, POWER_TRANSFORMER_PROP, TERMINAL_PROP, ENDNUMBER_PROP));
         bag.put(TRANSFORMER_END_PROP, tfeId);
         bag.put(NAME_PROP, tfeName);
         bag.put(POWER_TRANSFORMER_PROP, tfId);
         bag.put(TERMINAL_PROP, terminalId);
+        bag.put(ENDNUMBER_PROP, endNumber);
         bags.add(bag);
 
         bag = new PropertyBag(List.of(TRANSFORMER_END_PROP, NAME_PROP, POWER_TRANSFORMER_PROP, TERMINAL_PROP));
@@ -152,6 +154,7 @@ class CimToSclMapperContextTest {
         bag.put(NAME_PROP, "Other Name");
         bag.put(POWER_TRANSFORMER_PROP, "Unknown Transformer ID");
         bag.put(TERMINAL_PROP, "Other Terminal ID");
+        bag.put(ENDNUMBER_PROP, "2");
         bags.add(bag);
 
         when(cgmesModel.transformerEnds()).thenReturn(bags);
@@ -161,8 +164,10 @@ class CimToSclMapperContextTest {
         assertEquals(1, result.size());
         var ccn = result.get(0);
         assertEquals(tfeId, ccn.getId());
+        assertEquals(tfeName + "_" + endNumber, ccn.getUniqueName());
         assertEquals(tfeName, ccn.getName());
         assertEquals(terminalId, ccn.getTerminalId());
+        assertEquals(endNumber, ccn.getEndNumber());
     }
 
     @Test

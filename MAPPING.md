@@ -59,7 +59,8 @@ ProtectedSwitch.These classes are all mapped in the same way on IEC 61850
 | CIM Class                        | IEC Class                        | Remark    |
 | -------------------------------- | -------------------------------- | --------- |
 | *cim:PowerTransformerEnd*        | *TTransformerWinding*            |           |
-| name or id                       | name                             |           |
+| name or id (PowerTransformer) +  |                                  |           |
+| '_' + endNumber                  | name                             |           | 
 | 'PTW'                            | type                             |           |
 | Terminal                         | List&lt;TTerminal&gt;            | (1)       |
 

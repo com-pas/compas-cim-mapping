@@ -127,7 +127,7 @@ class CimToSclMapperTest {
 
     private void assertTransformerWinding(TTransformerWinding powerTransformerEnd) {
         assertNotNull(powerTransformerEnd);
-        assertEquals("T3", powerTransformerEnd.getName());
+        assertEquals("T3_1", powerTransformerEnd.getName());
         assertEquals(TTransformerWindingEnum.PTW, powerTransformerEnd.getType());
     }
 
@@ -241,16 +241,17 @@ class CimToSclMapperTest {
     @Test
     void mapTransformerEndToTTransformerWinding_WhenCalledWithCgmesTransformerEnd_ThenPropertiesMappedToTTransformerWinding() {
         var expectedName = "TheName";
+        var expectedEndNumber = "1";
 
-        when(cgmesTransformerEnd.getNameOrId()).thenReturn(expectedName);
+        when(cgmesTransformerEnd.getUniqueName()).thenReturn(expectedName + "_" + expectedEndNumber);
 
         var sclTransformerWinding = mapper.mapTransformerEndToTTransformerWinding(cgmesTransformerEnd, context);
 
         assertNotNull(sclTransformerWinding);
-        assertEquals(expectedName, sclTransformerWinding.getName());
+        assertEquals(expectedName + "_" + expectedEndNumber, sclTransformerWinding.getName());
         assertEquals(TTransformerWindingEnum.PTW, sclTransformerWinding.getType());
         verify(cgmesTransformerEnd, times(1)).getId();
-        verify(cgmesTransformerEnd, times(1)).getNameOrId();
+        verify(cgmesTransformerEnd, times(1)).getUniqueName();
         verify(cgmesTransformerEnd, times(1)).getTerminalId();
         verifyNoMoreInteractions(cgmesTransformerEnd);
     }
