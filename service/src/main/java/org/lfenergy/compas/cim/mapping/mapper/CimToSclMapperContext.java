@@ -30,6 +30,7 @@ public class CimToSclMapperContext {
     public static final String DESCRIPTION_PROP = "description";
     public static final String NOMINAL_VOLTAGE_PROP = "nominalVoltage";
     public static final String TYPE_PROP = "type";
+    public static final String ENDNUMBER_PROP = "endNumber";
     public static final String TERMINAL_1_PROP = "Terminal1";
     public static final String TERMINAL_2_PROP = "Terminal2";
 
@@ -131,7 +132,8 @@ public class CimToSclMapperContext {
                 .map(propertyBag -> new CgmesTransformerEnd(
                         propertyBag.getId(TRANSFORMER_END_PROP),
                         propertyBag.get(NAME_PROP),
-                        propertyBag.getId(TERMINAL_PROP)))
+                        propertyBag.getId(TERMINAL_PROP),
+                        propertyBag.get(ENDNUMBER_PROP)))
                 .collect(Collectors.toList());
     }
 

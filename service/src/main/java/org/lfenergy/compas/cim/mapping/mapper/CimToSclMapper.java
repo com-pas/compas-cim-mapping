@@ -150,7 +150,7 @@ public abstract class CimToSclMapper {
                 .forEach(tTransformerWinding -> tPowerTransformer.getTransformerWinding().add(tTransformerWinding));
     }
 
-    @Mapping(target = "name", source = "nameOrId")
+    @Mapping(target = "name", source = "uniqueName")
     @Mapping(target = "type", constant = "PTW")
     protected abstract TTransformerWinding mapTransformerEndToTTransformerWinding(CgmesTransformerEnd transformerEnd,
                                                                                   @Context CimToSclMapperContext context);
