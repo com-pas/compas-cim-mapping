@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 public class CimToSclMapperContext {
     public static final String SUBSTATION_PROP = "Substation";
     public static final String VOLTAGE_LEVEL_PROP = "VoltageLevel";
+    public static final String BUSBARSECTION_PROP = "BusbarSection";
     public static final String BAY_PROP = "Bay";
     public static final String POWER_TRANSFORMER_PROP = "PowerTransformer";
     public static final String TRANSFORMER_END_PROP = "TransformerEnd";
@@ -23,7 +24,6 @@ public class CimToSclMapperContext {
     public static final String SWITCH_PROP = "Switch";
     public static final String TERMINAL_PROP = "Terminal";
     public static final String CONNECTIVITY_NODE_PROP = "ConnectivityNode";
-    public static final String CONNECTIVITY_NODE_CONTAINER_PROP = "ConnectivityNodeContainer";
     public static final String CONDUCTING_EQUIPMENT_PROP = "ConductingEquipment";
     public static final String EQUIPMENT_CONTAINER_PROP = "EquipmentContainer";
     public static final String NAME_PROP = "name";
@@ -72,8 +72,28 @@ public class CimToSclMapperContext {
     }
 
     /**
-     * Search for bays that are coupled to a specific Voltage Level. Because CGMES Model doesn't support this,
-     * a SparQL is executed against the TripleStore.
+     * Search for busbarsections that are coupled to a specific Equipment Container.
+     *
+     * @param containerId The ID of the Equipment Container to filter on.
+     * @return The list of converted CGMES BusbarSections that were found.
+     */
+    public List<CgmesBusbarSection> getBusbarSectionsByEquipmentContainer(String containerId) {
+        return cgmesModel.tripleStore().query(
+                        "SELECT *\n" +
+                                "WHERE {\n" +
+                                " GRAPH ?graph {\n" +
+                                "    ?BusbarSection\n" +
+                                "        a cim:BusbarSection ;\n" +
+                                "        cim:Equipment.EquipmentContainer ?EquipmentContainer .\n" +
+                                "        OPTIONAL { ?BusbarSection cim:IdentifiedObject.name ?name }\n" +
+                                " FILTER (str(?EquipmentContainer) = \"http://default-cgmes-model/#" + containerId + "\") " +
+                                "}}").stream()
+                .map(bag -> new CgmesBusbarSection(bag.getId(BUSBARSECTION_PROP), bag.get(NAME_PROP)))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Search for bays that are coupled to a specific Voltage Level.
      *
      * @param voltageLevelId The ID of the Voltage Level to filter on.
      * @return The list of converted CGMES Bays that were found.
@@ -82,11 +102,11 @@ public class CimToSclMapperContext {
         return cgmesModel.tripleStore().query(
                         "SELECT *\n" +
                                 "WHERE {\n" +
-                                "GRAPH ?graph {\n" +
+                                " GRAPH ?graph {\n" +
                                 "    ?Bay\n" +
                                 "        a cim:Bay ;\n" +
-                                "        cim:IdentifiedObject.name ?name ;\n" +
-                                "        cim:Bay.VoltageLevel ?VoltageLevel ;\n" +
+                                "        cim:Bay.VoltageLevel ?VoltageLevel .\n" +
+                                "        OPTIONAL { ?Bay cim:IdentifiedObject.name ?name }\n" +
                                 " FILTER (str(?VoltageLevel) = \"http://default-cgmes-model/#" + voltageLevelId + "\") " +
                                 "}}").stream()
                 .map(bag -> new CgmesBay(bag.getId(BAY_PROP), bag.get(NAME_PROP)))
@@ -94,8 +114,7 @@ public class CimToSclMapperContext {
     }
 
     /**
-     * Search the CGMES Model for Power-Transformers that are coupled to a specific container. Because CGMES Model
-     * doesn't support filtering on Container ID, a SparQL is executed against the TripleStore.
+     * Search the CGMES Model for Power-Transformers that are coupled to a specific container.
      *
      * @param containerId The ID of the Container.
      * @return The List of converted CGMES Power-Transformers that were found.
@@ -103,11 +122,12 @@ public class CimToSclMapperContext {
     public List<CgmesTransformer> getTransformers(String containerId) {
         return cgmesModel.tripleStore().query(
                         "SELECT *\n" +
-                                "{ GRAPH ?graph {\n" +
+                                "WHERE {\n" +
+                                " GRAPH ?graph {\n" +
                                 "    ?PowerTransformer\n" +
                                 "        a cim:PowerTransformer ;\n" +
-                                "        cim:IdentifiedObject.name ?name ;\n" +
                                 "        cim:Equipment.EquipmentContainer ?EquipmentContainer .\n" +
+                                "        OPTIONAL { ?PowerTransformer cim:IdentifiedObject.name ?name }\n" +
                                 "        OPTIONAL { ?PowerTransformer cim:IdentifiedObject.description ?description } \n" +
                                 " FILTER (str(?EquipmentContainer) = \"http://default-cgmes-model/#" + containerId + "\") " +
                                 "}}")
@@ -164,15 +184,54 @@ public class CimToSclMapperContext {
     }
 
     /**
+     * Search the CGMES Model for Connectivity Nodes that are coupled to a BusbarSection.
+     *
+     * @param busbarSectionId The ID of the BusbarSection.
+     * @return The List of converted CGMES Connectivity Nodes that were found.
+     */
+    public List<CgmesConnectivityNode> getConnectivityNodeByBusbarSection(String busbarSectionId) {
+        return cgmesModel.tripleStore().query(
+                        "SELECT *\n" +
+                                "WHERE {\n" +
+                                " GRAPH ?graph {\n" +
+                                "  ?ConnectivityNode cim:ConnectivityNode.ConnectivityNodeContainer ?ConnectivityNodeContainer \n" +
+                                "      OPTIONAL { ?ConnectivityNode cim:IdentifiedObject.name ?name } \n" +
+                                "          ?Terminal cim:Terminal.ConnectivityNode ?ConnectivityNode; \n" +
+                                "          cim:Terminal.ConductingEquipment ?ConductingEquipment; \n" +
+                                "          FILTER (str(?ConductingEquipment) = \"http://default-cgmes-model/#" + busbarSectionId + "\") \n" +
+                                " } \n" +
+                                "} \n")
+                .stream()
+                .map(propertyBag -> new CgmesConnectivityNode(
+                        propertyBag.getId(CONNECTIVITY_NODE_PROP),
+                        propertyBag.get(NAME_PROP)))
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Search the CGMES Model for Connectivity Nodes that are coupled to a specific container.
      *
      * @param containerId The ID of the Container.
      * @return The List of converted CGMES Connectivity Nodes that were found.
      */
-    public List<CgmesConnectivityNode> getConnectivityNode(String containerId) {
-        return cgmesModel.connectivityNodes()
+    public List<CgmesConnectivityNode> getConnectivityNodeByBay(String containerId) {
+        return cgmesModel.tripleStore().query(
+                        "SELECT DISTINCT ?ConnectivityNode ?name \n" +
+                                "WHERE {\n" +
+                                " GRAPH ?graph {\n" +
+                                "  ?ConnectivityNode a cim:ConnectivityNode . \n" +
+                                "  OPTIONAL { ?ConnectivityNode cim:IdentifiedObject.name ?name } \n" +
+                                "    ?Terminal a cim:Terminal ;\n" +
+                                "    cim:Terminal.ConnectivityNode ?ConnectivityNode ; \n" +
+                                "    cim:Terminal.ConductingEquipment ?Switch . \n" +
+                                "      ?Switch a ?type ; \n" +
+                                "      cim:Equipment.EquipmentContainer ?EquipmentContainer . \n" +
+                                "      VALUES ?type { cim:Switch cim:Breaker cim:Disconnector cim:LoadBreakSwitch cim:ProtectedSwitch } . \n" +
+                                "  FILTER (str(?EquipmentContainer) = \"http://default-cgmes-model/#" + containerId + "\") \n" +
+                                " } \n" +
+                                "} \n" +
+                                "ORDER BY ?name ")
                 .stream()
-                .filter(propertyBag -> containerId.equals(propertyBag.getId(CONNECTIVITY_NODE_CONTAINER_PROP)))
                 .map(propertyBag -> new CgmesConnectivityNode(
                         propertyBag.getId(CONNECTIVITY_NODE_PROP),
                         propertyBag.get(NAME_PROP)))

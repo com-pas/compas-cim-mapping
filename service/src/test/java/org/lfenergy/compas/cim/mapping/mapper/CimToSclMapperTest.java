@@ -33,28 +33,6 @@ class CimToSclMapperTest {
     @Mock
     private CimToSclMapperContext context;
 
-    @Mock
-    private CgmesSubstation cgmesSubstation;
-    @Mock
-    private CgmesVoltageLevel cgmesVoltageLevel;
-    @Mock
-    private CgmesBay cgmesBay;
-    @Mock
-    private CgmesTransformer cgmesTransformer;
-    @Mock
-    private CgmesTransformerEnd cgmesTransformerEnd;
-    @Mock
-    private CgmesTapChanger cgmesTapChanger;
-    @Mock
-    private CgmesConnectivityNode cgmesConnectivityNode;
-    @Mock
-    private CgmesSwitch cgmesSwitch;
-    @Mock
-    private CgmesTerminal cgmesTerminal;
-
-    @Mock
-    private TVoltageLevel tVoltageLevel;
-
     private CimToSclMapper mapper;
 
     @BeforeEach
@@ -64,13 +42,12 @@ class CimToSclMapperTest {
 
     @Test
     void map_WhenWithCimData_ThenSclMapped() throws IOException {
-        // This is a overall test to see the whole mapping working with a test CIM File.
+        // This is an overall test to see the whole mapping working with a test CIM File.
         var converter = new ElementConverter();
         var reader = new CgmesCimReader(converter);
         var cimData = new CimData();
         cimData.setName("MiniGridTestConfiguration_BC_EQ_v3.0.0.xml");
-        cimData.setRdf(
-                List.of(converter.convertToElement(readFile(), "RDF", RDF_NS_URI)));
+        cimData.setRdf(List.of(converter.convertToElement(readFile(), "RDF", RDF_NS_URI)));
         var cgmesModel = reader.readModel(List.of(cimData));
 
         var result = new SCL();
@@ -103,8 +80,13 @@ class CimToSclMapperTest {
         assertEquals("k", voltageLevel.getVoltage().getMultiplier());
         assertEquals("V", voltageLevel.getVoltage().getUnit());
 
-        assertEquals(3, voltageLevel.getBay().size());
-        var bay = voltageLevel.getBay().get(0);
+        assertEquals(4, voltageLevel.getBay().size());
+        // There is one busbarSection converted to a bay, this will be the first entry.
+        var busbarSection = voltageLevel.getBay().get(0);
+        assertEquals("BUSBAR10", busbarSection.getName());
+        assertEquals(1, busbarSection.getConnectivityNode().size());
+        // The others bay are actual bays from CIM.
+        var bay = voltageLevel.getBay().get(1);
         assertEquals("BAY_T4_2", bay.getName());
 
         assertEquals(4, bay.getConnectivityNode().size());
@@ -165,6 +147,7 @@ class CimToSclMapperTest {
 
     @Test
     void mapSubstationToTSubstation_WhenCalledWithSubstation_ThenPropertiesMappedToTSubstation() {
+        var cgmesSubstation = mock(CgmesSubstation.class);
         var expectedId = UUID.randomUUID().toString();
         var expectedDesc = "Some description";
 
@@ -184,6 +167,7 @@ class CimToSclMapperTest {
 
     @Test
     void mapVoltageLevelToTVoltageLevel_WhenCalledWithVoltageLevel_ThenPropertiesMappedToTVoltageLevel() {
+        var cgmesVoltageLevel = mock(CgmesVoltageLevel.class);
         var expectedName = "TheName";
         var expectedVoltage = BigDecimal.valueOf(100.0);
 
@@ -195,7 +179,7 @@ class CimToSclMapperTest {
         assertNotNull(sclVoltageLevel);
         assertEquals(expectedName, sclVoltageLevel.getName());
         assertEquals(expectedVoltage, sclVoltageLevel.getVoltage().getValue());
-        verify(cgmesVoltageLevel, times(2)).getId();
+        verify(cgmesVoltageLevel, times(3)).getId();
         verify(cgmesVoltageLevel, times(1)).getNameOrId();
         verify(cgmesVoltageLevel, times(1)).getNominalV();
         verify(context, times(1)).addLast(sclVoltageLevel);
@@ -204,6 +188,9 @@ class CimToSclMapperTest {
 
     @Test
     void mapBayToTBay_WhenCalledWithCgmesBay_ThenPropertiesMappedToTBay() {
+        var tVoltageLevel = mock(TVoltageLevel.class);
+        var cgmesVoltageLevel = mock(CgmesVoltageLevel.class);
+        var cgmesBay = mock(CgmesBay.class);
         var expectedName = "TheName";
 
         when(cgmesBay.getNameOrId()).thenReturn(expectedName);
@@ -219,7 +206,27 @@ class CimToSclMapperTest {
     }
 
     @Test
+    void mapBusbarSectionBayToTBay_WhenCalledWithCgmesBusbarSection_ThenPropertiesMappedToTBay() {
+        var tVoltageLevel = mock(TVoltageLevel.class);
+        var cgmesVoltageLevel = mock(CgmesVoltageLevel.class);
+        var cgmesBusbarSection = mock(CgmesBusbarSection.class);
+        var expectedName = "TheName";
+
+        when(cgmesBusbarSection.getNameOrId()).thenReturn(expectedName);
+
+        var sclBay = mapper.mapBusbarSectionBayToTBay(cgmesBusbarSection, cgmesVoltageLevel, tVoltageLevel, context);
+
+        assertNotNull(sclBay);
+        assertEquals(expectedName, sclBay.getName());
+        verify(cgmesBusbarSection, times(1)).getId();
+        verify(cgmesBusbarSection, times(1)).getNameOrId();
+        verify(context, times(1)).addLast(sclBay);
+        verifyNoMoreInteractions(cgmesBusbarSection);
+    }
+
+    @Test
     void mapTransformerToTPowerTransformer_WhenCalledWithCgmesTransformer_ThenPropertiesMappedToTPowerTransformer() {
+        var cgmesTransformer = mock(CgmesTransformer.class);
         var expectedName = "TheName";
         var expectedDesc = "Desc";
 
@@ -240,6 +247,7 @@ class CimToSclMapperTest {
 
     @Test
     void mapTransformerEndToTTransformerWinding_WhenCalledWithCgmesTransformerEnd_ThenPropertiesMappedToTTransformerWinding() {
+        var cgmesTransformerEnd = mock(CgmesTransformerEnd.class);
         var expectedName = "TheName";
         var expectedEndNumber = "1";
 
@@ -258,6 +266,7 @@ class CimToSclMapperTest {
 
     @Test
     void mapTapChangerToTTapChanger_WhenCalledWithCgmesTapChanger_ThenPropertiesMappedToTTapChanger() {
+        var cgmesTapChanger = mock(CgmesTapChanger.class);
         var expectedName = "TheName";
 
         when(cgmesTapChanger.getNameOrId()).thenReturn(expectedName);
@@ -272,7 +281,8 @@ class CimToSclMapperTest {
     }
 
     @Test
-    void mapConnectivityNodeToTConnectivityNode_WhenCalledWithCgmesConnectivityNode_ThenPropertiesMappedToTConnectivityNode() {
+    void mapConnectivityNodeToTConnectivityNode_WhenCalledWithCgmesConnectivityNodeAndCacheble_ThenPropertiesMappedToTConnectivityNodeAndCached() {
+        var cgmesConnectivityNode = mock(CgmesConnectivityNode.class);
         var expectedId = "Id";
         var expectedName = "TheName";
         var expectedPathName = "ThePathName";
@@ -281,7 +291,7 @@ class CimToSclMapperTest {
         when(cgmesConnectivityNode.getNameOrId()).thenReturn(expectedName);
         when(context.createPathName()).thenReturn(expectedPathName);
 
-        var sclConnectivityNode = mapper.mapConnectivityNodeToTConnectivityNode(cgmesConnectivityNode, context);
+        var sclConnectivityNode = mapper.mapConnectivityNodeToTConnectivityNode(cgmesConnectivityNode, context, true);
 
         assertNotNull(sclConnectivityNode);
         assertEquals(expectedName, sclConnectivityNode.getName());
@@ -294,7 +304,31 @@ class CimToSclMapperTest {
     }
 
     @Test
+    void mapConnectivityNodeToTConnectivityNode_WhenCalledWithCgmesConnectivityNodeAndNotCacheble_ThenPropertiesMappedToTConnectivityNodeAndNotCached() {
+        var cgmesConnectivityNode = mock(CgmesConnectivityNode.class);
+        var expectedId = "Id";
+        var expectedName = "TheName";
+        var expectedPathName = "ThePathName";
+
+        when(cgmesConnectivityNode.getNameOrId()).thenReturn(expectedName);
+        when(context.createPathName()).thenReturn(expectedPathName);
+
+        var sclConnectivityNode = mapper.mapConnectivityNodeToTConnectivityNode(cgmesConnectivityNode, context, false);
+
+        assertNotNull(sclConnectivityNode);
+        assertEquals(expectedName, sclConnectivityNode.getName());
+        assertEquals(expectedPathName, sclConnectivityNode.getPathName());
+        verify(cgmesConnectivityNode, never()).getId();
+        verify(cgmesConnectivityNode, times(1)).getNameOrId();
+        verify(context, times(1)).addLast(sclConnectivityNode);
+        verify(context, never()).saveTConnectivityNode(eq(expectedId), any(TConnectivityNode.class));
+        verifyNoMoreInteractions(cgmesConnectivityNode);
+    }
+
+    @Test
     void mapSwitchToTConductingEquipment_WhenCalledWithCgmesSwitchOtherType_ThenPropertiesMappedToTConductingEquipment() {
+        var tVoltageLevel = mock(TVoltageLevel.class);
+        var cgmesSwitch = mock(CgmesSwitch.class);
         var expectedName = "TheName";
         var expectedType = SwitchType.CBR.name();
 
@@ -316,6 +350,8 @@ class CimToSclMapperTest {
 
     @Test
     void mapSwitchToTConductingEquipment_WhenCalledWithCgmesSwitchDCLineSegment_ThenPropertiesMappedToTConductingEquipment() {
+        var tVoltageLevel = mock(TVoltageLevel.class);
+        var cgmesSwitch = mock(CgmesSwitch.class);
         var expectedName = "TheName";
         var expectedType = SwitchType.CAB.name();
 
@@ -337,6 +373,7 @@ class CimToSclMapperTest {
 
     @Test
     void mapTerminalToTTerminal_WhenCalledWithCgmesTerminal_ThenPropertiesMappedToTTerminal() {
+        var cgmesTerminal = mock(CgmesTerminal.class);
         var expectedName = "TheName";
         var expectedConnectivityNode = "CN ID";
         var expectedCNPathName = "CN Pathname";

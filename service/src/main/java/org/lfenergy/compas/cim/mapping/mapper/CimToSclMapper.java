@@ -88,6 +88,11 @@ public abstract class CimToSclMapper {
     protected void afterVoltageLevelToTVoltageLevel(CgmesVoltageLevel cgmesVoltageLevel,
                                                     @MappingTarget TVoltageLevel tVoltageLevel,
                                                     @Context CimToSclMapperContext context) {
+        context.getBusbarSectionsByEquipmentContainer(cgmesVoltageLevel.getId())
+                .stream()
+                .map(cgmesBusbarSection -> mapBusbarSectionBayToTBay(cgmesBusbarSection, cgmesVoltageLevel, tVoltageLevel, context))
+                .forEach(tBay -> tVoltageLevel.getBay().add(tBay));
+
         context.getBaysByVoltageLevel(cgmesVoltageLevel.getId())
                 .stream()
                 .map(bay -> mapBayToTBay(bay, cgmesVoltageLevel, tVoltageLevel, context))
@@ -98,6 +103,21 @@ public abstract class CimToSclMapper {
                 .stream()
                 .map(transformer -> mapTransformerToTPowerTransformer(transformer, context))
                 .forEach(tPowerTransformer -> tVoltageLevel.getPowerTransformer().add(tPowerTransformer));
+    }
+
+    @Mapping(target = "name", source = "nameOrId")
+    protected abstract TBay mapBusbarSectionBayToTBay(CgmesBusbarSection cgmesBusbarSection,
+                                                      @Context CgmesVoltageLevel cgmesVoltageLevel,
+                                                      @Context TVoltageLevel tVoltageLevel,
+                                                      @Context CimToSclMapperContext context);
+
+    @AfterMapping
+    protected void afterBusbarSectionBayToTBay(CgmesBusbarSection cgmesBusbarSection,
+                                               @MappingTarget TBay tBay,
+                                               @Context CimToSclMapperContext context) {
+        context.getConnectivityNodeByBusbarSection(cgmesBusbarSection.getId()).stream()
+                .map(cn -> mapConnectivityNodeToTConnectivityNode(cn, context, false))
+                .forEach(tConnectivityNode -> tBay.getConnectivityNode().add(tConnectivityNode));
     }
 
     @Mapping(target = "name", source = "nameOrId")
@@ -114,10 +134,9 @@ public abstract class CimToSclMapper {
                                   @Context CimToSclMapperContext context) {
         // First we will process the Connectivity Nodes, because their path names are needed in the Terminal
         // of a Conduction Equipment.
-        var cgmesConnectivityNodes = context.getConnectivityNode(cgmesVoltageLevel.getId());
-        cgmesConnectivityNodes.addAll(context.getConnectivityNode(cgmesBay.getId()));
-        cgmesConnectivityNodes.stream()
-                .map(cn -> mapConnectivityNodeToTConnectivityNode(cn, context))
+        context.getConnectivityNodeByBay(cgmesBay.getId())
+                .stream()
+                .map(cn -> mapConnectivityNodeToTConnectivityNode(cn, context, true))
                 .forEach(tConnectivityNode -> tBay.getConnectivityNode().add(tConnectivityNode));
 
         // Now we can process the Conduction Equipment with their terminals.
@@ -181,15 +200,19 @@ public abstract class CimToSclMapper {
 
     @Mapping(target = "name", source = "nameOrId")
     protected abstract TConnectivityNode mapConnectivityNodeToTConnectivityNode(CgmesConnectivityNode cgmesConnectivityNode,
-                                                                                @Context CimToSclMapperContext context);
+                                                                                @Context CimToSclMapperContext context,
+                                                                                @Context boolean rememberConnectivityNode);
 
     @AfterMapping
     protected void afterConnectivityNodeToTConnectivityNode(CgmesConnectivityNode cgmesConnectivityNode,
                                                             @MappingTarget TConnectivityNode tConnectivityNode,
-                                                            @Context CimToSclMapperContext context) {
+                                                            @Context CimToSclMapperContext context,
+                                                            @Context boolean rememberConnectivityNode) {
         var pathName = context.createPathName();
         tConnectivityNode.setPathName(pathName);
-        context.saveTConnectivityNode(cgmesConnectivityNode.getId(), tConnectivityNode);
+        if (rememberConnectivityNode) {
+            context.saveTConnectivityNode(cgmesConnectivityNode.getId(), tConnectivityNode);
+        }
     }
 
     @Mapping(target = "name", source = "nameOrId")
