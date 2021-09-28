@@ -129,7 +129,6 @@ public abstract class CimToSclMapper {
     @AfterMapping
     protected void afterBayToTBay(CgmesBay cgmesBay,
                                   @MappingTarget TBay tBay,
-                                  @Context CgmesVoltageLevel cgmesVoltageLevel,
                                   @Context TVoltageLevel tVoltageLevel,
                                   @Context CimToSclMapperContext context) {
         // First we will process the Connectivity Nodes, because their path names are needed in the Terminal
