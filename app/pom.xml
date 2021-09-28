@@ -19,6 +19,9 @@ SPDX-License-Identifier: Apache-2.0
 
     <properties>
         <quarkus.platform.version>2.2.3.Final</quarkus.platform.version>
+
+        <quarkus.container-image.group>lfenergycompas</quarkus.container-image.group>
+        <quarkus.container-image.name>compas-cim-mapping</quarkus.container-image.name>
     </properties>
 
     <dependencyManagement>
@@ -197,8 +200,6 @@ SPDX-License-Identifier: Apache-2.0
             <properties>
                 <!-- Properties only used for publishing a native docker image (default to Docker Hub) -->
                 <quarkus.container-image.build>true</quarkus.container-image.build>
-                <quarkus.container-image.group>lfenergycompas</quarkus.container-image.group>
-                <quarkus.container-image.name>compas-cim-mapping</quarkus.container-image.name>
                 <quarkus.container-image.push>true</quarkus.container-image.push>
                 <quarkus.container-image.additional-tags>latest</quarkus.container-image.additional-tags>
             </properties>
