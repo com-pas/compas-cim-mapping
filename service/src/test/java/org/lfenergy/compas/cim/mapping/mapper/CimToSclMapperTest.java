@@ -57,8 +57,7 @@ class CimToSclMapperTest {
 
         assertEquals(5, result.getSubstation().size());
         var substation = result.getSubstation().get(0);
-        assertEquals("_af9a4ae3-ba2e-4c34-8e47-5af894ee20f4", substation.getName());
-        assertEquals("Sub1", substation.getDesc());
+        assertSubstation(substation);
 
         assertEquals(2, substation.getPowerTransformer().size());
         var powerTransformer = substation.getPowerTransformer().get(1);
@@ -73,31 +72,34 @@ class CimToSclMapperTest {
 
         assertEquals(3, substation.getVoltageLevel().size());
         var voltageLevel = substation.getVoltageLevel().get(0);
-        assertEquals("S1 380kV", voltageLevel.getName());
-        assertNotNull(voltageLevel.getVoltage());
-        assertNull(voltageLevel.getNomFreq());
-        assertEquals(BigDecimal.valueOf(380.0), voltageLevel.getVoltage().getValue());
-        assertEquals("k", voltageLevel.getVoltage().getMultiplier());
-        assertEquals("V", voltageLevel.getVoltage().getUnit());
+        assertVoltageLevel(voltageLevel);
 
         assertEquals(4, voltageLevel.getBay().size());
         // There is one busbarSection converted to a bay, this will be the first entry.
         var busbarSection = voltageLevel.getBay().get(0);
-        assertEquals("BUSBAR10", busbarSection.getName());
-        assertEquals(1, busbarSection.getConnectivityNode().size());
+        assertBay(busbarSection, "BUSBAR10", 1, 0);
         // The others bay are actual bays from CIM.
         var bay = voltageLevel.getBay().get(1);
-        assertEquals("BAY_T4_2", bay.getName());
+        assertBay(bay, "BAY_T4_2", 4, 3);
 
-        assertEquals(4, bay.getConnectivityNode().size());
         assertConnectivityNode(bay.getConnectivityNode().get(0));
 
-        assertEquals(3, bay.getConductingEquipment().size());
         var conductingEquipment = bay.getConductingEquipment().get(0);
         assertConductingEquipment(conductingEquipment);
 
         assertTerminal(conductingEquipment.getTerminal(), 2, "T4_2_ADDB1", "CONNECTIVITY_NODE83",
                 "_af9a4ae3-ba2e-4c34-8e47-5af894ee20f4/S1 380kV/BAY_T4_2/CONNECTIVITY_NODE83");
+    }
+
+    private void assertBay(TBay tBay, String name, int numberOfConnectivityNodes, int numberOfConductionEquipment) {
+        assertEquals(name, tBay.getName());
+        assertEquals(numberOfConnectivityNodes, tBay.getConnectivityNode().size());
+        assertEquals(numberOfConductionEquipment, tBay.getConductingEquipment().size());
+    }
+
+    private void assertSubstation(TSubstation substation) {
+        assertEquals("_af9a4ae3-ba2e-4c34-8e47-5af894ee20f4", substation.getName());
+        assertEquals("Sub1", substation.getDesc());
     }
 
     private void assertPowerTransformer(TPowerTransformer powerTransformer) {
@@ -111,6 +113,15 @@ class CimToSclMapperTest {
         assertNotNull(powerTransformerEnd);
         assertEquals("T3_1", powerTransformerEnd.getName());
         assertEquals(TTransformerWindingEnum.PTW, powerTransformerEnd.getType());
+    }
+
+    private void assertVoltageLevel(TVoltageLevel voltageLevel) {
+        assertEquals("S1 380kV", voltageLevel.getName());
+        assertNotNull(voltageLevel.getVoltage());
+        assertNull(voltageLevel.getNomFreq());
+        assertEquals(BigDecimal.valueOf(380.0), voltageLevel.getVoltage().getValue());
+        assertEquals("k", voltageLevel.getVoltage().getMultiplier());
+        assertEquals("V", voltageLevel.getVoltage().getUnit());
     }
 
     private void assertConnectivityNode(TConnectivityNode connectivityNode) {
