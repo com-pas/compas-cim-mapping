@@ -17,7 +17,7 @@ There is an IEC document describing the mapping, namely IEC/TS 62361-102, but no
 | id                               | name                             |           |
 | name                             | desc                             |           |
 | List&lt;cim:VoltageLevel&gt;     | List&lt;TVoltageLevel&gt;        | (1)       |
-| List&lt;*PowerTransformer*&gt;   | List&lt;TPowerTransformer&gt;    |           |
+| List&lt;cim:PowerTransformer&gt; | List&lt;TPowerTransformer&gt;    |           |
 
 (1): The list of VoltageLevels that belong to the Substation.
 
@@ -29,11 +29,19 @@ There is an IEC document describing the mapping, namely IEC/TS 62361-102, but no
 | nominalV                         | voltage.value                    |           |
 | 'k'                              | voltage.multiplier               |           |
 | 'V'                              | voltage.unit                     |           |
-| List&lt;Bay&gt;                  | List&lt;TBay&gt;                 | (2)       |
-| List&lt;*PowerTransformer*&gt;   | List&lt;TPowerTransformer&gt;    |           |
+| List&lt;cim:Bay&gt;              | List&lt;TBay&gt;                 | (2)       |
+| List&lt;cim:PowerTransformer&gt; | List&lt;TPowerTransformer&gt;    |           |
 
 (1): The nomFreq will be set to 0 if there is a Switch connected to it of the type 'DCLineSegment'.  
 (2): The list of Bays that belong to the VoltageLevel.
+
+| CIM Class                        | IEC Class                        | Remark    |
+| -------------------------------- | -------------------------------- | --------- |
+| *cim:BusbarSection*              | *TBay*                           |           |
+| name or id                       | name                             |           |
+| List&lt;cim:ConnectivityNode&gt; | List&lt;TConnectivityNode&gt;    | (1)       |
+
+(1): The ConnectivityNodes that are linked to the BusbarSection through a Terminal of the BusbarSection.
 
 | CIM Class                        | IEC Class                        | Remark    |
 | -------------------------------- | -------------------------------- | --------- |
@@ -41,20 +49,19 @@ There is an IEC document describing the mapping, namely IEC/TS 62361-102, but no
 | name or id                       | name                             |           |
 | List&lt;cim:ConnectivityNode&gt; | List&lt;TConnectivityNode&gt;    | (1)       |
 | List&lt;*Switches*&gt;           | List&lt;TConductingEquipment&gt; | (2)       |
-| List&lt;*PowerTransformer*&gt;   | List&lt;TPowerTransformer&gt;    |           |
+| List&lt;cim:PowerTransformer&gt; | List&lt;TPowerTransformer&gt;    |           |
 
-(1): ConnectivityNode in IEC CIM can be linked to a Bay, but also to the VoltageLevel. In IEC 61850 a ConnectivityNode
-can only be added to a Bay, so also the ConnectivityNode from the VoltageLevel are added to the Bay. This causes those
-ConnectivityNode to be found under each Bay of that VoltageLevel.  
-(2): Switches in IEC CIM can be the following types, cim:Switch cim:Breaker cim:Disconnector cim:LoadBreakSwitch cim:
-ProtectedSwitch.These classes are all mapped in the same way on IEC 61850
+(1): The ConnectivityNodes that are linked to the Bay thought the terminals of the switches of the Bay.
+(2): Switches in IEC CIM can be the following types, cim:Switch, cim:Breaker, cim:Disconnector, cim:LoadBreakSwitch and
+cim:ProtectedSwitch. These classes are all mapped in the same way on IEC 61850
 
-| CIM Class                        | IEC Class                        | Remark    |
-| -------------------------------- | -------------------------------- | --------- |
-| *cim:PowerTransformer*           | *TPowerTransformer*              |           |
-| name or id                       | name                             |           |
-| description                      | desc                             |           |
-| 'PTR'                            | type                             |           |
+| CIM Class                           | IEC Class                        | Remark    |
+| ----------------------------------- | -------------------------------- | --------- |
+| *cim:PowerTransformer*              | *TPowerTransformer*              |           |
+| name or id                          | name                             |           |
+| description                         | desc                             |           |
+| 'PTR'                               | type                             |           |
+| List&lt;cim:PowerTransformerEnd&gt; | List&lt;TTransformerWinding&gt;  |           |
 
 | CIM Class                        | IEC Class                        | Remark    |
 | -------------------------------- | -------------------------------- | --------- |
@@ -62,13 +69,15 @@ ProtectedSwitch.These classes are all mapped in the same way on IEC 61850
 | name or id (PowerTransformer) +  |                                  |           |
 | '_' + endNumber                  | name                             |           | 
 | 'PTW'                            | type                             |           |
+| cim:RatioTapChanger or           |                                  |           |
+| cim:PhaseTapChanger              | tapChanger                       |           |
 | Terminal                         | List&lt;TTerminal&gt;            | (1)       |
 
 (1): The terminal found in IEC CIM will be added as List to IEC 61850.
 
 | CIM Class                        | IEC Class                        | Remark    |
 | -------------------------------- | -------------------------------- | --------- |
-| *cim:RatioTapChanger*            | *TTapChanger*                    |           |
+| *cim:RatioTapChanger* or         |                                  |           |
 | *cim:PhaseTapChanger*            | *TTapChanger*                    |           |
 | name or id                       | name                             |           |
 | 'LTC'                            | type                             |           |
