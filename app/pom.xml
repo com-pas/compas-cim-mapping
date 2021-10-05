@@ -48,7 +48,7 @@ SPDX-License-Identifier: Apache-2.0
         </dependency>
         <dependency>
             <groupId>org.lfenergy.compas.core</groupId>
-            <artifactId>rest-commons</artifactId>
+            <artifactId>jaxrs-commons</artifactId>
         </dependency>
 
         <dependency>
