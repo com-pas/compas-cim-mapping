@@ -11,11 +11,6 @@ class CompasCimMappingConfigurationTest {
     private CompasCimMappingConfiguration configuration = new CompasCimMappingConfiguration();
 
     @Test
-    void createElementConverter_WhenCalled_ThenObjectReturned() {
-        assertNotNull(configuration.createElementConverter());
-    }
-
-    @Test
     void createCimToSclMapper_WhenCalled_ThenObjectReturned() {
         assertNotNull(configuration.createCimToSclMapper());
     }

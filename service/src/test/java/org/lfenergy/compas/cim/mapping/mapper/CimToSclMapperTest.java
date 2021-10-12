@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.lfenergy.compas.cim.mapping.cgmes.CgmesCimReader;
 import org.lfenergy.compas.cim.mapping.model.*;
-import org.lfenergy.compas.core.commons.ElementConverter;
 import org.lfenergy.compas.scl2007b4.model.*;
 import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
@@ -42,8 +41,7 @@ class CimToSclMapperTest {
     @Test
     void map_WhenWithCimData_ThenSclMapped() throws IOException {
         // This is an overall test to see the whole mapping working with a test CIM File.
-        var converter = new ElementConverter();
-        var reader = new CgmesCimReader(converter);
+        var reader = new CgmesCimReader();
         var cimData = new CimData();
         cimData.setName("MiniGridTestConfiguration_BC_EQ_v3.0.0.xml");
         cimData.setRdfData(readFile());
