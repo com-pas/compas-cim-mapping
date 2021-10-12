@@ -26,6 +26,7 @@ SPDX-License-Identifier: Apache-2.0
 
         <compas.core.version>0.5.0</compas.core.version>
         <jakarta-cdi-api.version>2.0.2</jakarta-cdi-api.version>
+        <apache.commons-io.version>2.11.0</apache.commons-io.version>
         <slf4j.version>1.7.32</slf4j.version>
         <powsybl.version>4.4.0</powsybl.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
@@ -96,6 +97,12 @@ SPDX-License-Identifier: Apache-2.0
                 <groupId>org.mapstruct</groupId>
                 <artifactId>mapstruct</artifactId>
                 <version>${mapstruct.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${apache.commons-io.version}</version>
             </dependency>
 
             <dependency>

@@ -25,7 +25,6 @@ import java.util.UUID;
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.lfenergy.compas.cim.mapping.CimMappingConstants.DC_LINE_SEGMENT_TYPE;
-import static org.lfenergy.compas.cim.mapping.CimMappingConstants.RDF_NS_URI;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,7 +46,7 @@ class CimToSclMapperTest {
         var reader = new CgmesCimReader(converter);
         var cimData = new CimData();
         cimData.setName("MiniGridTestConfiguration_BC_EQ_v3.0.0.xml");
-        cimData.setRdf(List.of(converter.convertToElement(readFile(), "RDF", RDF_NS_URI)));
+        cimData.setRdfData(readFile());
         var cgmesModel = reader.readModel(List.of(cimData));
 
         var result = new SCL();
