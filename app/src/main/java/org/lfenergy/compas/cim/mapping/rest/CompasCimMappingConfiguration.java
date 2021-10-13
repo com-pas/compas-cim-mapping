@@ -3,30 +3,26 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.compas.cim.mapping.rest;
 
-import com.powsybl.triplestore.impl.rdf4j.TripleStoreFactoryServiceRDF4J;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import org.lfenergy.compas.cim.mapping.mapper.CimToSclMapper;
 import org.lfenergy.compas.core.commons.ElementConverter;
-import org.lfenergy.compas.scl2007b4.model.ObjectFactory;
-import org.lfenergy.compas.scl2007b4.model.TDA;
-import org.lfenergy.compas.scl2007b4.model.TDAI;
-import org.lfenergy.compas.scl2007b4.model.TSDI;
 
 import javax.enterprise.inject.Produces;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 
 /**
  * Create Beans from other dependencies that are used in the application.
+ *
+ * Also, for native compilation we need to register certain classes for reflection.
+ * This is done by using the RegisterForReflection annotation.
  */
 @RegisterForReflection(targets = {
-        TripleStoreFactoryServiceRDF4J.class,
-        ObjectFactory.class,
-        TDA.class,
-        TSDI.class,
-        TDAI.class,
-        NormalizedStringAdapter.class,
-        CollapsedStringAdapter.class}
+        com.powsybl.triplestore.impl.rdf4j.TripleStoreFactoryServiceRDF4J.class,
+        org.lfenergy.compas.scl2007b4.model.ObjectFactory.class,
+        org.lfenergy.compas.scl2007b4.model.TDA.class,
+        org.lfenergy.compas.scl2007b4.model.TSDI.class,
+        org.lfenergy.compas.scl2007b4.model.TDAI.class,
+        javax.xml.bind.annotation.adapters.NormalizedStringAdapter.class,
+        javax.xml.bind.annotation.adapters.CollapsedStringAdapter.class}
 )
 public class CompasCimMappingConfiguration {
     @Produces
