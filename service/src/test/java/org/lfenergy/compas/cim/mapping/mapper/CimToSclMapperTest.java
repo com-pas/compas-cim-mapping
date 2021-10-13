@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.lfenergy.compas.cim.mapping.cgmes.CgmesCimReader;
 import org.lfenergy.compas.cim.mapping.model.*;
-import org.lfenergy.compas.core.commons.ElementConverter;
 import org.lfenergy.compas.scl2007b4.model.*;
 import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
@@ -25,7 +24,6 @@ import java.util.UUID;
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.lfenergy.compas.cim.mapping.CimMappingConstants.DC_LINE_SEGMENT_TYPE;
-import static org.lfenergy.compas.cim.mapping.CimMappingConstants.RDF_NS_URI;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,11 +41,10 @@ class CimToSclMapperTest {
     @Test
     void map_WhenWithCimData_ThenSclMapped() throws IOException {
         // This is an overall test to see the whole mapping working with a test CIM File.
-        var converter = new ElementConverter();
-        var reader = new CgmesCimReader(converter);
+        var reader = new CgmesCimReader();
         var cimData = new CimData();
         cimData.setName("MiniGridTestConfiguration_BC_EQ_v3.0.0.xml");
-        cimData.setRdf(List.of(converter.convertToElement(readFile(), "RDF", RDF_NS_URI)));
+        cimData.setRdfData(readFile());
         var cgmesModel = reader.readModel(List.of(cimData));
 
         var result = new SCL();
