@@ -7,15 +7,14 @@ import com.powsybl.cgmes.model.CgmesModel;
 import com.powsybl.cgmes.model.CgmesModelFactory;
 import com.powsybl.commons.datasource.ReadOnlyMemDataSource;
 import com.powsybl.triplestore.api.TripleStoreFactory;
+import org.apache.commons.io.input.ReaderInputStream;
 import org.lfenergy.compas.cim.mapping.model.CimData;
-import org.lfenergy.compas.core.commons.ElementConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
@@ -27,13 +26,6 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class CgmesCimReader {
     private static final Logger LOGGER = LoggerFactory.getLogger(CgmesCimReader.class);
-
-    private final ElementConverter converter;
-
-    @Inject
-    public CgmesCimReader(ElementConverter converter) {
-        this.converter = converter;
-    }
 
     /**
      * Use PowSyBl to convert a CIM XML InputStream to the PowSyBl Cgmes Model.
@@ -55,14 +47,11 @@ public class CgmesCimReader {
 
     Map<String, InputStream> convertCimDataToMap(List<CimData> cimData) {
         return cimData.stream()
-                .filter(cimRecord -> cimRecord.getRdf() != null && cimRecord.getRdf().size() == 1)
                 .collect(
                         Collectors.toMap(
                                 CimData::getName,
-                                cimRecord -> {
-                                    var xml = converter.convertToString(cimRecord.getRdf().get(0), false);
-                                    return new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
-                                })
+                                cimRecord -> new ReaderInputStream(
+                                        new StringReader(cimRecord.getRdfData()), StandardCharsets.UTF_8))
                 );
     }
 }

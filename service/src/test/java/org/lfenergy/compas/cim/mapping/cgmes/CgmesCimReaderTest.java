@@ -6,9 +6,7 @@ package org.lfenergy.compas.cim.mapping.cgmes;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.lfenergy.compas.cim.mapping.model.CimData;
-import org.lfenergy.compas.core.commons.ElementConverter;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
@@ -19,13 +17,9 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CgmesCimReaderTest {
-    @Mock
-    private ElementConverter converter;
-
     @InjectMocks
     private CgmesCimReader cgmesCimReader;
 
@@ -33,15 +27,12 @@ class CgmesCimReaderTest {
     void readModel_WhenReadingCimModel_ThenCgmesModelReturnedWithSubstations() throws IOException {
         var cimData = new CimData();
         cimData.setName("MiniGridTestConfiguration_BC_EQ_v3.0.0.xml");
-        cimData.getRdf().add(null); // Fake added an Element, will be fixed bij mocking below.
+        cimData.setRdfData(readFile());
         var cimDataList = List.of(cimData);
-
-        when(converter.convertToString(any(), eq(false))).thenReturn(readFile());
 
         var result = cgmesCimReader.readModel(cimDataList);
 
         assertEquals(5, result.substations().size());
-        verifyNoMoreInteractions(converter);
     }
 
     @Test
@@ -51,34 +42,6 @@ class CgmesCimReaderTest {
         var result = cgmesCimReader.readModel(cimDataList);
 
         assertEquals(0, result.substations().size());
-        verifyNoMoreInteractions(converter);
-    }
-
-    @Test
-    void readModel_WhenReadingWithoutRdfElement_ThenCgmesModelReturnedWithoutSubstations() {
-        var cimData = new CimData();
-        cimData.setName("MiniGridTestConfiguration_BC_EQ_v3.0.0.xml");
-        cimData.setRdf(null);
-        var cimDataList = List.of(cimData);
-
-        var result = cgmesCimReader.readModel(cimDataList);
-
-        assertEquals(0, result.substations().size());
-        verifyNoMoreInteractions(converter);
-    }
-
-    @Test
-    void readModel_WhenReadingWithTooManyRdfElement_ThenCgmesModelReturnedWithoutSubstations() {
-        var cimData = new CimData();
-        cimData.setName("MiniGridTestConfiguration_BC_EQ_v3.0.0.xml");
-        cimData.getRdf().add(null); // Fake added an Element
-        cimData.getRdf().add(null); // Fake added an Element
-        var cimDataList = List.of(cimData);
-
-        var result = cgmesCimReader.readModel(cimDataList);
-
-        assertEquals(0, result.substations().size());
-        verifyNoMoreInteractions(converter);
     }
 
     private String readFile() throws IOException {
