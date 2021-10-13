@@ -3,10 +3,6 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.compas.cim.mapping.service;
 
-import com.powsybl.cgmes.model.*;
-import com.powsybl.cgmes.model.triplestore.CgmesModelTripleStore;
-import com.powsybl.commons.datasource.ReadOnlyDataSource;
-import com.powsybl.commons.datasource.ReadOnlyMemDataSource;
 import com.powsybl.triplestore.api.*;
 import com.powsybl.triplestore.impl.rdf4j.TripleStoreFactoryServiceRDF4J;
 import io.quarkus.runtime.annotations.RegisterForReflection;
@@ -28,11 +24,19 @@ import java.util.stream.Collectors;
 
 /**
  * Mapping Service to process the passed CIM XML(s) (RDF Format) and convert these to a Cgmes Model
- * that is used to create a IEC SCL Model, including some basic data being filled in the Header.
+ * that is used to create an IEC SCL Model, including some basic data being filled in the Header.
  */
 @ApplicationScoped
-@RegisterForReflection(targets = {TripleStoreFactoryServiceRDF4J.class, TripleStoreFactoryService.class, ObjectFactory.class,
-        TDA.class, TSDI.class, TDAI.class, NormalizedStringAdapter.class, CollapsedStringAdapter.class})
+@RegisterForReflection(targets = {
+        TripleStoreFactoryServiceRDF4J.class,
+        TripleStoreFactoryService.class,
+        ObjectFactory.class,
+        TDA.class,
+        TSDI.class,
+        TDAI.class,
+        NormalizedStringAdapter.class,
+        CollapsedStringAdapter.class}
+)
 public class CompasCimMappingService {
     private static final String INITIAL_VERSION = "0.0.1";
     private static final String INITIAL_REVISION = "";
