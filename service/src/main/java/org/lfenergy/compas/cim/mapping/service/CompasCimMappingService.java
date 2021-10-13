@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 @RegisterForReflection(targets = {
         TripleStoreFactoryServiceRDF4J.class,
-        TripleStoreFactoryService.class,
         ObjectFactory.class,
         TDA.class,
         TSDI.class,

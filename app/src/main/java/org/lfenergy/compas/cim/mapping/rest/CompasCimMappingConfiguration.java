@@ -22,7 +22,6 @@ import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
  */
 @RegisterForReflection(targets = {
         TripleStoreFactoryServiceRDF4J.class,
-        TripleStoreFactoryService.class,
         ObjectFactory.class,
         TDA.class,
         TSDI.class,
