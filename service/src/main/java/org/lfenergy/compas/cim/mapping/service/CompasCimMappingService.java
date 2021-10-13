@@ -3,9 +3,6 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.compas.cim.mapping.service;
 
-import com.powsybl.triplestore.api.*;
-import com.powsybl.triplestore.impl.rdf4j.TripleStoreFactoryServiceRDF4J;
-import io.quarkus.runtime.annotations.RegisterForReflection;
 import org.lfenergy.compas.cim.mapping.cgmes.CgmesCimReader;
 import org.lfenergy.compas.cim.mapping.mapper.CimToSclMapper;
 import org.lfenergy.compas.cim.mapping.mapper.CimToSclMapperContext;
@@ -14,8 +11,6 @@ import org.lfenergy.compas.scl2007b4.model.*;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -27,15 +22,6 @@ import java.util.stream.Collectors;
  * that is used to create an IEC SCL Model, including some basic data being filled in the Header.
  */
 @ApplicationScoped
-@RegisterForReflection(targets = {
-        TripleStoreFactoryServiceRDF4J.class,
-        ObjectFactory.class,
-        TDA.class,
-        TSDI.class,
-        TDAI.class,
-        NormalizedStringAdapter.class,
-        CollapsedStringAdapter.class}
-)
 public class CompasCimMappingService {
     private static final String INITIAL_VERSION = "0.0.1";
     private static final String INITIAL_REVISION = "";

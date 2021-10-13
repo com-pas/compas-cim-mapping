@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.compas.cim.mapping.rest;
 
-import com.powsybl.triplestore.api.*;
 import com.powsybl.triplestore.impl.rdf4j.TripleStoreFactoryServiceRDF4J;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import org.lfenergy.compas.cim.mapping.mapper.CimToSclMapper;
