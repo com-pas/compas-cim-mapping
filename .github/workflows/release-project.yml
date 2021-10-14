@@ -39,6 +39,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Deploy with Maven to GitHub Packages and Docker Hub
-        run: ./mvnw -B -s custom_maven_settings.xml -Prelease clean deploy
+        run: ./mvnw -B -s custom_maven_settings.xml -Prelease,native clean deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
