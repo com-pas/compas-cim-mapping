@@ -21,8 +21,9 @@ import javax.enterprise.inject.Produces;
         org.lfenergy.compas.scl2007b4.model.TSDI.class,
         org.lfenergy.compas.scl2007b4.model.TDAI.class,
         javax.xml.bind.annotation.adapters.NormalizedStringAdapter.class,
-        javax.xml.bind.annotation.adapters.CollapsedStringAdapter.class}
-)
+        javax.xml.bind.annotation.adapters.CollapsedStringAdapter.class,
+        javax.xml.bind.annotation.W3CDomHandler.class,
+})
 public class CompasCimMappingConfiguration {
     @Produces
     public CimToSclMapper createCimToSclMapper() {
