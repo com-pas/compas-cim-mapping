@@ -7,10 +7,7 @@ import org.lfenergy.compas.cim.mapping.cgmes.CgmesCimReader;
 import org.lfenergy.compas.cim.mapping.mapper.CimToSclMapper;
 import org.lfenergy.compas.cim.mapping.mapper.CimToSclMapperContext;
 import org.lfenergy.compas.cim.mapping.model.CimData;
-import org.lfenergy.compas.scl2007b4.model.ObjectFactory;
-import org.lfenergy.compas.scl2007b4.model.SCL;
-import org.lfenergy.compas.scl2007b4.model.THeader;
-import org.lfenergy.compas.scl2007b4.model.THitem;
+import org.lfenergy.compas.scl2007b4.model.*;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -22,7 +19,7 @@ import java.util.stream.Collectors;
 
 /**
  * Mapping Service to process the passed CIM XML(s) (RDF Format) and convert these to a Cgmes Model
- * that is used to create a IEC SCL Model, including some basic data being filled in the Header.
+ * that is used to create an IEC SCL Model, including some basic data being filled in the Header.
  */
 @ApplicationScoped
 public class CompasCimMappingService {
