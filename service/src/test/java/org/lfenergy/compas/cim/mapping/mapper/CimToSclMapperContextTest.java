@@ -442,6 +442,22 @@ class CimToSclMapperContextTest {
     }
 
     @Test
+    void containsTConnectivityNode_WhenCalledWithKnownId_ThenTrueReturned() {
+        var knownCnId = "CN ID";
+
+        context.saveTConnectivityNode(knownCnId, new TConnectivityNode());
+        context.saveTConnectivityNode("Other ID", new TConnectivityNode());
+        assertTrue(context.containsTConnectivityNode(knownCnId));
+    }
+
+    @Test
+    void containsTConnectivityNode_WhenCalledWithUnknownId_ThenFalseReturned() {
+        context.saveTConnectivityNode("CN ID", new TConnectivityNode());
+        context.saveTConnectivityNode("Other ID", new TConnectivityNode());
+        assertFalse(context.containsTConnectivityNode("Unknown ID"));
+    }
+
+    @Test
     void getPathnameFromConnectivityNode_WhenCalledWithKnownId_ThenPathNameOfCNReturned() {
         var cnId = "CN ID";
         var cnPathName = "CN PATH NAME";

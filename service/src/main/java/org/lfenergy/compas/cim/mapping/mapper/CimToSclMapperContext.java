@@ -334,6 +334,10 @@ public class CimToSclMapperContext {
         connectivityNodeIdMap.put(id, tConnectivityNode);
     }
 
+    public boolean containsTConnectivityNode(String id) {
+        return connectivityNodeIdMap.containsKey(id);
+    }
+
     public Optional<String> getPathnameFromConnectivityNode(String id) {
         var tConnectivityNode = connectivityNodeIdMap.get(id);
         if (tConnectivityNode != null) {
