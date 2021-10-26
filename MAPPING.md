@@ -51,7 +51,7 @@ There is an IEC document describing the mapping, namely IEC/TS 62361-102, but no
 | List&lt;*Switches*&gt;           | List&lt;TConductingEquipment&gt; | (2)       |
 | List&lt;cim:PowerTransformer&gt; | List&lt;TPowerTransformer&gt;    |           |
 
-(1): The ConnectivityNodes that are linked to the Bay thought the terminals of the switches of the Bay.
+(1): The ConnectivityNodes that are linked to the Bay thought the terminals of the switches of the Bay.  
 (2): Switches in IEC CIM can be the following types, cim:Switch, cim:Breaker, cim:Disconnector, cim:LoadBreakSwitch and
 cim:ProtectedSwitch. These classes are all mapped in the same way on IEC 61850
 

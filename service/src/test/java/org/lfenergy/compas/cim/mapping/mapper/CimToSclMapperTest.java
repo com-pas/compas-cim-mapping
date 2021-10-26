@@ -75,11 +75,15 @@ class CimToSclMapperTest {
         // There is one busbarSection converted to a bay, this will be the first entry.
         var busbarSection = voltageLevel.getBay().get(0);
         assertBay(busbarSection, "BUSBAR10", 1, 0);
+        assertConnectivityNode(busbarSection.getConnectivityNode().get(0), "CONNECTIVITY_NODE82",
+                "_af9a4ae3-ba2e-4c34-8e47-5af894ee20f4/S1 380kV/BUSBAR10/CONNECTIVITY_NODE82");
+
         // The others bay are actual bays from CIM.
         var bay = voltageLevel.getBay().get(1);
-        assertBay(bay, "BAY_T4_2", 4, 3);
+        assertBay(bay, "BAY_T4_2", 3, 3);
 
-        assertConnectivityNode(bay.getConnectivityNode().get(0));
+        assertConnectivityNode(bay.getConnectivityNode().get(0), "CONNECTIVITY_NODE83",
+                "_af9a4ae3-ba2e-4c34-8e47-5af894ee20f4/S1 380kV/BAY_T4_2/CONNECTIVITY_NODE83");
 
         var conductingEquipment = bay.getConductingEquipment().get(0);
         assertConductingEquipment(conductingEquipment);
@@ -121,10 +125,10 @@ class CimToSclMapperTest {
         assertEquals("V", voltageLevel.getVoltage().getUnit());
     }
 
-    private void assertConnectivityNode(TConnectivityNode connectivityNode) {
+    private void assertConnectivityNode(TConnectivityNode connectivityNode, String name, String pathName) {
         assertNotNull(connectivityNode);
-        assertEquals("CONNECTIVITY_NODE82", connectivityNode.getName());
-        assertEquals("_af9a4ae3-ba2e-4c34-8e47-5af894ee20f4/S1 380kV/BAY_T4_2/CONNECTIVITY_NODE82", connectivityNode.getPathName());
+        assertEquals(name, connectivityNode.getName());
+        assertEquals(pathName, connectivityNode.getPathName());
     }
 
     private void assertConductingEquipment(TConductingEquipment conductingEquipment) {
@@ -195,25 +199,6 @@ class CimToSclMapperTest {
     }
 
     @Test
-    void mapBayToTBay_WhenCalledWithCgmesBay_ThenPropertiesMappedToTBay() {
-        var tVoltageLevel = mock(TVoltageLevel.class);
-        var cgmesVoltageLevel = mock(CgmesVoltageLevel.class);
-        var cgmesBay = mock(CgmesBay.class);
-        var expectedName = "TheName";
-
-        when(cgmesBay.getNameOrId()).thenReturn(expectedName);
-
-        var sclBay = mapper.mapBayToTBay(cgmesBay, cgmesVoltageLevel, tVoltageLevel, context);
-
-        assertNotNull(sclBay);
-        assertEquals(expectedName, sclBay.getName());
-        verify(cgmesBay, times(3)).getId();
-        verify(cgmesBay, times(1)).getNameOrId();
-        verify(context, times(1)).addLast(sclBay);
-        verifyNoMoreInteractions(cgmesBay);
-    }
-
-    @Test
     void mapBusbarSectionBayToTBay_WhenCalledWithCgmesBusbarSection_ThenPropertiesMappedToTBay() {
         var tVoltageLevel = mock(TVoltageLevel.class);
         var cgmesVoltageLevel = mock(CgmesVoltageLevel.class);
@@ -230,6 +215,25 @@ class CimToSclMapperTest {
         verify(cgmesBusbarSection, times(1)).getNameOrId();
         verify(context, times(1)).addLast(sclBay);
         verifyNoMoreInteractions(cgmesBusbarSection);
+    }
+
+    @Test
+    void mapBayToTBay_WhenCalledWithCgmesBay_ThenPropertiesMappedToTBay() {
+        var tVoltageLevel = mock(TVoltageLevel.class);
+        var cgmesVoltageLevel = mock(CgmesVoltageLevel.class);
+        var cgmesBay = mock(CgmesBay.class);
+        var expectedName = "TheName";
+
+        when(cgmesBay.getNameOrId()).thenReturn(expectedName);
+
+        var sclBay = mapper.mapBayToTBay(cgmesBay, cgmesVoltageLevel, tVoltageLevel, context);
+
+        assertNotNull(sclBay);
+        assertEquals(expectedName, sclBay.getName());
+        verify(cgmesBay, times(3)).getId();
+        verify(cgmesBay, times(1)).getNameOrId();
+        verify(context, times(1)).addLast(sclBay);
+        verifyNoMoreInteractions(cgmesBay);
     }
 
     @Test
@@ -289,7 +293,7 @@ class CimToSclMapperTest {
     }
 
     @Test
-    void mapConnectivityNodeToTConnectivityNode_WhenCalledWithCgmesConnectivityNodeAndCacheble_ThenPropertiesMappedToTConnectivityNodeAndCached() {
+    void mapConnectivityNodeToTConnectivityNode_WhenCalledWithCgmesConnectivityNode_ThenPropertiesMappedToTConnectivityNode() {
         var cgmesConnectivityNode = mock(CgmesConnectivityNode.class);
         var expectedId = "Id";
         var expectedName = "TheName";
@@ -299,7 +303,7 @@ class CimToSclMapperTest {
         when(cgmesConnectivityNode.getNameOrId()).thenReturn(expectedName);
         when(context.createPathName()).thenReturn(expectedPathName);
 
-        var sclConnectivityNode = mapper.mapConnectivityNodeToTConnectivityNode(cgmesConnectivityNode, context, true);
+        var sclConnectivityNode = mapper.mapConnectivityNodeToTConnectivityNode(cgmesConnectivityNode, context);
 
         assertNotNull(sclConnectivityNode);
         assertEquals(expectedName, sclConnectivityNode.getName());
@@ -308,28 +312,6 @@ class CimToSclMapperTest {
         verify(cgmesConnectivityNode, times(1)).getNameOrId();
         verify(context, times(1)).addLast(sclConnectivityNode);
         verify(context, times(1)).saveTConnectivityNode(eq(expectedId), any(TConnectivityNode.class));
-        verifyNoMoreInteractions(cgmesConnectivityNode);
-    }
-
-    @Test
-    void mapConnectivityNodeToTConnectivityNode_WhenCalledWithCgmesConnectivityNodeAndNotCacheble_ThenPropertiesMappedToTConnectivityNodeAndNotCached() {
-        var cgmesConnectivityNode = mock(CgmesConnectivityNode.class);
-        var expectedId = "Id";
-        var expectedName = "TheName";
-        var expectedPathName = "ThePathName";
-
-        when(cgmesConnectivityNode.getNameOrId()).thenReturn(expectedName);
-        when(context.createPathName()).thenReturn(expectedPathName);
-
-        var sclConnectivityNode = mapper.mapConnectivityNodeToTConnectivityNode(cgmesConnectivityNode, context, false);
-
-        assertNotNull(sclConnectivityNode);
-        assertEquals(expectedName, sclConnectivityNode.getName());
-        assertEquals(expectedPathName, sclConnectivityNode.getPathName());
-        verify(cgmesConnectivityNode, never()).getId();
-        verify(cgmesConnectivityNode, times(1)).getNameOrId();
-        verify(context, times(1)).addLast(sclConnectivityNode);
-        verify(context, never()).saveTConnectivityNode(eq(expectedId), any(TConnectivityNode.class));
         verifyNoMoreInteractions(cgmesConnectivityNode);
     }
 
