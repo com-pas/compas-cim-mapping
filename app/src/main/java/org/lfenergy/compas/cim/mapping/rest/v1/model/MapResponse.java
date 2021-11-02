@@ -18,7 +18,7 @@ import static org.lfenergy.compas.cim.mapping.CimMappingConstants.SCL_NS_URI;
 @XmlRootElement(name = "MapResponse", namespace = CIM_MAPPING_SERVICE_V1_NS_URI)
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MapResponse {
-    @Schema(description = "The SCL File created from the CIM RDF Files.", example = "SCL XML")
+    @Schema(description = "The SCL File created from the CIM RDF Files.")
     @XmlElement(name = "SCL", namespace = SCL_NS_URI)
     protected SCL scl;
 
