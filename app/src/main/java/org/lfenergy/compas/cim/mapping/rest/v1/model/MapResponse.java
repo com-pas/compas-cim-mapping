@@ -14,10 +14,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import static org.lfenergy.compas.cim.mapping.CimMappingConstants.CIM_MAPPING_SERVICE_V1_NS_URI;
 import static org.lfenergy.compas.cim.mapping.CimMappingConstants.SCL_NS_URI;
 
+@Schema(description = "Response with the converted CIM RDF Files to IEC 61850 SCL File.")
 @XmlRootElement(name = "MapResponse", namespace = CIM_MAPPING_SERVICE_V1_NS_URI)
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MapResponse {
-    @Schema(example = "SCL XML")
+    @Schema(description = "The SCL File created from the CIM RDF Files.", example = "SCL XML")
     @XmlElement(name = "SCL", namespace = SCL_NS_URI)
     protected SCL scl;
 
