@@ -18,7 +18,7 @@ SPDX-License-Identifier: Apache-2.0
     <packaging>jar</packaging>
 
     <properties>
-        <quarkus.platform.version>2.4.0.Final</quarkus.platform.version>
+        <quarkus.platform.version>2.4.1.Final</quarkus.platform.version>
 
         <quarkus.container-image.group>lfenergy</quarkus.container-image.group>
         <quarkus.container-image.name>compas-cim-mapping</quarkus.container-image.name>
