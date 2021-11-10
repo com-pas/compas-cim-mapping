@@ -12,4 +12,5 @@ public class CompasCimMappingErrorCode {
     }
 
     public static final String UNKNOWN_TYPE_ERROR_CODE = "CIM-0001";
+    public static final String NO_DATA_ERROR_CODE = "CIM-0002";
 }
