@@ -28,7 +28,7 @@ SPDX-License-Identifier: Apache-2.0
         <jakarta-cdi-api.version>2.0.2</jakarta-cdi-api.version>
         <apache.commons-io.version>2.11.0</apache.commons-io.version>
         <slf4j.version>1.7.32</slf4j.version>
-        <powsybl.version>4.4.0</powsybl.version>
+        <powsybl.version>4.5.0</powsybl.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
 
         <!-- Test -->
