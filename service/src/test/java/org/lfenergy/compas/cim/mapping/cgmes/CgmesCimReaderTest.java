@@ -5,6 +5,7 @@ package org.lfenergy.compas.cim.mapping.cgmes;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.lfenergy.compas.cim.mapping.exception.CompasCimMappingException;
 import org.lfenergy.compas.cim.mapping.model.CimData;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -17,6 +18,8 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.lfenergy.compas.cim.mapping.exception.CompasCimMappingErrorCode.NO_DATA_ERROR_CODE;
 
 @ExtendWith(MockitoExtension.class)
 class CgmesCimReaderTest {
@@ -36,12 +39,21 @@ class CgmesCimReaderTest {
     }
 
     @Test
-    void readModel_WhenReadingWithoutCimModel_ThenCgmesModelReturnedWithoutSubstations() {
+    void readModel_WhenReadingWithEmptyCimDataList_ThenExceptionThrown() {
         List<CimData> cimDataList = Collections.emptyList();
 
-        var result = cgmesCimReader.readModel(cimDataList);
+        var exception = assertThrows(CompasCimMappingException.class,
+                () -> cgmesCimReader.readModel(cimDataList));
 
-        assertEquals(0, result.substations().size());
+        assertEquals(NO_DATA_ERROR_CODE, exception.getErrorCode());
+    }
+
+    @Test
+    void readModel_WhenReadingWithNullList_ThenExceptionThrown() {
+        var exception = assertThrows(CompasCimMappingException.class,
+                () -> cgmesCimReader.readModel(null));
+
+        assertEquals(NO_DATA_ERROR_CODE, exception.getErrorCode());
     }
 
     private String readFile() throws IOException {
