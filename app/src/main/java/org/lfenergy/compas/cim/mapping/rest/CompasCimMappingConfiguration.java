@@ -15,14 +15,7 @@ import javax.enterprise.inject.Produces;
  * This is done by using the RegisterForReflection annotation.
  */
 @RegisterForReflection(targets = {
-        com.powsybl.triplestore.impl.rdf4j.TripleStoreFactoryServiceRDF4J.class,
-        org.lfenergy.compas.scl2007b4.model.ObjectFactory.class,
-        org.lfenergy.compas.scl2007b4.model.TDA.class,
-        org.lfenergy.compas.scl2007b4.model.TSDI.class,
-        org.lfenergy.compas.scl2007b4.model.TDAI.class,
-        javax.xml.bind.annotation.adapters.NormalizedStringAdapter.class,
-        javax.xml.bind.annotation.adapters.CollapsedStringAdapter.class,
-        javax.xml.bind.annotation.W3CDomHandler.class,
+        com.powsybl.triplestore.impl.rdf4j.TripleStoreFactoryServiceRDF4J.class
 })
 public class CompasCimMappingConfiguration {
     @Produces
