@@ -7,7 +7,10 @@ import org.lfenergy.compas.cim.mapping.cgmes.CgmesCimReader;
 import org.lfenergy.compas.cim.mapping.mapper.CimToSclMapper;
 import org.lfenergy.compas.cim.mapping.mapper.CimToSclMapperContext;
 import org.lfenergy.compas.cim.mapping.model.CimData;
-import org.lfenergy.compas.scl2007b4.model.*;
+import org.lfenergy.compas.scl2007b4.model.ObjectFactory;
+import org.lfenergy.compas.scl2007b4.model.SCL;
+import org.lfenergy.compas.scl2007b4.model.THeader;
+import org.lfenergy.compas.scl2007b4.model.THitem;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -63,7 +66,7 @@ public class CompasCimMappingService {
      * @return The created SCL Model.
      */
     SCL createBasicSCL(List<CimData> cimData, String who) {
-        var formatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssXXX");
+        var formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
         var factory = new ObjectFactory();
 
         // Create the SCL and set some default values.
