@@ -2,11 +2,11 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-package org.lfenergy.compas.cim.mapping;
+package org.lfenergy.compas.cim.mapping.rest;
 
-import io.quarkus.test.junit.NativeImageTest;
+import io.quarkus.test.junit.QuarkusIntegrationTest;
 
-@NativeImageTest
+@QuarkusIntegrationTest
 class NativeHealthCheckIT extends HealthCheckTest {
     // Execute the same tests but in native mode.
 }

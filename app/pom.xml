@@ -141,6 +141,7 @@ SPDX-License-Identifier: Apache-2.0
             <properties>
                 <quarkus.package.type>native</quarkus.package.type>
                 <quarkus.native.container-build>true</quarkus.native.container-build> <!-- Allows for creating a Linux executable without GraalVM being installed -->
+                <quarkus.container-image.build>true</quarkus.container-image.build> <!-- Also make a Docker Image, so the native test will be executed against the container -->
             </properties>
 
             <build>

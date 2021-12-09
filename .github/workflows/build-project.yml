@@ -50,7 +50,7 @@ jobs:
           servers: '[{ "id": "github-packages-compas", "username": "OWNER", "password": "${{ secrets.GITHUB_TOKEN }}" }]'
       - name: Build Native with Maven
         if: ${{ github.event_name == 'pull_request' }}
-        run: ./mvnw -s custom_maven_settings.xml -B clean verify -Pnative
+        run: ./mvnw -s custom_maven_settings.xml -B -Pnative clean verify
       - name: Build with Maven
         if: ${{ github.event_name == 'push' }}
         run: ./mvnw -s custom_maven_settings.xml -B clean verify
