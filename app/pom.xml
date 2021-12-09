@@ -18,23 +18,9 @@ SPDX-License-Identifier: Apache-2.0
     <packaging>jar</packaging>
 
     <properties>
-        <quarkus.platform.version>2.4.1.Final</quarkus.platform.version>
-
         <quarkus.container-image.group>lfenergy</quarkus.container-image.group>
         <quarkus.container-image.name>compas-cim-mapping</quarkus.container-image.name>
     </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.quarkus</groupId>
-                <artifactId>quarkus-universe-bom</artifactId>
-                <version>${quarkus.platform.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -155,6 +141,7 @@ SPDX-License-Identifier: Apache-2.0
             <properties>
                 <quarkus.package.type>native</quarkus.package.type>
                 <quarkus.native.container-build>true</quarkus.native.container-build> <!-- Allows for creating a Linux executable without GraalVM being installed -->
+                <quarkus.container-image.build>true</quarkus.container-image.build> <!-- Also make a Docker Image, so the native test will be executed against the container -->
             </properties>
 
             <build>
