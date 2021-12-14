@@ -24,7 +24,7 @@ SPDX-License-Identifier: Apache-2.0
         <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
         <sonarqube-plugin.version>3.2.0</sonarqube-plugin.version>
 
-        <compas.core.version>0.6.0</compas.core.version>
+        <compas.core.version>0.7.0</compas.core.version>
 
         <quarkus.platform.version>2.4.2.Final</quarkus.platform.version>
         <microprofile-openapi-api.version>3.0</microprofile-openapi-api.version>
