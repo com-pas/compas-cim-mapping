@@ -1,20 +1,20 @@
-# SPDX-FileCopyrightText: 2021 Alliander N.V.
+# SPDX-FileCopyrightText: 2022 Alliander N.V.
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# Add issues and pull request to project boards used for PR's initiated by account other than Dependabot.
-# PR's initiated by bots don't have access to our Organization secrets, so we need a separate workflow for it.
-# More information:
-# https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
-# https://github.com/dependabot/dependabot-core/issues/3253 
-name: Add issues and pull request to project boards
+name: Add issues and pull request to project boards Dependabot trigger
 
-on: [ issues, pull_request ]
+on:
+  workflow_run:
+    workflows: ["Add issues and pull request to project boards Dependabot"]
+    types: 
+      - completed
 
 jobs:
   github-actions-automate-projects:
     runs-on: ubuntu-latest
-    if: ${{ github.actor != 'dependabot[bot]' }}
+
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: add-new-issues-to-repository-based-project-column
         uses: docker://takanabe/github-actions-automate-projects:v0.0.1

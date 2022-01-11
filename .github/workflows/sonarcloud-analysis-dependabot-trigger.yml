@@ -1,22 +1,14 @@
-# SPDX-FileCopyrightText: 2021 Alliander N.V.
+# SPDX-FileCopyrightText: 2022 Alliander N.V.
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# SonarCloud Analysis used for PR's initiated by account other than Dependabot.
-# PR's initiated by bots don't have access to our Organization secrets, so we need a separate workflow for it.
-# More information:
-# https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
-# https://github.com/dependabot/dependabot-core/issues/3253 
-name: SonarCloud Analysis
+name: SonarCloud Analysis Dependabot trigger
 
 on:
-  push:
-    branches:
-      - '**'
-  pull_request:
-    branches:
-      - 'main'
-      - 'develop'
+  workflow_run:
+    workflows: ["SonarCloud Analysis Dependabot"]
+    types: 
+      - completed
 
 jobs:
   build:
@@ -24,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
-    if: ${{ github.actor != 'dependabot[bot]' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - uses: actions/checkout@v2
         with:

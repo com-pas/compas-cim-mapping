@@ -1,0 +1,21 @@
+# SPDX-FileCopyrightText: 2022 Alliander N.V.
+#
+# SPDX-License-Identifier: Apache-2.0
+
+name: SonarCloud Analysis Dependabot
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - 'main'
+      - 'develop'
+
+jobs:
+  check-dependabot:
+    runs-on: ubuntu-latest
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    steps:
+      - run: echo "SonarCloud Analysis initiated by Dependabot"

@@ -1,0 +1,14 @@
+# SPDX-FileCopyrightText: 2022 Alliander N.V.
+#
+# SPDX-License-Identifier: Apache-2.0
+
+name: Add issues and pull request to project boards Dependabot
+
+on: [ issues, pull_request ]
+
+jobs:
+  check-dependabot:
+    runs-on: ubuntu-latest
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    steps:
+      - run: echo "Add issues and pull request to project boards initiated by Dependabot"
