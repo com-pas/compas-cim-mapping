@@ -10,7 +10,7 @@
 name: Add issues and pull request to project boards
 
 on:
-  isues:
+  issues:
   pull_request:
   workflow_run:
     workflows: ["Add issues and pull request to project boards Dependabot"]
