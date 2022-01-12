@@ -9,12 +9,18 @@
 # https://github.com/dependabot/dependabot-core/issues/3253 
 name: Add issues and pull request to project boards
 
-on: [ issues, pull_request ]
+on:
+  isues:
+  pull_request:
+  workflow_run:
+    workflows: ["Add issues and pull request to project boards Dependabot"]
+    types: 
+      - completed
 
 jobs:
   github-actions-automate-projects:
     runs-on: ubuntu-latest
-    if: ${{ github.actor != 'dependabot[bot]' }}
+    if: ${{ github.actor != 'dependabot[bot]' || github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: add-new-issues-to-repository-based-project-column
         uses: docker://takanabe/github-actions-automate-projects:v0.0.1

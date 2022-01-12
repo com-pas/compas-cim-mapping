@@ -17,6 +17,10 @@ on:
     branches:
       - 'main'
       - 'develop'
+  workflow_run:
+    workflows: ["SonarCloud Analysis Dependabot"]
+    types: 
+      - completed
 
 jobs:
   build:
@@ -24,12 +28,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
-    if: ${{ github.actor != 'dependabot[bot]' }}
+    if: ${{ github.actor != 'dependabot[bot]' || github.event.workflow_run.conclusion == 'success' }}
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-
       - name: Set up JDK 1.11
         uses: actions/setup-java@v2.5.0
         with:
