@@ -2,11 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# Add issues and pull request to project boards used for PR's initiated by account other than Dependabot.
-# PR's initiated by bots don't have access to our Organization secrets, so we need a separate workflow for it.
-# More information:
-# https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
-# https://github.com/dependabot/dependabot-core/issues/3253 
 name: Add issues and pull request to project boards
 
 on: [issues, pull_request, pull_request_target]
