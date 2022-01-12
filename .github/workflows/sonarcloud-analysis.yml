@@ -17,12 +17,10 @@ on:
     branches:
       - 'main'
       - 'develop'
-      - 'dependabot-fix'
   pull_request_target:
     branches:
       - 'main'
       - 'develop'
-      - 'dependabot-fix'
 
 jobs:
   build:
