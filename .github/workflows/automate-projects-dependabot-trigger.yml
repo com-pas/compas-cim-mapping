@@ -14,7 +14,6 @@ jobs:
   github-actions-automate-projects:
     runs-on: ubuntu-latest
 
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: add-new-issues-to-repository-based-project-column
         uses: docker://takanabe/github-actions-automate-projects:v0.0.1
