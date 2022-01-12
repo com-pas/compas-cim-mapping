@@ -17,10 +17,12 @@ on:
     branches:
       - 'main'
       - 'develop'
-  workflow_run:
-    workflows: ["SonarCloud Analysis Dependabot"]
-    types: 
-      - completed
+      - 'dependabot-fix'
+  pull_request_target:
+    branches:
+      - 'main'
+      - 'develop'
+      - 'dependabot-fix'
 
 jobs:
   build:
@@ -28,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
-    if: ${{ github.actor != 'dependabot[bot]' || github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ (github.event_name != 'pull_request_target' && github.actor != 'dependabot[bot]') || (github.actor == 'dependabot[bot]' && github.event_name == 'pull_request_target') }}
     steps:
       - uses: actions/checkout@v2
         with:
