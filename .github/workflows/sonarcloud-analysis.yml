@@ -61,4 +61,5 @@ jobs:
           -Dsonar.projectKey=com-pas_compas-cim-mapping \
           -Dsonar.organization=com-pas \
           -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.pullrequest.key=${{ github.event.pull_request.number }} \
           clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
