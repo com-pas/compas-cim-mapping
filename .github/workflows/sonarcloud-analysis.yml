@@ -12,12 +12,10 @@ on:
     branches:
       - 'main'
       - 'develop'
-      - 'fix-sonarcloud-decorator'
   pull_request_target:
     branches:
       - 'main'
       - 'develop'
-      - 'fix-sonarcloud-decorator'
 
 jobs:
   build:
