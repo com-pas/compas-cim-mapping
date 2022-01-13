@@ -11,6 +11,9 @@ There is an IEC document describing the mapping, namely IEC/TS 62361-102, but no
 
 ## Mapping IEC CIM to IEC 61850
 
+**Remark**: In CIM the name is optional, so when the name is not there the ID is used. This is the case for many
+entities described below (``name or id``).
+
 | CIM Class                        | IEC Class                        | Remark    |
 | -------------------------------- | -------------------------------- | --------- |
 | *cim:Substation*                 | *TSubstation*                    |           |
