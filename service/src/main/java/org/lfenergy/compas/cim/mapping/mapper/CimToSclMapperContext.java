@@ -49,8 +49,12 @@ public class CimToSclMapperContext {
      * @return The List of converted CGMES Substations that were found.
      */
     public List<CgmesSubstation> getSubstations() {
-        return cgmesModel.substations()
-                .stream()
+        return cgmesModel.tripleStore().query(
+                        START_QUERY +
+                                "    ?Substation" +
+                                "        a cim:Substation ;" +
+                                "        cim:IdentifiedObject.name ?name ;" +
+                                END_QUERY).stream()
                 .map(propertyBag -> new CgmesSubstation(
                         propertyBag.getId(SUBSTATION_PROP),
                         propertyBag.get(NAME_PROP)))
@@ -89,7 +93,9 @@ public class CimToSclMapperContext {
                                 "        OPTIONAL { ?BusbarSection cim:IdentifiedObject.name ?name }\n" +
                                 " FILTER (str(?EquipmentContainer) = \"http://default-cgmes-model/#" + containerId + "\") " +
                                 END_QUERY).stream()
-                .map(bag -> new CgmesBusbarSection(bag.getId(BUSBARSECTION_PROP), bag.get(NAME_PROP)))
+                .map(bag -> new CgmesBusbarSection(
+                        bag.getId(BUSBARSECTION_PROP),
+                        bag.get(NAME_PROP)))
                 .collect(Collectors.toList());
     }
 
@@ -108,7 +114,9 @@ public class CimToSclMapperContext {
                                 "        OPTIONAL { ?Bay cim:IdentifiedObject.name ?name }\n" +
                                 " FILTER (str(?VoltageLevel) = \"http://default-cgmes-model/#" + voltageLevelId + "\") " +
                                 END_QUERY).stream()
-                .map(bag -> new CgmesBay(bag.getId(BAY_PROP), bag.get(NAME_PROP)))
+                .map(bag -> new CgmesBay(
+                        bag.getId(BAY_PROP),
+                        bag.get(NAME_PROP)))
                 .collect(Collectors.toList());
     }
 
