@@ -43,7 +43,9 @@ class CimToSclMapperContextTest {
         bag.put(NAME_PROP, substationName);
         bags.add(bag);
 
-        when(cgmesModel.substations()).thenReturn(bags);
+        var tripleStore = mock(TripleStore.class);
+        when(cgmesModel.tripleStore()).thenReturn(tripleStore);
+        when(tripleStore.query(anyString())).thenReturn(bags);
 
         var result = context.getSubstations();
         assertNotNull(result);
