@@ -151,9 +151,19 @@ public class CimToSclMapperContext {
      * @return The List of converted CGMES Power-Transformer Ends that were found.
      */
     public List<CgmesTransformerEnd> getTransformerEnds(String powerTransformerId) {
-        return cgmesModel.transformerEnds()
+        return cgmesModel.tripleStore().query(
+                        START_QUERY +
+                                "    ?PowerTransformer\n" +
+                                "        a cim:PowerTransformer ;\n" +
+                                "        cim:IdentifiedObject.name ?name .\n" +
+                                "    ?TransformerEnd\n" +
+                                "        a cim:PowerTransformerEnd ;\n" +
+                                "        cim:PowerTransformerEnd.PowerTransformer ?PowerTransformer ;\n" +
+                                "        cim:TransformerEnd.endNumber ?endNumber ;\n" +
+                                "        cim:TransformerEnd.Terminal ?Terminal .\n" +
+                                " FILTER (str(?PowerTransformer) = \"http://default-cgmes-model/#" + powerTransformerId + "\") " +
+                                END_QUERY)
                 .stream()
-                .filter(propertyBag -> powerTransformerId.equals(propertyBag.getId(POWER_TRANSFORMER_PROP)))
                 .map(propertyBag -> new CgmesTransformerEnd(
                         propertyBag.getId(TRANSFORMER_END_PROP),
                         propertyBag.get(NAME_PROP),
