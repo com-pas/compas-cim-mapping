@@ -32,8 +32,6 @@ public class CimToSclMapperContext {
     public static final String NOMINAL_VOLTAGE_PROP = "nominalVoltage";
     public static final String TYPE_PROP = "type";
     public static final String ENDNUMBER_PROP = "endNumber";
-    public static final String TERMINAL_1_PROP = "Terminal1";
-    public static final String TERMINAL_2_PROP = "Terminal2";
 
     private static final String START_QUERY = "SELECT *\nWHERE {{\n GRAPH ?graph {\n";
     private static final String END_QUERY = "}}}\n";
@@ -291,15 +289,20 @@ public class CimToSclMapperContext {
      * @return The List of converted CGMES Switches that were found.
      */
     public List<CgmesSwitch> getSwitches(String containerId) {
-        return cgmesModel.switches()
+        return cgmesModel.tripleStore().query(
+                        START_QUERY +
+                                " ?Switch \n" +
+                                "    a ?type ; \n" +
+                                "    cim:Equipment.EquipmentContainer ?EquipmentContainer . \n" +
+                                "    OPTIONAL { ?Switch cim:IdentifiedObject.name ?name } \n" +
+                                "    VALUES ?type { cim:Switch cim:Breaker cim:Disconnector cim:LoadBreakSwitch cim:ProtectedSwitch cim:GroundDisconnector } . \n" +
+                                " FILTER (str(?EquipmentContainer) = \"http://default-cgmes-model/#" + containerId + "\") \n" +
+                                END_QUERY)
                 .stream()
-                .filter(propertyBag -> containerId.equals(propertyBag.getId(EQUIPMENT_CONTAINER_PROP)))
                 .map(propertyBag -> new CgmesSwitch(
                         propertyBag.getId(SWITCH_PROP),
                         propertyBag.get(NAME_PROP),
-                        propertyBag.getLocal(TYPE_PROP),
-                        propertyBag.getId(TERMINAL_1_PROP),
-                        propertyBag.getId(TERMINAL_2_PROP)))
+                        propertyBag.getLocal(TYPE_PROP)))
                 .collect(Collectors.toList());
     }
 
@@ -309,10 +312,21 @@ public class CimToSclMapperContext {
      * @param conductingEquipmentId The ID of the Conducting Equipment.
      * @return The List of converted CGMES Terminals that were found.
      */
-    public List<CgmesTerminal> getTerminals(String conductingEquipmentId) {
-        return cgmesModel.terminals()
+    public List<CgmesTerminal> getTerminalsByConductingEquipment(String conductingEquipmentId) {
+        return cgmesModel.tripleStore().query(
+                        START_QUERY +
+                                " ?Terminal \n" +
+                                "    a cim:Terminal ; \n" +
+                                "    cim:Terminal.ConductingEquipment ?ConductingEquipment .\n" +
+                                "    OPTIONAL { ?Terminal cim:IdentifiedObject.name ?name }\n" +
+                                " ?ConductingEquipment \n" +
+                                "    a ?conductingEquipmentType .\n" +
+                                " FILTER (str(?ConductingEquipment) = \"http://default-cgmes-model/#" + conductingEquipmentId + "\") \n" +
+                                "}}\n" +
+                                "OPTIONAL { GRAPH ?graphCN {\n" +
+                                "        ?Terminal cim:Terminal.ConnectivityNode ?ConnectivityNode .\n" +
+                                END_QUERY)
                 .stream()
-                .filter(propertyBag -> conductingEquipmentId.equals(propertyBag.getId(CONDUCTING_EQUIPMENT_PROP)))
                 .map(propertyBag -> new CgmesTerminal(
                         propertyBag.getId(TERMINAL_PROP),
                         propertyBag.get(NAME_PROP),
@@ -326,10 +340,21 @@ public class CimToSclMapperContext {
      * @param terminalId The ID of the Terminal.
      * @return The converted CGMES Terminal that is found.
      */
-    public Optional<CgmesTerminal> getTerminal(String terminalId) {
-        return cgmesModel.terminals()
+    public Optional<CgmesTerminal> getTerminalById(String terminalId) {
+        return cgmesModel.tripleStore().query(
+                        START_QUERY +
+                                " ?Terminal \n" +
+                                "    a cim:Terminal ; \n" +
+                                "    cim:Terminal.ConductingEquipment ?ConductingEquipment .\n" +
+                                "    OPTIONAL { ?Terminal cim:IdentifiedObject.name ?name }\n" +
+                                " ?ConductingEquipment \n" +
+                                "    a ?conductingEquipmentType .\n" +
+                                " FILTER (str(?Terminal) = \"http://default-cgmes-model/#" + terminalId + "\") \n" +
+                                "}}\n" +
+                                "OPTIONAL { GRAPH ?graphCN {\n" +
+                                "        ?Terminal cim:Terminal.ConnectivityNode ?ConnectivityNode .\n" +
+                                END_QUERY)
                 .stream()
-                .filter(propertyBag -> terminalId.equals(propertyBag.getId(TERMINAL_PROP)))
                 .map(propertyBag -> new CgmesTerminal(
                         propertyBag.getId(TERMINAL_PROP),
                         propertyBag.get(NAME_PROP),
@@ -342,7 +367,7 @@ public class CimToSclMapperContext {
      * At the end this list is used to create a PathName for the ConnectivityNode.
      */
     // List holding all passed TNaming Elements
-    private LinkedList<TNaming> namingLevels = new LinkedList<>();
+    private final LinkedList<TNaming> namingLevels = new LinkedList<>();
 
     /**
      * Adds the parameter to the stack. Called on the way down (BeforeMapping).

@@ -43,9 +43,7 @@ class CimToSclMapperContextTest {
         bag.put(NAME_PROP, substationName);
         bags.add(bag);
 
-        var tripleStore = mock(TripleStore.class);
-        when(cgmesModel.tripleStore()).thenReturn(tripleStore);
-        when(tripleStore.query(anyString())).thenReturn(bags);
+        setupTripleStore(bags);
 
         var result = context.getSubstations();
         assertNotNull(result);
@@ -69,9 +67,7 @@ class CimToSclMapperContextTest {
         bag.put(SUBSTATION_PROP, substationId);
         bags.add(bag);
 
-        var tripleStore = mock(TripleStore.class);
-        when(cgmesModel.tripleStore()).thenReturn(tripleStore);
-        when(tripleStore.query(anyString())).thenReturn(bags);
+        setupTripleStore(bags);
 
         var result = context.getVoltageLevelsBySubstation(substationId);
         assertNotNull(result);
@@ -92,12 +88,9 @@ class CimToSclMapperContextTest {
         bag.put(NAME_PROP, busbarSectionName);
         bags.add(bag);
 
-        var tripleStore = mock(TripleStore.class);
-        when(cgmesModel.tripleStore()).thenReturn(tripleStore);
-        when(tripleStore.query(anyString())).thenReturn(bags);
+        setupTripleStore(bags);
 
         var result = context.getBusbarSectionsByEquipmentContainer("Random VoltageId");
-
         assertNotNull(result);
         assertEquals(1, result.size());
         var busbarSection = result.get(0);
@@ -116,12 +109,9 @@ class CimToSclMapperContextTest {
         bag.put(NAME_PROP, bayName);
         bags.add(bag);
 
-        var tripleStore = mock(TripleStore.class);
-        when(cgmesModel.tripleStore()).thenReturn(tripleStore);
-        when(tripleStore.query(anyString())).thenReturn(bags);
+        setupTripleStore(bags);
 
         var result = context.getBaysByVoltageLevel("Random VoltageId");
-
         assertNotNull(result);
         assertEquals(1, result.size());
         var bay = result.get(0);
@@ -144,12 +134,9 @@ class CimToSclMapperContextTest {
         bag.put(EQUIPMENT_CONTAINER_PROP, pwContainerId);
         bags.add(bag);
 
-        var tripleStore = mock(TripleStore.class);
-        when(cgmesModel.tripleStore()).thenReturn(tripleStore);
-        when(tripleStore.query(anyString())).thenReturn(bags);
+        setupTripleStore(bags);
 
         var result = context.getTransformers(pwContainerId);
-
         assertNotNull(result);
         assertEquals(1, result.size());
         var transformer = result.get(0);
@@ -175,9 +162,7 @@ class CimToSclMapperContextTest {
         bag.put(ENDNUMBER_PROP, endNumber);
         bags.add(bag);
 
-        var tripleStore = mock(TripleStore.class);
-        when(cgmesModel.tripleStore()).thenReturn(tripleStore);
-        when(tripleStore.query(anyString())).thenReturn(bags);
+        setupTripleStore(bags);
 
         var result = context.getTransformerEnds(tfId);
         assertNotNull(result);
@@ -197,9 +182,7 @@ class CimToSclMapperContextTest {
         var ratioBags = new PropertyBags();
         var phaseBags = new PropertyBags();
 
-        var tripleStore = mock(TripleStore.class);
-        when(cgmesModel.tripleStore()).thenReturn(tripleStore);
-        when(tripleStore.query(anyString())).thenReturn(ratioBags, phaseBags);
+        setupTripleStore(ratioBags, phaseBags);
 
         var result = context.getTapChanger(tfeId);
         assertFalse(result.isPresent());
@@ -219,9 +202,7 @@ class CimToSclMapperContextTest {
         bag.put(TRANSFORMER_END_PROP, tfeId);
         ratioBags.add(bag);
 
-        var tripleStore = mock(TripleStore.class);
-        when(cgmesModel.tripleStore()).thenReturn(tripleStore);
-        when(tripleStore.query(anyString())).thenReturn(ratioBags);
+        setupTripleStore(ratioBags);
 
         var result = context.getTapChanger(tfeId);
         assertTrue(result.isPresent());
@@ -245,9 +226,7 @@ class CimToSclMapperContextTest {
         bag.put(TRANSFORMER_END_PROP, tfeId);
         phaseBags.add(bag);
 
-        var tripleStore = mock(TripleStore.class);
-        when(cgmesModel.tripleStore()).thenReturn(tripleStore);
-        when(tripleStore.query(anyString())).thenReturn(ratioBags, phaseBags);
+        setupTripleStore(ratioBags, phaseBags);
 
         var result = context.getTapChanger(tfeId);
         assertTrue(result.isPresent());
@@ -268,9 +247,7 @@ class CimToSclMapperContextTest {
         bag.put(NAME_PROP, ccnName);
         bags.add(bag);
 
-        var tripleStore = mock(TripleStore.class);
-        when(cgmesModel.tripleStore()).thenReturn(tripleStore);
-        when(tripleStore.query(anyString())).thenReturn(bags);
+        setupTripleStore(bags);
 
         var result = context.getConnectivityNodeByBusbarSection(busbarSectionId);
         assertNotNull(result);
@@ -292,9 +269,7 @@ class CimToSclMapperContextTest {
         bag.put(NAME_PROP, ccnName);
         bags.add(bag);
 
-        var tripleStore = mock(TripleStore.class);
-        when(cgmesModel.tripleStore()).thenReturn(tripleStore);
-        when(tripleStore.query(anyString())).thenReturn(bags);
+        setupTripleStore(bags);
 
         var result = context.getConnectivityNodeByBay(bayID);
         assertNotNull(result);
@@ -311,23 +286,14 @@ class CimToSclMapperContextTest {
         var containerId = "Known Container ID";
 
         var bags = new PropertyBags();
-        var bag = new PropertyBag(List.of(SWITCH_PROP, NAME_PROP, TYPE_PROP, EQUIPMENT_CONTAINER_PROP, TERMINAL_1_PROP, TERMINAL_2_PROP));
+        var bag = new PropertyBag(List.of(SWITCH_PROP, NAME_PROP, TYPE_PROP, EQUIPMENT_CONTAINER_PROP));
         bag.put(SWITCH_PROP, switchId);
         bag.put(NAME_PROP, switchName);
         bag.put(TYPE_PROP, "Breaker");
         bag.put(EQUIPMENT_CONTAINER_PROP, containerId);
-        bag.put(TERMINAL_1_PROP, "Terminal1 ID");
-        bag.put(TERMINAL_2_PROP, "Terminal2 ID");
         bags.add(bag);
 
-        bag = new PropertyBag(List.of(SWITCH_PROP, NAME_PROP, TYPE_PROP, EQUIPMENT_CONTAINER_PROP, TERMINAL_1_PROP, TERMINAL_2_PROP));
-        bag.put(SWITCH_PROP, "Other ID");
-        bag.put(NAME_PROP, "Other Name");
-        bag.put(TYPE_PROP, "Breaker");
-        bag.put(EQUIPMENT_CONTAINER_PROP, "Unknown Container ID");
-        bags.add(bag);
-
-        when(cgmesModel.switches()).thenReturn(bags);
+        setupTripleStore(bags);
 
         var result = context.getSwitches(containerId);
         assertNotNull(result);
@@ -338,30 +304,22 @@ class CimToSclMapperContextTest {
     }
 
     @Test
-    void getTerminals_WhenCalledWithKnownId_ThenPropertyBagsIsFilteredOnIdAndConvertedToCgmesTerminal() {
+    void getTerminalsByConductingEquipment_WhenCalledWithKnownId_ThenPropertyBagsIsFilteredOnIdAndConvertedToCgmesTerminal() {
         var terminalId = "TerminalId";
         var terminalName = "Name Terminal";
         var ccnNode = "Connectivity Node ID";
         var containerId = "Known Container ID";
 
         var bags = new PropertyBags();
-        var bag = new PropertyBag(List.of(TERMINAL_PROP, NAME_PROP, CONNECTIVITY_NODE_PROP, CONDUCTING_EQUIPMENT_PROP));
+        var bag = new PropertyBag(List.of(TERMINAL_PROP, NAME_PROP, CONNECTIVITY_NODE_PROP));
         bag.put(TERMINAL_PROP, terminalId);
         bag.put(NAME_PROP, terminalName);
         bag.put(CONNECTIVITY_NODE_PROP, ccnNode);
-        bag.put(CONDUCTING_EQUIPMENT_PROP, containerId);
         bags.add(bag);
 
-        bag = new PropertyBag(List.of(TERMINAL_PROP, NAME_PROP, CONNECTIVITY_NODE_PROP, CONDUCTING_EQUIPMENT_PROP));
-        bag.put(TERMINAL_PROP, "Other ID");
-        bag.put(NAME_PROP, "Other Name");
-        bag.put(CONNECTIVITY_NODE_PROP, "Some Other ID");
-        bag.put(CONDUCTING_EQUIPMENT_PROP, "Unknown Container ID");
-        bags.add(bag);
+        setupTripleStore(bags);
 
-        when(cgmesModel.terminals()).thenReturn(bags);
-
-        var result = context.getTerminals(containerId);
+        var result = context.getTerminalsByConductingEquipment(containerId);
         assertNotNull(result);
         assertEquals(1, result.size());
         var terminal = result.get(0);
@@ -370,31 +328,23 @@ class CimToSclMapperContextTest {
         assertEquals(ccnNode, terminal.getConnectivityNodeId());
     }
 
+
     @Test
-    void getTerminal_WhenCalledWithKnownId_ThenPropertyBagsIsFilteredOnIdAndConvertedToCgmesTerminal() {
+    void getTerminalById_WhenCalledWithKnownId_ThenPropertyBagsIsFilteredOnIdAndConvertedToCgmesTerminal() {
         var terminalId = "TerminalId";
         var terminalName = "Name Terminal";
         var ccnNode = "Connectivity Node ID";
-        var containerId = "Known Container ID";
 
         var bags = new PropertyBags();
-        var bag = new PropertyBag(List.of(TERMINAL_PROP, NAME_PROP, CONNECTIVITY_NODE_PROP, CONDUCTING_EQUIPMENT_PROP));
+        var bag = new PropertyBag(List.of(TERMINAL_PROP, NAME_PROP, CONNECTIVITY_NODE_PROP));
         bag.put(TERMINAL_PROP, terminalId);
         bag.put(NAME_PROP, terminalName);
         bag.put(CONNECTIVITY_NODE_PROP, ccnNode);
-        bag.put(CONDUCTING_EQUIPMENT_PROP, containerId);
         bags.add(bag);
 
-        bag = new PropertyBag(List.of(TERMINAL_PROP, NAME_PROP, CONNECTIVITY_NODE_PROP, CONDUCTING_EQUIPMENT_PROP));
-        bag.put(TERMINAL_PROP, "Other ID");
-        bag.put(NAME_PROP, "Other Name");
-        bag.put(CONNECTIVITY_NODE_PROP, "Some Other ID");
-        bag.put(CONDUCTING_EQUIPMENT_PROP, "Unknown Container ID");
-        bags.add(bag);
+        setupTripleStore(bags);
 
-        when(cgmesModel.terminals()).thenReturn(bags);
-
-        var result = context.getTerminal(terminalId);
+        var result = context.getTerminalById(terminalId);
         assertNotNull(result);
         var terminal = result.get();
         assertEquals(terminalId, terminal.getId());
@@ -509,5 +459,11 @@ class CimToSclMapperContextTest {
         var result = context.getNameFromConnectivityNode(cnId);
 
         assertFalse(result.isPresent());
+    }
+
+    private void setupTripleStore(PropertyBags bags, PropertyBags... otherBags) {
+        var tripleStore = mock(TripleStore.class);
+        when(cgmesModel.tripleStore()).thenReturn(tripleStore);
+        when(tripleStore.query(anyString())).thenReturn(bags, otherBags);
     }
 }
