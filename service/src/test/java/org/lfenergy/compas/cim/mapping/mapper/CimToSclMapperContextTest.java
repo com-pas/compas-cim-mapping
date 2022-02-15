@@ -180,15 +180,9 @@ class CimToSclMapperContextTest {
         bag.put(ENDNUMBER_PROP, endNumber);
         bags.add(bag);
 
-        bag = new PropertyBag(List.of(TRANSFORMER_END_PROP, NAME_PROP, POWER_TRANSFORMER_PROP, TERMINAL_PROP));
-        bag.put(TRANSFORMER_END_PROP, "Other ID");
-        bag.put(NAME_PROP, "Other Name");
-        bag.put(POWER_TRANSFORMER_PROP, "Unknown Transformer ID");
-        bag.put(TERMINAL_PROP, "Other Terminal ID");
-        bag.put(ENDNUMBER_PROP, "2");
-        bags.add(bag);
-
-        when(cgmesModel.transformerEnds()).thenReturn(bags);
+        var tripleStore = mock(TripleStore.class);
+        when(cgmesModel.tripleStore()).thenReturn(tripleStore);
+        when(tripleStore.query(anyString())).thenReturn(bags);
 
         var result = context.getTransformerEnds(tfId);
         assertNotNull(result);
