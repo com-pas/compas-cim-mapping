@@ -25,13 +25,13 @@ public class CimToSclMapperContext {
     public static final String SWITCH_PROP = "Switch";
     public static final String TERMINAL_PROP = "Terminal";
     public static final String CONNECTIVITY_NODE_PROP = "ConnectivityNode";
-    public static final String CONDUCTING_EQUIPMENT_PROP = "ConductingEquipment";
     public static final String EQUIPMENT_CONTAINER_PROP = "EquipmentContainer";
+
     public static final String NAME_PROP = "name";
     public static final String DESCRIPTION_PROP = "description";
     public static final String NOMINAL_VOLTAGE_PROP = "nominalVoltage";
     public static final String TYPE_PROP = "type";
-    public static final String ENDNUMBER_PROP = "endNumber";
+    public static final String END_NUMBER_PROP = "endNumber";
 
     private static final String START_QUERY = "SELECT *\nWHERE {{\n GRAPH ?graph {\n";
     private static final String END_QUERY = "}}}\n";
@@ -177,7 +177,7 @@ public class CimToSclMapperContext {
                         propertyBag.getId(TRANSFORMER_END_PROP),
                         propertyBag.get(NAME_PROP),
                         propertyBag.getId(TERMINAL_PROP),
-                        propertyBag.get(ENDNUMBER_PROP)))
+                        propertyBag.get(END_NUMBER_PROP)))
                 .collect(Collectors.toList());
     }
 

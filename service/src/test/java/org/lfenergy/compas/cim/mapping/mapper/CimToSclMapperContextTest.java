@@ -154,12 +154,12 @@ class CimToSclMapperContextTest {
         var endNumber = "1";
 
         var bags = new PropertyBags();
-        var bag = new PropertyBag(List.of(TRANSFORMER_END_PROP, NAME_PROP, POWER_TRANSFORMER_PROP, TERMINAL_PROP, ENDNUMBER_PROP));
+        var bag = new PropertyBag(List.of(TRANSFORMER_END_PROP, NAME_PROP, POWER_TRANSFORMER_PROP, TERMINAL_PROP, END_NUMBER_PROP));
         bag.put(TRANSFORMER_END_PROP, tfeId);
         bag.put(NAME_PROP, tfeName);
         bag.put(POWER_TRANSFORMER_PROP, tfId);
         bag.put(TERMINAL_PROP, terminalId);
-        bag.put(ENDNUMBER_PROP, endNumber);
+        bag.put(END_NUMBER_PROP, endNumber);
         bags.add(bag);
 
         setupTripleStore(bags);
