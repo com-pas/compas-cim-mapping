@@ -69,14 +69,9 @@ class CimToSclMapperContextTest {
         bag.put(SUBSTATION_PROP, substationId);
         bags.add(bag);
 
-        bag = new PropertyBag(List.of(VOLTAGE_LEVEL_PROP, NAME_PROP, NOMINAL_VOLTAGE_PROP, SUBSTATION_PROP));
-        bag.put(VOLTAGE_LEVEL_PROP, "Other ID");
-        bag.put(NAME_PROP, "Other Name");
-        bag.put(NOMINAL_VOLTAGE_PROP, "1.1");
-        bag.put(SUBSTATION_PROP, "Unknown Container ID");
-        bags.add(bag);
-
-        when(cgmesModel.voltageLevels()).thenReturn(bags);
+        var tripleStore = mock(TripleStore.class);
+        when(cgmesModel.tripleStore()).thenReturn(tripleStore);
+        when(tripleStore.query(anyString())).thenReturn(bags);
 
         var result = context.getVoltageLevelsBySubstation(substationId);
         assertNotNull(result);
@@ -199,8 +194,12 @@ class CimToSclMapperContextTest {
     void getTapChanger_WhenNoTapChangersFound_ThenEmptyOptionalReturned() {
         var tfeId = "Known Transformer End ID";
 
-        when(cgmesModel.ratioTapChangers()).thenReturn(new PropertyBags());
-        when(cgmesModel.phaseTapChangers()).thenReturn(new PropertyBags());
+        var ratioBags = new PropertyBags();
+        var phaseBags = new PropertyBags();
+
+        var tripleStore = mock(TripleStore.class);
+        when(cgmesModel.tripleStore()).thenReturn(tripleStore);
+        when(tripleStore.query(anyString())).thenReturn(ratioBags, phaseBags);
 
         var result = context.getTapChanger(tfeId);
         assertFalse(result.isPresent());
@@ -212,13 +211,17 @@ class CimToSclMapperContextTest {
         var tcName = "Name TapChanger";
         var tfeId = "Known Transformer End ID";
 
-        var bags = new PropertyBags();
+        var ratioBags = new PropertyBags();
+
         var bag = new PropertyBag(List.of(RATIO_TAP_CHANGER_PROP, NAME_PROP, TRANSFORMER_END_PROP));
         bag.put(RATIO_TAP_CHANGER_PROP, tcId);
         bag.put(NAME_PROP, tcName);
         bag.put(TRANSFORMER_END_PROP, tfeId);
-        bags.add(bag);
-        when(cgmesModel.ratioTapChangers()).thenReturn(bags);
+        ratioBags.add(bag);
+
+        var tripleStore = mock(TripleStore.class);
+        when(cgmesModel.tripleStore()).thenReturn(tripleStore);
+        when(tripleStore.query(anyString())).thenReturn(ratioBags);
 
         var result = context.getTapChanger(tfeId);
         assertTrue(result.isPresent());
@@ -233,15 +236,18 @@ class CimToSclMapperContextTest {
         var tcName = "Name TapChanger";
         var tfeId = "Known Transformer End ID";
 
-        when(cgmesModel.ratioTapChangers()).thenReturn(new PropertyBags());
+        var ratioBags = new PropertyBags();
+        var phaseBags = new PropertyBags();
 
-        var bags = new PropertyBags();
         var bag = new PropertyBag(List.of(PHASE_TAP_CHANGER_PROP, NAME_PROP, TRANSFORMER_END_PROP));
         bag.put(PHASE_TAP_CHANGER_PROP, tcId);
         bag.put(NAME_PROP, tcName);
         bag.put(TRANSFORMER_END_PROP, tfeId);
-        bags.add(bag);
-        when(cgmesModel.phaseTapChangers()).thenReturn(bags);
+        phaseBags.add(bag);
+
+        var tripleStore = mock(TripleStore.class);
+        when(cgmesModel.tripleStore()).thenReturn(tripleStore);
+        when(tripleStore.query(anyString())).thenReturn(ratioBags, phaseBags);
 
         var result = context.getTapChanger(tfeId);
         assertTrue(result.isPresent());
