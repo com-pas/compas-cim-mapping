@@ -188,7 +188,7 @@ public abstract class CimToSclMapper {
                     tTransformerWinding.setTapChanger(tTapChanger);
                 });
 
-        context.getTerminal(transformerEnd.getTerminalId())
+        context.getTerminalById(transformerEnd.getTerminalId())
                 .ifPresent(cgmesTerminal -> {
                     var tTerminal = mapTerminalToTTerminal(cgmesTerminal, context);
                     tTransformerWinding.getTerminal().add(tTerminal);
@@ -230,7 +230,7 @@ public abstract class CimToSclMapper {
             tVoltageLevel.setNomFreq(BigDecimal.ZERO);
         }
 
-        context.getTerminals(cgmesSwitch.getId())
+        context.getTerminalsByConductingEquipment(cgmesSwitch.getId())
                 .stream()
                 .map(cgmesTerminal -> mapTerminalToTTerminal(cgmesTerminal, context))
                 .forEach(tTerminal -> tConductingEquipment.getTerminal().add(tTerminal));
