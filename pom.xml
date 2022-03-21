@@ -20,16 +20,16 @@ SPDX-License-Identifier: Apache-2.0
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <compiler-plugin.version>3.10.0</compiler-plugin.version>
+        <compiler-plugin.version>3.10.1</compiler-plugin.version>
         <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
         <sonarqube-plugin.version>3.2.0</sonarqube-plugin.version>
 
         <compas.core.version>0.8.0</compas.core.version>
 
-        <quarkus.platform.version>2.7.1.Final</quarkus.platform.version>
+        <quarkus.platform.version>2.7.5.Final</quarkus.platform.version>
         <microprofile-openapi-api.version>3.0</microprofile-openapi-api.version>
         <slf4j.version>1.7.36</slf4j.version>
-        <powsybl.version>4.6.1</powsybl.version>
+        <powsybl.version>4.7.0</powsybl.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
         <openpojo.version>0.9.1</openpojo.version>
     </properties>
