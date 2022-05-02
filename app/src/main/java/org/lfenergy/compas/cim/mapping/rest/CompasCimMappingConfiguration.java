@@ -10,12 +10,11 @@ import javax.enterprise.inject.Produces;
 
 /**
  * Create Beans from other dependencies that are used in the application.
- *
- * Also, for native compilation we need to register certain classes for reflection.
- * This is done by using the RegisterForReflection annotation.
  */
 @RegisterForReflection(targets = {
-        com.powsybl.triplestore.impl.rdf4j.TripleStoreFactoryServiceRDF4J.class
+        com.powsybl.triplestore.impl.rdf4j.TripleStoreFactoryServiceRDF4J.class,
+        org.lfenergy.compas.core.jaxrs.model.ErrorResponse.class,
+        org.lfenergy.compas.core.jaxrs.model.ErrorMessage.class
 })
 public class CompasCimMappingConfiguration {
     @Produces

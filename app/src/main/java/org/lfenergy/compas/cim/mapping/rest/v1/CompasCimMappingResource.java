@@ -44,7 +44,7 @@ public class CompasCimMappingResource {
     @Path("/map")
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.APPLICATION_XML)
-    public MapResponse mapCimToScl(@Valid MapRequest request) {
+    public MapResponse map(@Valid MapRequest request) {
         String who = jsonWebToken.getClaim(userInfoProperties.who());
         LOGGER.trace("Username used for Who {}", who);
 
