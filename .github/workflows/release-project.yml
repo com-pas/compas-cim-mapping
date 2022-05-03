@@ -6,7 +6,7 @@ name: Release Project
 
 on:
   release:
-    types: [released]
+    types: [ released ]
 
 jobs:
   push_to_registry:
@@ -56,6 +56,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Deploy with Maven to GitHub Packages and Docker Hub
-        run: ./mvnw -B -s custom_maven_settings.xml -Prelease,native clean deploy
+        # See issue https://github.com/com-pas/compas-cim-mapping/issues/218
+        #        run: ./mvnw -B -s custom_maven_settings.xml -Prelease,native clean deploy
+        run: ./mvnw -B -s custom_maven_settings.xml -Prelease clean deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
