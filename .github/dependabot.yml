@@ -33,3 +33,9 @@ updates:
         versions: [ "[7.0,)" ]
       - dependency-name: org.glassfish:jakarta.el
         versions: [ "[4.0,)" ]
+
+  - package-ecosystem: "docker"
+    directory: "/app/src/main/docker/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
