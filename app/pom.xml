@@ -136,12 +136,11 @@ SPDX-License-Identifier: Apache-2.0
 
     <profiles>
         <profile>
-            <id>native</id>
+            <id>jvm-image</id>
 
             <properties>
-                <quarkus.package.type>native</quarkus.package.type>
-                <quarkus.native.container-build>true</quarkus.native.container-build> <!-- Allows for creating a Linux executable without GraalVM being installed -->
-                <quarkus.container-image.build>true</quarkus.container-image.build> <!-- Also make a Docker Image, so the native test will be executed against the container -->
+                <!-- Make a Docker Image, so the integration tests will be executed against the container -->
+                <quarkus.container-image.build>true</quarkus.container-image.build>
             </properties>
 
             <build>
@@ -158,8 +157,50 @@ SPDX-License-Identifier: Apache-2.0
                                 </goals>
                                 <configuration>
                                     <systemPropertyVariables>
-                                        <native.image.path>${project.build.directory}/${project.build.finalName}-runner</native.image.path>
-                                        <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                                        <java.util.logging.manager>
+                                            org.jboss.logmanager.LogManager
+                                        </java.util.logging.manager>
+                                        <maven.home>${maven.home}</maven.home>
+                                    </systemPropertyVariables>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>native-image</id>
+
+            <properties>
+                <!-- Make a Docker Image, so the integration tests will be executed against the container -->
+                <quarkus.container-image.build>true</quarkus.container-image.build>
+
+                <quarkus.package.type>native</quarkus.package.type>
+                <!-- Allows for creating a Linux executable without GraalVM being installed -->
+                <quarkus.native.container-build>true</quarkus.native.container-build>
+            </properties>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>${surefire-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                                <configuration>
+                                    <systemPropertyVariables>
+                                        <native.image.path>
+                                            ${project.build.directory}/${project.build.finalName}-runner
+                                        </native.image.path>
+                                        <java.util.logging.manager>org.jboss.logmanager.LogManager
+                                        </java.util.logging.manager>
                                         <maven.home>${maven.home}</maven.home>
                                     </systemPropertyVariables>
                                 </configuration>
@@ -185,8 +226,10 @@ SPDX-License-Identifier: Apache-2.0
             <id>release</id>
 
             <properties>
-                <!-- Properties only used for publishing a native docker image (default to Docker Hub) -->
+                <!-- Make a Docker Image from the component -->
                 <quarkus.container-image.build>true</quarkus.container-image.build>
+
+                <!-- Properties only used for publishing a native docker image (default to Docker Hub) -->
                 <quarkus.container-image.push>true</quarkus.container-image.push>
                 <quarkus.container-image.additional-tags>latest</quarkus.container-image.additional-tags>
             </properties>
