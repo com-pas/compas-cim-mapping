@@ -7,6 +7,6 @@ package org.lfenergy.compas.cim.mapping.rest;
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 
 @QuarkusIntegrationTest
-class NativeHealthCheckIT extends HealthCheckTest {
+class HealthCheckIT extends HealthCheckTest {
     // Execute the same tests but in native mode.
 }
