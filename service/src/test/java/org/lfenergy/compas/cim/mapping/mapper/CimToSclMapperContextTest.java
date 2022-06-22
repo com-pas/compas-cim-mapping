@@ -81,16 +81,18 @@ class CimToSclMapperContextTest {
     void getBusbarSectionsByEquipmentContainer_WhenSparQLReturnsBags_ThenPropertyBagIsConvertedToCgmesBusbarSection() {
         var busbarSectionId = "BusbarSectionId";
         var busbarSectionName = "Name BusbarSection";
+        var equipmentContainerId = "ContainerId";
 
         var bags = new PropertyBags();
-        var bag = new PropertyBag(List.of(BUSBARSECTION_PROP, NAME_PROP));
+        var bag = new PropertyBag(List.of(BUSBARSECTION_PROP, NAME_PROP, EQUIPMENT_CONTAINER_PROP));
         bag.put(BUSBARSECTION_PROP, busbarSectionId);
         bag.put(NAME_PROP, busbarSectionName);
+        bag.put(EQUIPMENT_CONTAINER_PROP, equipmentContainerId);
         bags.add(bag);
 
         setupTripleStore(bags);
 
-        var result = context.getBusbarSectionsByEquipmentContainer("Random VoltageId");
+        var result = context.getBusbarSectionsByEquipmentContainer(equipmentContainerId);
         assertNotNull(result);
         assertEquals(1, result.size());
         var busbarSection = result.get(0);
@@ -102,16 +104,18 @@ class CimToSclMapperContextTest {
     void getBaysByVoltageLevel_WhenSparQLReturnsBags_ThenPropertyBagIsConvertedToCgmesBay() {
         var bayId = "BayId";
         var bayName = "Name Bay";
+        var voltageLevelId = "VoltageLevelId";
 
         var bags = new PropertyBags();
-        var bag = new PropertyBag(List.of(BAY_PROP, NAME_PROP));
+        var bag = new PropertyBag(List.of(BAY_PROP, NAME_PROP, VOLTAGE_LEVEL_PROP));
         bag.put(BAY_PROP, bayId);
         bag.put(NAME_PROP, bayName);
+        bag.put(VOLTAGE_LEVEL_PROP, voltageLevelId);
         bags.add(bag);
 
         setupTripleStore(bags);
 
-        var result = context.getBaysByVoltageLevel("Random VoltageId");
+        var result = context.getBaysByVoltageLevel(voltageLevelId);
         assertNotNull(result);
         assertEquals(1, result.size());
         var bay = result.get(0);
@@ -242,9 +246,10 @@ class CimToSclMapperContextTest {
         var busbarSectionId = "BusbarSection ID";
 
         var bags = new PropertyBags();
-        var bag = new PropertyBag(List.of(CONNECTIVITY_NODE_PROP, NAME_PROP));
+        var bag = new PropertyBag(List.of(CONNECTIVITY_NODE_PROP, NAME_PROP, CONDUCTING_EQUIPMENT_PROP));
         bag.put(CONNECTIVITY_NODE_PROP, ccnId);
         bag.put(NAME_PROP, ccnName);
+        bag.put(CONDUCTING_EQUIPMENT_PROP, busbarSectionId);
         bags.add(bag);
 
         setupTripleStore(bags);
@@ -264,9 +269,10 @@ class CimToSclMapperContextTest {
         var bayID = "Bay ID";
 
         var bags = new PropertyBags();
-        var bag = new PropertyBag(List.of(CONNECTIVITY_NODE_PROP, NAME_PROP));
+        var bag = new PropertyBag(List.of(CONNECTIVITY_NODE_PROP, NAME_PROP, EQUIPMENT_CONTAINER_PROP));
         bag.put(CONNECTIVITY_NODE_PROP, ccnId);
         bag.put(NAME_PROP, ccnName);
+        bag.put(EQUIPMENT_CONTAINER_PROP, bayID);
         bags.add(bag);
 
         setupTripleStore(bags);
@@ -315,6 +321,7 @@ class CimToSclMapperContextTest {
         bag.put(TERMINAL_PROP, terminalId);
         bag.put(NAME_PROP, terminalName);
         bag.put(CONNECTIVITY_NODE_PROP, ccnNode);
+        bag.put(CONDUCTING_EQUIPMENT_PROP, containerId);
         bags.add(bag);
 
         setupTripleStore(bags);
