@@ -65,7 +65,7 @@ class CimToSclMapperTest {
         assertTransformerWinding(transformerWinding);
         assertTapChanger(transformerWinding.getTapChanger());
         assertTerminal(transformerWinding.getTerminal(), 1, "T3_0", "CONNECTIVITY_NODE88",
-                "_af9a4ae3-ba2e-4c34-8e47-5af894ee20f4/S1 380kV/BAY_T3_0/CONNECTIVITY_NODE88");
+                "af9a4ae3-ba2e-4c34-8e47-5af894ee20f4/S1 380kV/BAY_T3_0/CONNECTIVITY_NODE88");
 
         assertEquals(3, substation.getVoltageLevel().size());
         var voltageLevel = substation.getVoltageLevel().get(0);
@@ -76,20 +76,20 @@ class CimToSclMapperTest {
         var busbarSection = voltageLevel.getBay().get(0);
         assertBay(busbarSection, "BUSBAR10", 1, 0);
         assertConnectivityNode(busbarSection.getConnectivityNode().get(0), "CONNECTIVITY_NODE82",
-                "_af9a4ae3-ba2e-4c34-8e47-5af894ee20f4/S1 380kV/BUSBAR10/CONNECTIVITY_NODE82");
+                "af9a4ae3-ba2e-4c34-8e47-5af894ee20f4/S1 380kV/BUSBAR10/CONNECTIVITY_NODE82");
 
         // The others bay are actual bays from CIM.
         var bay = voltageLevel.getBay().get(1);
         assertBay(bay, "BAY_T4_2", 3, 3);
 
         assertConnectivityNode(bay.getConnectivityNode().get(0), "CONNECTIVITY_NODE83",
-                "_af9a4ae3-ba2e-4c34-8e47-5af894ee20f4/S1 380kV/BAY_T4_2/CONNECTIVITY_NODE83");
+                "af9a4ae3-ba2e-4c34-8e47-5af894ee20f4/S1 380kV/BAY_T4_2/CONNECTIVITY_NODE83");
 
         var conductingEquipment = bay.getConductingEquipment().get(0);
         assertConductingEquipment(conductingEquipment);
 
         assertTerminal(conductingEquipment.getTerminal(), 2, "T4_2_ADDB1", "CONNECTIVITY_NODE83",
-                "_af9a4ae3-ba2e-4c34-8e47-5af894ee20f4/S1 380kV/BAY_T4_2/CONNECTIVITY_NODE83");
+                "af9a4ae3-ba2e-4c34-8e47-5af894ee20f4/S1 380kV/BAY_T4_2/CONNECTIVITY_NODE83");
     }
 
     private void assertBay(TBay tBay, String name, int numberOfConnectivityNodes, int numberOfConductionEquipment) {
@@ -99,7 +99,7 @@ class CimToSclMapperTest {
     }
 
     private void assertSubstation(TSubstation substation) {
-        assertEquals("_af9a4ae3-ba2e-4c34-8e47-5af894ee20f4", substation.getName());
+        assertEquals("af9a4ae3-ba2e-4c34-8e47-5af894ee20f4", substation.getName());
         assertEquals("Sub1", substation.getDesc());
     }
 

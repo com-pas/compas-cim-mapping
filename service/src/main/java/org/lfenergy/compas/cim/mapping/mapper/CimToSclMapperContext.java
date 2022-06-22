@@ -26,6 +26,7 @@ public class CimToSclMapperContext {
     public static final String TERMINAL_PROP = "Terminal";
     public static final String CONNECTIVITY_NODE_PROP = "ConnectivityNode";
     public static final String EQUIPMENT_CONTAINER_PROP = "EquipmentContainer";
+    public static final String CONDUCTING_EQUIPMENT_PROP = "ConductingEquipment";
 
     public static final String NAME_PROP = "name";
     public static final String DESCRIPTION_PROP = "description";
@@ -74,16 +75,16 @@ public class CimToSclMapperContext {
                                 "    cim:VoltageLevel.Substation ?Substation ; \n" +
                                 "    cim:VoltageLevel.BaseVoltage ?BaseVoltage . \n" +
                                 "    OPTIONAL { ?VoltageLevel cim:IdentifiedObject.name ?name } \n" +
-                                " FILTER (str(?Substation) = \"http://default-cgmes-model/#" + substationId + "\") \n" +
                                 "}} \n" +
                                 "OPTIONAL { GRAPH ?graphBaseVoltage { \n" +
                                 "    ?BaseVoltage cim:BaseVoltage.nominalVoltage ?nominalVoltage . \n" +
                                 END_QUERY)
                 .stream()
-                .map(propertyBag -> new CgmesVoltageLevel(
-                        propertyBag.getId(VOLTAGE_LEVEL_PROP),
-                        propertyBag.get(NAME_PROP),
-                        propertyBag.asDouble(NOMINAL_VOLTAGE_PROP)))
+                .filter(bag -> substationId.equals(bag.getId(SUBSTATION_PROP)))
+                .map(bag -> new CgmesVoltageLevel(
+                        bag.getId(VOLTAGE_LEVEL_PROP),
+                        bag.get(NAME_PROP),
+                        bag.asDouble(NOMINAL_VOLTAGE_PROP)))
                 .collect(Collectors.toList());
     }
 
@@ -100,8 +101,9 @@ public class CimToSclMapperContext {
                                 "    a cim:BusbarSection ; \n" +
                                 "    cim:Equipment.EquipmentContainer ?EquipmentContainer . \n" +
                                 "    OPTIONAL { ?BusbarSection cim:IdentifiedObject.name ?name } \n" +
-                                " FILTER (str(?EquipmentContainer) = \"http://default-cgmes-model/#" + containerId + "\") \n" +
-                                END_QUERY).stream()
+                                END_QUERY)
+                .stream()
+                .filter(bag -> containerId.equals(bag.getId(EQUIPMENT_CONTAINER_PROP)))
                 .map(bag -> new CgmesBusbarSection(
                         bag.getId(BUSBARSECTION_PROP),
                         bag.get(NAME_PROP)))
@@ -121,8 +123,9 @@ public class CimToSclMapperContext {
                                 "    a cim:Bay ;\n" +
                                 "    cim:Bay.VoltageLevel ?VoltageLevel . \n" +
                                 "    OPTIONAL { ?Bay cim:IdentifiedObject.name ?name } \n" +
-                                " FILTER (str(?VoltageLevel) = \"http://default-cgmes-model/#" + voltageLevelId + "\") \n" +
-                                END_QUERY).stream()
+                                END_QUERY)
+                .stream()
+                .filter(bag -> voltageLevelId.equals(bag.getId(VOLTAGE_LEVEL_PROP)))
                 .map(bag -> new CgmesBay(
                         bag.getId(BAY_PROP),
                         bag.get(NAME_PROP)))
@@ -143,13 +146,13 @@ public class CimToSclMapperContext {
                                 "     cim:Equipment.EquipmentContainer ?EquipmentContainer . \n" +
                                 "     OPTIONAL { ?PowerTransformer cim:IdentifiedObject.name ?name } \n" +
                                 "     OPTIONAL { ?PowerTransformer cim:IdentifiedObject.description ?description } \n" +
-                                " FILTER (str(?EquipmentContainer) = \"http://default-cgmes-model/#" + containerId + "\") \n" +
                                 END_QUERY)
                 .stream()
-                .map(propertyBag -> new CgmesTransformer(
-                        propertyBag.getId(POWER_TRANSFORMER_PROP),
-                        propertyBag.get(NAME_PROP),
-                        propertyBag.get(DESCRIPTION_PROP)))
+                .filter(bag -> containerId.equals(bag.getId(EQUIPMENT_CONTAINER_PROP)))
+                .map(bag -> new CgmesTransformer(
+                        bag.getId(POWER_TRANSFORMER_PROP),
+                        bag.get(NAME_PROP),
+                        bag.get(DESCRIPTION_PROP)))
                 .collect(Collectors.toList());
     }
 
@@ -170,9 +173,9 @@ public class CimToSclMapperContext {
                                 "     cim:PowerTransformerEnd.PowerTransformer ?PowerTransformer ; \n" +
                                 "     cim:TransformerEnd.endNumber ?endNumber ; \n" +
                                 "     cim:TransformerEnd.Terminal ?Terminal . \n" +
-                                " FILTER (str(?PowerTransformer) = \"http://default-cgmes-model/#" + powerTransformerId + "\") \n" +
                                 END_QUERY)
                 .stream()
+                .filter(bag -> powerTransformerId.equals(bag.getId(POWER_TRANSFORMER_PROP)))
                 .map(propertyBag -> new CgmesTransformerEnd(
                         propertyBag.getId(TRANSFORMER_END_PROP),
                         propertyBag.get(NAME_PROP),
@@ -189,42 +192,41 @@ public class CimToSclMapperContext {
      */
     public Optional<CgmesTapChanger> getTapChanger(String powerTransformerEndId) {
         // Convert all the RatioTapChangers from CIM.
-        var tapChanger = processTapChangerStream(getRatioTapChangers(powerTransformerEndId), RATIO_TAP_CHANGER_PROP);
+        var tapChanger = processTapChangerStream(getRatioTapChangers(), powerTransformerEndId, RATIO_TAP_CHANGER_PROP);
         if (!tapChanger.isPresent()) {
             // Convert all the PhaseTapChangers from CIM.
-            tapChanger = processTapChangerStream(getPhaseTapChangers(powerTransformerEndId), PHASE_TAP_CHANGER_PROP);
+            tapChanger = processTapChangerStream(getPhaseTapChangers(), powerTransformerEndId, PHASE_TAP_CHANGER_PROP);
         }
         return tapChanger;
     }
 
-    private Optional<CgmesTapChanger> processTapChangerStream(Stream<PropertyBag> tapChangerStream, String idName) {
+    private Optional<CgmesTapChanger> processTapChangerStream(Stream<PropertyBag> tapChangerStream, String powerTransformerEndId, String idName) {
         return tapChangerStream
+                .filter(bag -> powerTransformerEndId.equals(bag.getId(TRANSFORMER_END_PROP)))
                 .map(propertyBag -> new CgmesTapChanger(
                         propertyBag.getId(idName),
                         propertyBag.get(NAME_PROP)))
                 .findFirst();
     }
 
-    private Stream<PropertyBag> getRatioTapChangers(String powerTransformerEndId) {
+    private Stream<PropertyBag> getRatioTapChangers() {
         return cgmesModel.tripleStore().query(
                         START_QUERY +
                                 " ?RatioTapChanger \n" +
                                 "     a cim:RatioTapChanger ; \n" +
                                 "     cim:RatioTapChanger.TransformerEnd ?TransformerEnd . \n" +
                                 "     OPTIONAL { ?RatioTapChanger cim:IdentifiedObject.name ?name } \n" +
-                                " FILTER (str(?TransformerEnd) = \"http://default-cgmes-model/#" + powerTransformerEndId + "\") \n" +
                                 END_QUERY)
                 .stream();
     }
 
-    private Stream<PropertyBag> getPhaseTapChangers(String powerTransformerEndId) {
+    private Stream<PropertyBag> getPhaseTapChangers() {
         return cgmesModel.tripleStore().query(
                         START_QUERY +
                                 " ?PhaseTapChanger \n" +
                                 "     a ?phaseTapChangerType ; \n" +
                                 "     cim:PhaseTapChanger.TransformerEnd ?TransformerEnd . \n" +
                                 "     OPTIONAL { ?PhaseTapChanger cim:IdentifiedObject.name ?name } \n" +
-                                " FILTER (str(?TransformerEnd) = \"http://default-cgmes-model/#" + powerTransformerEndId + "\") \n" +
                                 END_QUERY)
                 .stream();
     }
@@ -244,9 +246,9 @@ public class CimToSclMapperContext {
                                 " ?Terminal \n" +
                                 "     cim:Terminal.ConnectivityNode ?ConnectivityNode; \n" +
                                 "     cim:Terminal.ConductingEquipment ?ConductingEquipment; \n" +
-                                " FILTER (str(?ConductingEquipment) = \"http://default-cgmes-model/#" + busbarSectionId + "\") \n" +
                                 END_QUERY)
                 .stream()
+                .filter(bag -> busbarSectionId.equals(bag.getId(CONDUCTING_EQUIPMENT_PROP)))
                 .map(propertyBag -> new CgmesConnectivityNode(
                         propertyBag.getId(CONNECTIVITY_NODE_PROP),
                         propertyBag.get(NAME_PROP)))
@@ -261,7 +263,7 @@ public class CimToSclMapperContext {
      */
     public List<CgmesConnectivityNode> getConnectivityNodeByBay(String containerId) {
         return cgmesModel.tripleStore().query(
-                        "SELECT DISTINCT ?ConnectivityNode ?name \n" +
+                        "SELECT DISTINCT ?ConnectivityNode ?name ?EquipmentContainer \n" +
                                 "WHERE {{\n" +
                                 " GRAPH ?graph {\n" +
                                 "  ?ConnectivityNode a cim:ConnectivityNode . \n" +
@@ -272,10 +274,10 @@ public class CimToSclMapperContext {
                                 "  ?Switch a ?type ; \n" +
                                 "     cim:Equipment.EquipmentContainer ?EquipmentContainer . \n" +
                                 "     VALUES ?type { cim:Switch cim:Breaker cim:Disconnector cim:LoadBreakSwitch cim:ProtectedSwitch } . \n" +
-                                "  FILTER (str(?EquipmentContainer) = \"http://default-cgmes-model/#" + containerId + "\") \n" +
                                 END_QUERY +
                                 "ORDER BY ?name ")
                 .stream()
+                .filter(bag -> containerId.equals(bag.getId(EQUIPMENT_CONTAINER_PROP)))
                 .map(propertyBag -> new CgmesConnectivityNode(
                         propertyBag.getId(CONNECTIVITY_NODE_PROP),
                         propertyBag.get(NAME_PROP)))
@@ -296,9 +298,9 @@ public class CimToSclMapperContext {
                                 "    cim:Equipment.EquipmentContainer ?EquipmentContainer . \n" +
                                 "    OPTIONAL { ?Switch cim:IdentifiedObject.name ?name } \n" +
                                 "    VALUES ?type { cim:Switch cim:Breaker cim:Disconnector cim:LoadBreakSwitch cim:ProtectedSwitch cim:GroundDisconnector } . \n" +
-                                " FILTER (str(?EquipmentContainer) = \"http://default-cgmes-model/#" + containerId + "\") \n" +
                                 END_QUERY)
                 .stream()
+                .filter(bag -> containerId.equals(bag.getId(EQUIPMENT_CONTAINER_PROP)))
                 .map(propertyBag -> new CgmesSwitch(
                         propertyBag.getId(SWITCH_PROP),
                         propertyBag.get(NAME_PROP),
@@ -321,12 +323,12 @@ public class CimToSclMapperContext {
                                 "    OPTIONAL { ?Terminal cim:IdentifiedObject.name ?name }\n" +
                                 " ?ConductingEquipment \n" +
                                 "    a ?conductingEquipmentType .\n" +
-                                " FILTER (str(?ConductingEquipment) = \"http://default-cgmes-model/#" + conductingEquipmentId + "\") \n" +
                                 "}}\n" +
                                 "OPTIONAL { GRAPH ?graphCN {\n" +
                                 "        ?Terminal cim:Terminal.ConnectivityNode ?ConnectivityNode .\n" +
                                 END_QUERY)
                 .stream()
+                .filter(bag -> conductingEquipmentId.equals(bag.getId(CONDUCTING_EQUIPMENT_PROP)))
                 .map(propertyBag -> new CgmesTerminal(
                         propertyBag.getId(TERMINAL_PROP),
                         propertyBag.get(NAME_PROP),
@@ -349,12 +351,12 @@ public class CimToSclMapperContext {
                                 "    OPTIONAL { ?Terminal cim:IdentifiedObject.name ?name }\n" +
                                 " ?ConductingEquipment \n" +
                                 "    a ?conductingEquipmentType .\n" +
-                                " FILTER (str(?Terminal) = \"http://default-cgmes-model/#" + terminalId + "\") \n" +
                                 "}}\n" +
                                 "OPTIONAL { GRAPH ?graphCN {\n" +
                                 "        ?Terminal cim:Terminal.ConnectivityNode ?ConnectivityNode .\n" +
                                 END_QUERY)
                 .stream()
+                .filter(bag -> terminalId.equals(bag.getId(TERMINAL_PROP)))
                 .map(propertyBag -> new CgmesTerminal(
                         propertyBag.getId(TERMINAL_PROP),
                         propertyBag.get(NAME_PROP),
