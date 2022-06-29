@@ -60,7 +60,7 @@ public class CimToSclMapperContext {
                 .map(propertyBag -> new CgmesSubstation(
                         propertyBag.getId(SUBSTATION_PROP),
                         propertyBag.get(NAME_PROP)))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -91,7 +91,7 @@ public class CimToSclMapperContext {
                         bag.getId(VOLTAGE_LEVEL_PROP),
                         bag.get(NAME_PROP),
                         bag.asDouble(NOMINAL_VOLTAGE_PROP)))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -117,7 +117,7 @@ public class CimToSclMapperContext {
                 .map(bag -> new CgmesBusbarSection(
                         bag.getId(BUSBARSECTION_PROP),
                         bag.get(NAME_PROP)))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -143,7 +143,7 @@ public class CimToSclMapperContext {
                 .map(bag -> new CgmesBay(
                         bag.getId(BAY_PROP),
                         bag.get(NAME_PROP)))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -171,7 +171,7 @@ public class CimToSclMapperContext {
                         bag.getId(POWER_TRANSFORMER_PROP),
                         bag.get(NAME_PROP),
                         bag.get(DESCRIPTION_PROP)))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -203,7 +203,7 @@ public class CimToSclMapperContext {
                         propertyBag.get(NAME_PROP),
                         propertyBag.getId(TERMINAL_PROP),
                         propertyBag.get(END_NUMBER_PROP)))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -286,7 +286,7 @@ public class CimToSclMapperContext {
                 .map(propertyBag -> new CgmesConnectivityNode(
                         propertyBag.getId(CONNECTIVITY_NODE_PROP),
                         propertyBag.get(NAME_PROP)))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -317,7 +317,7 @@ public class CimToSclMapperContext {
                 .map(propertyBag -> new CgmesConnectivityNode(
                         propertyBag.getId(CONNECTIVITY_NODE_PROP),
                         propertyBag.get(NAME_PROP)))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -345,7 +345,7 @@ public class CimToSclMapperContext {
                         propertyBag.getId(SWITCH_PROP),
                         propertyBag.get(NAME_PROP),
                         propertyBag.getLocal(TYPE_PROP)))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -377,7 +377,7 @@ public class CimToSclMapperContext {
                         propertyBag.getId(TERMINAL_PROP),
                         propertyBag.get(NAME_PROP),
                         propertyBag.getId(CONNECTIVITY_NODE_PROP)))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
