@@ -159,231 +159,186 @@ class CimToSclMapperTest {
 
     @Test
     void mapSubstationToTSubstation_WhenCalledWithSubstation_ThenPropertiesMappedToTSubstation() {
-        var cgmesSubstation = mock(CgmesSubstation.class);
-        var expectedId = UUID.randomUUID().toString();
-        var expectedDesc = "Some description";
-
-        when(cgmesSubstation.getId()).thenReturn(expectedId);
-        when(cgmesSubstation.getName()).thenReturn(expectedDesc);
+        var id = UUID.randomUUID().toString();
+        var name = "Some description";
+        var cgmesSubstation = new CgmesSubstation(id, name);
 
         var sclSubstation = mapper.mapSubstationToTSubstation(cgmesSubstation, context);
 
         assertNotNull(sclSubstation);
-        assertEquals(expectedId, sclSubstation.getName());
-        assertEquals(expectedDesc, sclSubstation.getDesc());
-        verify(cgmesSubstation, times(3)).getId();
-        verify(cgmesSubstation, times(1)).getName();
+        assertEquals(id, sclSubstation.getName());
+        assertEquals(name, sclSubstation.getDesc());
         verify(context, times(1)).addLast(sclSubstation);
-        verifyNoMoreInteractions(cgmesSubstation);
     }
 
     @Test
     void mapVoltageLevelToTVoltageLevel_WhenCalledWithVoltageLevel_ThenPropertiesMappedToTVoltageLevel() {
-        var cgmesVoltageLevel = mock(CgmesVoltageLevel.class);
-        var expectedName = "TheName";
-        var expectedVoltage = BigDecimal.valueOf(100.0);
-
-        when(cgmesVoltageLevel.getNameOrId()).thenReturn(expectedName);
-        when(cgmesVoltageLevel.getNominalV()).thenReturn(expectedVoltage.doubleValue());
+        var cgmesVoltageLevel = createCgmesVoltageLevel();
 
         var sclVoltageLevel = mapper.mapVoltageLevelToTVoltageLevel(cgmesVoltageLevel, context);
 
         assertNotNull(sclVoltageLevel);
-        assertEquals(expectedName, sclVoltageLevel.getName());
-        assertEquals(expectedVoltage, sclVoltageLevel.getVoltage().getValue());
-        verify(cgmesVoltageLevel, times(3)).getId();
-        verify(cgmesVoltageLevel, times(1)).getNameOrId();
-        verify(cgmesVoltageLevel, times(1)).getNominalV();
+        assertEquals(cgmesVoltageLevel.name(), sclVoltageLevel.getName());
+        assertEquals(cgmesVoltageLevel.nominalV(), sclVoltageLevel.getVoltage().getValue().doubleValue());
         verify(context, times(1)).addLast(sclVoltageLevel);
-        verifyNoMoreInteractions(cgmesVoltageLevel);
+    }
+
+    private CgmesVoltageLevel createCgmesVoltageLevel() {
+        var id = UUID.randomUUID().toString();
+        var name = "TheVLName";
+        var voltage = BigDecimal.valueOf(100.0);
+        return new CgmesVoltageLevel(id, name, voltage.doubleValue());
     }
 
     @Test
     void mapBusbarSectionBayToTBay_WhenCalledWithCgmesBusbarSection_ThenPropertiesMappedToTBay() {
-        var tVoltageLevel = mock(TVoltageLevel.class);
-        var cgmesVoltageLevel = mock(CgmesVoltageLevel.class);
-        var cgmesBusbarSection = mock(CgmesBusbarSection.class);
-        var expectedName = "TheName";
-
-        when(cgmesBusbarSection.getNameOrId()).thenReturn(expectedName);
+        var id = UUID.randomUUID().toString();
+        var name = "TheBSName";
+        var cgmesBusbarSection = new CgmesBusbarSection(id, name);
+        var cgmesVoltageLevel = createCgmesVoltageLevel();
+        var tVoltageLevel = new TVoltageLevel();
 
         var sclBay = mapper.mapBusbarSectionBayToTBay(cgmesBusbarSection, cgmesVoltageLevel, tVoltageLevel, context);
 
         assertNotNull(sclBay);
-        assertEquals(expectedName, sclBay.getName());
-        verify(cgmesBusbarSection, times(1)).getId();
-        verify(cgmesBusbarSection, times(1)).getNameOrId();
+        assertEquals(cgmesBusbarSection.name(), sclBay.getName());
         verify(context, times(1)).addLast(sclBay);
-        verifyNoMoreInteractions(cgmesBusbarSection);
     }
 
     @Test
     void mapBayToTBay_WhenCalledWithCgmesBay_ThenPropertiesMappedToTBay() {
-        var tVoltageLevel = mock(TVoltageLevel.class);
-        var cgmesVoltageLevel = mock(CgmesVoltageLevel.class);
-        var cgmesBay = mock(CgmesBay.class);
-        var expectedName = "TheName";
-
-        when(cgmesBay.getNameOrId()).thenReturn(expectedName);
+        var id = UUID.randomUUID().toString();
+        var name = "TheBayName";
+        var cgmesBay = new CgmesBay(id, name);
+        var cgmesVoltageLevel = createCgmesVoltageLevel();
+        var tVoltageLevel = new TVoltageLevel();
 
         var sclBay = mapper.mapBayToTBay(cgmesBay, cgmesVoltageLevel, tVoltageLevel, context);
 
         assertNotNull(sclBay);
-        assertEquals(expectedName, sclBay.getName());
-        verify(cgmesBay, times(3)).getId();
-        verify(cgmesBay, times(1)).getNameOrId();
+        assertEquals(cgmesBay.name(), sclBay.getName());
         verify(context, times(1)).addLast(sclBay);
-        verifyNoMoreInteractions(cgmesBay);
     }
 
     @Test
     void mapTransformerToTPowerTransformer_WhenCalledWithCgmesTransformer_ThenPropertiesMappedToTPowerTransformer() {
-        var cgmesTransformer = mock(CgmesTransformer.class);
-        var expectedName = "TheName";
-        var expectedDesc = "Desc";
-
-        when(cgmesTransformer.getNameOrId()).thenReturn(expectedName);
-        when(cgmesTransformer.getDescription()).thenReturn(expectedDesc);
+        var id = UUID.randomUUID().toString();
+        var name = "TheName";
+        var desc = "Desc";
+        var cgmesTransformer = new CgmesTransformer(id, name, desc);
 
         var sclPowerTransformer = mapper.mapTransformerToTPowerTransformer(cgmesTransformer, context);
 
         assertNotNull(sclPowerTransformer);
-        assertEquals(expectedName, sclPowerTransformer.getName());
-        assertEquals(expectedDesc, sclPowerTransformer.getDesc());
+        assertEquals(cgmesTransformer.name(), sclPowerTransformer.getName());
+        assertEquals(cgmesTransformer.description(), sclPowerTransformer.getDesc());
         assertEquals(TPowerTransformerEnum.PTR, sclPowerTransformer.getType());
-        verify(cgmesTransformer, times(1)).getId();
-        verify(cgmesTransformer, times(1)).getNameOrId();
-        verify(cgmesTransformer, times(1)).getDescription();
-        verifyNoMoreInteractions(cgmesTransformer);
     }
 
     @Test
     void mapTransformerEndToTTransformerWinding_WhenCalledWithCgmesTransformerEnd_ThenPropertiesMappedToTTransformerWinding() {
-        var cgmesTransformerEnd = mock(CgmesTransformerEnd.class);
-        var expectedName = "TheName";
-        var expectedEndNumber = "1";
-
-        when(cgmesTransformerEnd.getUniqueName()).thenReturn(expectedName + "_" + expectedEndNumber);
+        var id = UUID.randomUUID().toString();
+        var name = "TheName";
+        var desc = "Desc";
+        var terminalId = "12345";
+        var endNumber = "1";
+        var cgmesTransformerEnd = new CgmesTransformerEnd(id, name, terminalId, endNumber);
 
         var sclTransformerWinding = mapper.mapTransformerEndToTTransformerWinding(cgmesTransformerEnd, context);
 
         assertNotNull(sclTransformerWinding);
-        assertEquals(expectedName + "_" + expectedEndNumber, sclTransformerWinding.getName());
+        assertEquals(cgmesTransformerEnd.getUniqueName(), sclTransformerWinding.getName());
         assertEquals(TTransformerWindingEnum.PTW, sclTransformerWinding.getType());
-        verify(cgmesTransformerEnd, times(1)).getId();
-        verify(cgmesTransformerEnd, times(1)).getUniqueName();
-        verify(cgmesTransformerEnd, times(1)).getTerminalId();
-        verifyNoMoreInteractions(cgmesTransformerEnd);
     }
 
     @Test
     void mapTapChangerToTTapChanger_WhenCalledWithCgmesTapChanger_ThenPropertiesMappedToTTapChanger() {
-        var cgmesTapChanger = mock(CgmesTapChanger.class);
-        var expectedName = "TheName";
-
-        when(cgmesTapChanger.getNameOrId()).thenReturn(expectedName);
+        var id = UUID.randomUUID().toString();
+        var name = "TheName";
+        var cgmesTapChanger = new CgmesTapChanger(id, name);
 
         var sclTapChanger = mapper.mapTapChangerToTTapChanger(cgmesTapChanger, context);
 
         assertNotNull(sclTapChanger);
-        assertEquals(expectedName, sclTapChanger.getName());
+        assertEquals(cgmesTapChanger.name(), sclTapChanger.getName());
         assertEquals("LTC", sclTapChanger.getType());
-        verify(cgmesTapChanger, times(1)).getNameOrId();
-        verifyNoMoreInteractions(cgmesTapChanger);
     }
 
     @Test
     void mapConnectivityNodeToTConnectivityNode_WhenCalledWithCgmesConnectivityNode_ThenPropertiesMappedToTConnectivityNode() {
-        var cgmesConnectivityNode = mock(CgmesConnectivityNode.class);
-        var expectedId = "Id";
-        var expectedName = "TheName";
-        var expectedPathName = "ThePathName";
+        var id = UUID.randomUUID().toString();
+        var name = "TheName";
+        var pathName = "ThePathName";
+        var cgmesConnectivityNode = new CgmesConnectivityNode(id, name);
 
-        when(cgmesConnectivityNode.getId()).thenReturn(expectedId);
-        when(cgmesConnectivityNode.getNameOrId()).thenReturn(expectedName);
-        when(context.createPathName()).thenReturn(expectedPathName);
+        when(context.createPathName()).thenReturn(pathName);
 
         var sclConnectivityNode = mapper.mapConnectivityNodeToTConnectivityNode(cgmesConnectivityNode, context);
 
         assertNotNull(sclConnectivityNode);
-        assertEquals(expectedName, sclConnectivityNode.getName());
-        assertEquals(expectedPathName, sclConnectivityNode.getPathName());
-        verify(cgmesConnectivityNode, times(1)).getId();
-        verify(cgmesConnectivityNode, times(1)).getNameOrId();
+        assertEquals(cgmesConnectivityNode.name(), sclConnectivityNode.getName());
+        assertEquals(pathName, sclConnectivityNode.getPathName());
         verify(context, times(1)).addLast(sclConnectivityNode);
-        verify(context, times(1)).saveTConnectivityNode(eq(expectedId), any(TConnectivityNode.class));
-        verifyNoMoreInteractions(cgmesConnectivityNode);
+        verify(context, times(1)).saveTConnectivityNode(eq(id), any(TConnectivityNode.class));
     }
 
     @Test
     void mapSwitchToTConductingEquipment_WhenCalledWithCgmesSwitchOtherType_ThenPropertiesMappedToTConductingEquipment() {
-        var tVoltageLevel = mock(TVoltageLevel.class);
-        var cgmesSwitch = mock(CgmesSwitch.class);
-        var expectedName = "TheName";
-        var expectedType = SwitchType.CBR.name();
+        var id = UUID.randomUUID().toString();
+        var name = "TheName";
+        var type = "Breaker";
+        var cgmesSwitch = new CgmesSwitch(id, name, type);
 
-        when(cgmesSwitch.getNameOrId()).thenReturn(expectedName);
-        when(cgmesSwitch.getType()).thenReturn(SwitchType.CBR.getCimTypes().get(0));
+        var tVoltageLevel = new TVoltageLevel();
+        tVoltageLevel.setNomFreq(BigDecimal.ONE);
 
         var sclConductingEquipment = mapper.mapSwitchToTConductingEquipment(cgmesSwitch, tVoltageLevel, context);
 
         assertNotNull(sclConductingEquipment);
-        assertEquals(expectedName, sclConductingEquipment.getName());
-        assertEquals(expectedType, sclConductingEquipment.getType());
-        verify(cgmesSwitch, times(1)).getId();
-        verify(cgmesSwitch, times(1)).getNameOrId();
-        verify(cgmesSwitch, times(2)).getType();
-        verify(tVoltageLevel, never()).setNomFreq(any(BigDecimal.class));
+        assertEquals(cgmesSwitch.name(), sclConductingEquipment.getName());
+        assertEquals(SwitchType.convertSwitchType(type).name(), sclConductingEquipment.getType());
+        assertEquals(BigDecimal.ONE, tVoltageLevel.getNomFreq());
         verify(context, times(1)).addLast(sclConductingEquipment);
-        verifyNoMoreInteractions(cgmesSwitch);
     }
 
     @Test
     void mapSwitchToTConductingEquipment_WhenCalledWithCgmesSwitchDCLineSegment_ThenPropertiesMappedToTConductingEquipment() {
-        var tVoltageLevel = mock(TVoltageLevel.class);
-        var cgmesSwitch = mock(CgmesSwitch.class);
-        var expectedName = "TheName";
-        var expectedType = SwitchType.CAB.name();
+        var id = UUID.randomUUID().toString();
+        var name = "TheName";
+        var type = DC_LINE_SEGMENT_TYPE;
+        var cgmesSwitch = new CgmesSwitch(id, name, type);
 
-        when(cgmesSwitch.getNameOrId()).thenReturn(expectedName);
-        when(cgmesSwitch.getType()).thenReturn(DC_LINE_SEGMENT_TYPE);
+        var tVoltageLevel = new TVoltageLevel();
+        tVoltageLevel.setNomFreq(BigDecimal.ONE);
 
         var sclConductingEquipment = mapper.mapSwitchToTConductingEquipment(cgmesSwitch, tVoltageLevel, context);
 
         assertNotNull(sclConductingEquipment);
-        assertEquals(expectedName, sclConductingEquipment.getName());
-        assertEquals(expectedType, sclConductingEquipment.getType());
-        verify(cgmesSwitch, times(1)).getId();
-        verify(cgmesSwitch, times(1)).getNameOrId();
-        verify(cgmesSwitch, times(2)).getType();
-        verify(tVoltageLevel, times(1)).setNomFreq(BigDecimal.ZERO);
+        assertEquals(cgmesSwitch.name(), sclConductingEquipment.getName());
+        assertEquals(SwitchType.convertSwitchType(type).name(), sclConductingEquipment.getType());
+        assertEquals(BigDecimal.ZERO, tVoltageLevel.getNomFreq());
         verify(context, times(1)).addLast(sclConductingEquipment);
-        verifyNoMoreInteractions(cgmesSwitch);
     }
 
     @Test
     void mapTerminalToTTerminal_WhenCalledWithCgmesTerminal_ThenPropertiesMappedToTTerminal() {
-        var cgmesTerminal = mock(CgmesTerminal.class);
-        var expectedName = "TheName";
-        var expectedConnectivityNode = "CN ID";
+        var id = UUID.randomUUID().toString();
+        var name = "TheName";
+        var connectivityNode = "CN ID";
+        var cgmesTerminal = new CgmesTerminal(id, name, connectivityNode);
+
         var expectedCNPathName = "CN Pathname";
         var expectedCNodeName = "CN Name";
-
-        when(cgmesTerminal.getNameOrId()).thenReturn(expectedName);
-        when(cgmesTerminal.getConnectivityNodeId()).thenReturn(expectedConnectivityNode);
-        when(context.getPathnameFromConnectivityNode(expectedConnectivityNode)).thenReturn(Optional.of(expectedCNPathName));
-        when(context.getNameFromConnectivityNode(expectedConnectivityNode)).thenReturn(Optional.of(expectedCNodeName));
+        when(context.getPathnameFromConnectivityNode(connectivityNode)).thenReturn(Optional.of(expectedCNPathName));
+        when(context.getNameFromConnectivityNode(connectivityNode)).thenReturn(Optional.of(expectedCNodeName));
 
         var sclTerminal = mapper.mapTerminalToTTerminal(cgmesTerminal, context);
 
         assertNotNull(sclTerminal);
-        assertEquals(expectedName, sclTerminal.getName());
+        assertEquals(cgmesTerminal.name(), sclTerminal.getName());
         assertEquals(expectedCNPathName, sclTerminal.getConnectivityNode());
         assertEquals(expectedCNodeName, sclTerminal.getCNodeName());
-        verify(cgmesTerminal, times(1)).getNameOrId();
-        verify(cgmesTerminal, times(2)).getConnectivityNodeId();
-        verify(context, times(1)).getPathnameFromConnectivityNode(expectedConnectivityNode);
-        verify(context, times(1)).getNameFromConnectivityNode(expectedConnectivityNode);
-        verifyNoMoreInteractions(cgmesTerminal, context);
+        verify(context, times(1)).getPathnameFromConnectivityNode(connectivityNode);
+        verify(context, times(1)).getNameFromConnectivityNode(connectivityNode);
     }
 }

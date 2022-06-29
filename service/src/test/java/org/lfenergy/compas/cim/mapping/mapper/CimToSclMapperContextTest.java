@@ -49,8 +49,8 @@ class CimToSclMapperContextTest {
         assertNotNull(result);
         assertEquals(1, result.size());
         var substation = result.get(0);
-        assertEquals(substationId, substation.getId());
-        assertEquals(substationName, substation.getName());
+        assertEquals(substationId, substation.id());
+        assertEquals(substationName, substation.name());
     }
 
     @Test
@@ -73,8 +73,8 @@ class CimToSclMapperContextTest {
         assertNotNull(result);
         assertEquals(1, result.size());
         var voltageLevel = result.get(0);
-        assertEquals(voltageLevelId, voltageLevel.getId());
-        assertEquals(voltageLevelName, voltageLevel.getName());
+        assertEquals(voltageLevelId, voltageLevel.id());
+        assertEquals(voltageLevelName, voltageLevel.name());
     }
 
     @Test
@@ -96,8 +96,8 @@ class CimToSclMapperContextTest {
         assertNotNull(result);
         assertEquals(1, result.size());
         var busbarSection = result.get(0);
-        assertEquals(busbarSectionId, busbarSection.getId());
-        assertEquals(busbarSectionName, busbarSection.getName());
+        assertEquals(busbarSectionId, busbarSection.id());
+        assertEquals(busbarSectionName, busbarSection.name());
     }
 
     @Test
@@ -119,8 +119,8 @@ class CimToSclMapperContextTest {
         assertNotNull(result);
         assertEquals(1, result.size());
         var bay = result.get(0);
-        assertEquals(bayId, bay.getId());
-        assertEquals(bayName, bay.getName());
+        assertEquals(bayId, bay.id());
+        assertEquals(bayName, bay.name());
     }
 
     @Test
@@ -144,9 +144,9 @@ class CimToSclMapperContextTest {
         assertNotNull(result);
         assertEquals(1, result.size());
         var transformer = result.get(0);
-        assertEquals(pwId, transformer.getId());
-        assertEquals(pwName, transformer.getName());
-        assertEquals(pwDesc, transformer.getDescription());
+        assertEquals(pwId, transformer.id());
+        assertEquals(pwName, transformer.name());
+        assertEquals(pwDesc, transformer.description());
     }
 
     @Test
@@ -172,11 +172,11 @@ class CimToSclMapperContextTest {
         assertNotNull(result);
         assertEquals(1, result.size());
         var ccn = result.get(0);
-        assertEquals(tfeId, ccn.getId());
+        assertEquals(tfeId, ccn.id());
         assertEquals(tfeName + "_" + endNumber, ccn.getUniqueName());
-        assertEquals(tfeName, ccn.getName());
-        assertEquals(terminalId, ccn.getTerminalId());
-        assertEquals(endNumber, ccn.getEndNumber());
+        assertEquals(tfeName, ccn.name());
+        assertEquals(terminalId, ccn.terminalId());
+        assertEquals(endNumber, ccn.endNumber());
     }
 
     @Test
@@ -211,8 +211,8 @@ class CimToSclMapperContextTest {
         var result = context.getTapChanger(tfeId);
         assertTrue(result.isPresent());
         var tapChanger = result.get();
-        assertEquals(tcId, tapChanger.getId());
-        assertEquals(tcName, tapChanger.getName());
+        assertEquals(tcId, tapChanger.id());
+        assertEquals(tcName, tapChanger.name());
     }
 
     @Test
@@ -235,8 +235,8 @@ class CimToSclMapperContextTest {
         var result = context.getTapChanger(tfeId);
         assertTrue(result.isPresent());
         var tapChanger = result.get();
-        assertEquals(tcId, tapChanger.getId());
-        assertEquals(tcName, tapChanger.getName());
+        assertEquals(tcId, tapChanger.id());
+        assertEquals(tcName, tapChanger.name());
     }
 
     @Test
@@ -258,8 +258,8 @@ class CimToSclMapperContextTest {
         assertNotNull(result);
         assertEquals(1, result.size());
         var ccn = result.get(0);
-        assertEquals(ccnId, ccn.getId());
-        assertEquals(ccnName, ccn.getName());
+        assertEquals(ccnId, ccn.id());
+        assertEquals(ccnName, ccn.name());
     }
 
     @Test
@@ -281,8 +281,8 @@ class CimToSclMapperContextTest {
         assertNotNull(result);
         assertEquals(1, result.size());
         var ccn = result.get(0);
-        assertEquals(ccnId, ccn.getId());
-        assertEquals(ccnName, ccn.getName());
+        assertEquals(ccnId, ccn.id());
+        assertEquals(ccnName, ccn.name());
     }
 
     @Test
@@ -305,8 +305,8 @@ class CimToSclMapperContextTest {
         assertNotNull(result);
         assertEquals(1, result.size());
         var switchEquipment = result.get(0);
-        assertEquals(switchId, switchEquipment.getId());
-        assertEquals(switchName, switchEquipment.getName());
+        assertEquals(switchId, switchEquipment.id());
+        assertEquals(switchName, switchEquipment.name());
     }
 
     @Test
@@ -330,9 +330,9 @@ class CimToSclMapperContextTest {
         assertNotNull(result);
         assertEquals(1, result.size());
         var terminal = result.get(0);
-        assertEquals(terminalId, terminal.getId());
-        assertEquals(terminalName, terminal.getName());
-        assertEquals(ccnNode, terminal.getConnectivityNodeId());
+        assertEquals(terminalId, terminal.id());
+        assertEquals(terminalName, terminal.name());
+        assertEquals(ccnNode, terminal.connectivityNodeId());
     }
 
 
@@ -354,9 +354,9 @@ class CimToSclMapperContextTest {
         var result = context.getTerminalById(terminalId);
         assertNotNull(result);
         var terminal = result.get();
-        assertEquals(terminalId, terminal.getId());
-        assertEquals(terminalName, terminal.getName());
-        assertEquals(ccnNode, terminal.getConnectivityNodeId());
+        assertEquals(terminalId, terminal.id());
+        assertEquals(terminalName, terminal.name());
+        assertEquals(ccnNode, terminal.connectivityNodeId());
     }
 
     @Test

@@ -65,13 +65,13 @@ public abstract class CimToSclMapper {
     protected void afterSubstationToTSubstation(CgmesSubstation substation,
                                                 @MappingTarget TSubstation tSubstation,
                                                 @Context CimToSclMapperContext context) {
-        context.getVoltageLevelsBySubstation(substation.getId())
+        context.getVoltageLevelsBySubstation(substation.id())
                 .stream()
                 .map(voltageLevel -> mapVoltageLevelToTVoltageLevel(voltageLevel, context))
                 .forEach(tVoltageLevel -> tSubstation.getVoltageLevel().add(tVoltageLevel));
 
         // PowerTransformers coupled to the Bay Level.
-        context.getTransformers(substation.getId())
+        context.getTransformers(substation.id())
                 .stream()
                 .map(transformer -> mapTransformerToTPowerTransformer(transformer, context))
                 .forEach(tPowerTransformer -> tSubstation.getPowerTransformer().add(tPowerTransformer));
@@ -90,18 +90,18 @@ public abstract class CimToSclMapper {
                                                     @Context CimToSclMapperContext context) {
         // First we need to process the BusbarSections before the Bays.
         // This way the Connectivity Nodes from the BusbarSections are known to the Terminals in the Bay.
-        context.getBusbarSectionsByEquipmentContainer(cgmesVoltageLevel.getId())
+        context.getBusbarSectionsByEquipmentContainer(cgmesVoltageLevel.id())
                 .stream()
                 .map(cgmesBusbarSection -> mapBusbarSectionBayToTBay(cgmesBusbarSection, cgmesVoltageLevel, tVoltageLevel, context))
                 .forEach(tBay -> tVoltageLevel.getBay().add(tBay));
 
-        context.getBaysByVoltageLevel(cgmesVoltageLevel.getId())
+        context.getBaysByVoltageLevel(cgmesVoltageLevel.id())
                 .stream()
                 .map(bay -> mapBayToTBay(bay, cgmesVoltageLevel, tVoltageLevel, context))
                 .forEach(tBay -> tVoltageLevel.getBay().add(tBay));
 
         // PowerTransformers coupled to the Bay Level.
-        context.getTransformers(cgmesVoltageLevel.getId())
+        context.getTransformers(cgmesVoltageLevel.id())
                 .stream()
                 .map(transformer -> mapTransformerToTPowerTransformer(transformer, context))
                 .forEach(tPowerTransformer -> tVoltageLevel.getPowerTransformer().add(tPowerTransformer));
@@ -117,8 +117,8 @@ public abstract class CimToSclMapper {
     protected void afterBusbarSectionBayToTBay(CgmesBusbarSection cgmesBusbarSection,
                                                @MappingTarget TBay tBay,
                                                @Context CimToSclMapperContext context) {
-        context.getConnectivityNodeByBusbarSection(cgmesBusbarSection.getId()).stream()
-                .filter(cn -> !context.containsTConnectivityNode(cn.getId()))
+        context.getConnectivityNodeByBusbarSection(cgmesBusbarSection.id()).stream()
+                .filter(cn -> !context.containsTConnectivityNode(cn.id()))
                 .map(cn -> mapConnectivityNodeToTConnectivityNode(cn, context))
                 .forEach(tConnectivityNode -> tBay.getConnectivityNode().add(tConnectivityNode));
     }
@@ -136,20 +136,20 @@ public abstract class CimToSclMapper {
                                   @Context CimToSclMapperContext context) {
         // First we will process the Connectivity Nodes, because their path names are needed in the Terminal
         // of a Conduction Equipment.
-        context.getConnectivityNodeByBay(cgmesBay.getId())
+        context.getConnectivityNodeByBay(cgmesBay.id())
                 .stream()
-                .filter(cn -> !context.containsTConnectivityNode(cn.getId()))
+                .filter(cn -> !context.containsTConnectivityNode(cn.id()))
                 .map(cn -> mapConnectivityNodeToTConnectivityNode(cn, context))
                 .forEach(tConnectivityNode -> tBay.getConnectivityNode().add(tConnectivityNode));
 
         // Now we can process the Conduction Equipment with their terminals.
-        context.getSwitches(cgmesBay.getId())
+        context.getSwitches(cgmesBay.id())
                 .stream()
                 .map(cgmesSwitch -> mapSwitchToTConductingEquipment(cgmesSwitch, tVoltageLevel, context))
                 .forEach(tConductingEquipment -> tBay.getConductingEquipment().add(tConductingEquipment));
 
         // PowerTransformers coupled to the Bay Level.
-        context.getTransformers(cgmesBay.getId())
+        context.getTransformers(cgmesBay.id())
                 .stream()
                 .map(transformer -> mapTransformerToTPowerTransformer(transformer, context))
                 .forEach(tPowerTransformer -> tBay.getPowerTransformer().add(tPowerTransformer));
@@ -166,7 +166,7 @@ public abstract class CimToSclMapper {
                                                        @MappingTarget TPowerTransformer tPowerTransformer,
                                                        @Context CimToSclMapperContext context) {
         // PowerTransformer Ends coupled to the PowerTransformer.
-        context.getTransformerEnds(transformer.getId())
+        context.getTransformerEnds(transformer.id())
                 .stream()
                 .map(transformerEnd -> mapTransformerEndToTTransformerWinding(transformerEnd, context))
                 .forEach(tTransformerWinding -> tPowerTransformer.getTransformerWinding().add(tTransformerWinding));
@@ -182,13 +182,13 @@ public abstract class CimToSclMapper {
                                                             @MappingTarget TTransformerWinding tTransformerWinding,
                                                             @Context CimToSclMapperContext context) {
         // Convert the Ratio-/PhaseTapChanger from IEC CIM to IEC 61850.
-        context.getTapChanger(transformerEnd.getId())
+        context.getTapChanger(transformerEnd.id())
                 .ifPresent(cgmesTapChanger -> {
                     var tTapChanger = mapTapChangerToTTapChanger(cgmesTapChanger, context);
                     tTransformerWinding.setTapChanger(tTapChanger);
                 });
 
-        context.getTerminalById(transformerEnd.getTerminalId())
+        context.getTerminalById(transformerEnd.terminalId())
                 .ifPresent(cgmesTerminal -> {
                     var tTerminal = mapTerminalToTTerminal(cgmesTerminal, context);
                     tTransformerWinding.getTerminal().add(tTerminal);
@@ -211,11 +211,11 @@ public abstract class CimToSclMapper {
                                                             @Context CimToSclMapperContext context) {
         var pathName = context.createPathName();
         tConnectivityNode.setPathName(pathName);
-        context.saveTConnectivityNode(cgmesConnectivityNode.getId(), tConnectivityNode);
+        context.saveTConnectivityNode(cgmesConnectivityNode.id(), tConnectivityNode);
     }
 
     @Mapping(target = "name", source = "nameOrId")
-    @Mapping(target = "type", expression = "java( org.lfenergy.compas.cim.mapping.model.SwitchType.convertSwitchType(cgmesSwitch.getType()).name() )")
+    @Mapping(target = "type", expression = "java( org.lfenergy.compas.cim.mapping.model.SwitchType.convertSwitchType(cgmesSwitch.type()).name() )")
     protected abstract TConductingEquipment mapSwitchToTConductingEquipment(CgmesSwitch cgmesSwitch,
                                                                             @Context TVoltageLevel tVoltageLevel,
                                                                             @Context CimToSclMapperContext context);
@@ -226,11 +226,11 @@ public abstract class CimToSclMapper {
                                                      @Context TVoltageLevel tVoltageLevel,
                                                      @Context CimToSclMapperContext context) {
         // For DCLineSegment the nomFreq from the Voltage Level to 0
-        if (DC_LINE_SEGMENT_TYPE.equals(cgmesSwitch.getType())) {
+        if (DC_LINE_SEGMENT_TYPE.equals(cgmesSwitch.type())) {
             tVoltageLevel.setNomFreq(BigDecimal.ZERO);
         }
 
-        context.getTerminalsByConductingEquipment(cgmesSwitch.getId())
+        context.getTerminalsByConductingEquipment(cgmesSwitch.id())
                 .stream()
                 .map(cgmesTerminal -> mapTerminalToTTerminal(cgmesTerminal, context))
                 .forEach(tTerminal -> tConductingEquipment.getTerminal().add(tTerminal));
@@ -238,8 +238,8 @@ public abstract class CimToSclMapper {
 
 
     @Mapping(target = "name", source = "nameOrId")
-    @Mapping(target = "connectivityNode", expression = "java( context.getPathnameFromConnectivityNode(cgmesTerminal.getConnectivityNodeId()).orElse(null) )")
-    @Mapping(target = "CNodeName", expression = "java( context.getNameFromConnectivityNode(cgmesTerminal.getConnectivityNodeId()).orElse(null) )")
+    @Mapping(target = "connectivityNode", expression = "java( context.getPathnameFromConnectivityNode(cgmesTerminal.connectivityNodeId()).orElse(null) )")
+    @Mapping(target = "CNodeName", expression = "java( context.getNameFromConnectivityNode(cgmesTerminal.connectivityNodeId()).orElse(null) )")
     protected abstract TTerminal mapTerminalToTTerminal(CgmesTerminal cgmesTerminal,
                                                         @Context CimToSclMapperContext context);
 
