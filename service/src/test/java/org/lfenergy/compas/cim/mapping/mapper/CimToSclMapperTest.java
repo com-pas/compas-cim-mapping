@@ -160,7 +160,7 @@ class CimToSclMapperTest {
     @Test
     void mapSubstationToTSubstation_WhenCalledWithSubstation_ThenPropertiesMappedToTSubstation() {
         var id = UUID.randomUUID().toString();
-        var name = "Some description";
+        var name = "Some name";
         var cgmesSubstation = new CgmesSubstation(id, name);
 
         var sclSubstation = mapper.mapSubstationToTSubstation(cgmesSubstation, context);
