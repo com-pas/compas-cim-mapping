@@ -11,7 +11,7 @@ import com.openpojo.validation.test.impl.GetterTester;
 import com.openpojo.validation.test.impl.SetterTester;
 import org.junit.jupiter.api.Test;
 
-abstract class AbstractPojoTester {
+public abstract class AbstractPojoTester {
     @Test
     void validateSettersAndGetters() {
         var personPojo = PojoClassFactory.getPojoClass(getClassToBeTested());
