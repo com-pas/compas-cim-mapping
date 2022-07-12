@@ -3,8 +3,5 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.compas.cim.mapping.model;
 
-public class CgmesConnectivityNode extends AbstractCgmesEntity {
-    public CgmesConnectivityNode(String id, String name) {
-        super(id, name);
-    }
+public record CgmesConnectivityNode(String id, String name) implements CgmesCommonEntity {
 }
