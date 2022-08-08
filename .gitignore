@@ -1,69 +1,47 @@
-# SPDX-FileCopyrightText: 2021 Alliander N.V.
+# SPDX-FileCopyrightText: 2022 Alliander N.V.
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# Compiled class file
-*.class
+#Maven
+/.mvn/wrapper/maven-wrapper.jar
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+release.properties
 
-# Log file
-*.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-
-# Alliander specific
-oc
-
-# Gradle stuff
-.gradle
-**/build/
-!src/**/build/
-
-# Ignore Gradle GUI config
-gradle-app.setting
-
-# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
-!gradle-wrapper.jar
-
-# Cache of project
-.gradletasknamecache
-
-# IDE specific
-.vscode/
-.idea
-
-# General
-.DS_Store
-target
-*.iml
-.settings
+# Eclipse
 .project
 .classpath
-out
-lib
-bin
-.java-version
-*.orig
-*.rej
+.settings/
+bin/
+
+# IntelliJ
+.idea
+*.ipr
+*.iml
+*.iws
+
+# NetBeans
+nb-configuration.xml
+
+# Visual Studio Code
+.vscode
+.factorypath
+
+# OSX
+.DS_Store
+
+# Vim
 *.swp
 *.swo
-.cache
-build
+
+# patch
+*.orig
+*.rej
+
+# Local environment
+.env
 
 # Quarkus specific
 quarkus.log
