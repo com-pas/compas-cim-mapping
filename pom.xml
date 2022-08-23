@@ -27,7 +27,7 @@ SPDX-License-Identifier: Apache-2.0
 
         <quarkus.platform.version>2.11.2.Final</quarkus.platform.version>
         <microprofile-openapi-api.version>3.0</microprofile-openapi-api.version>
-        <slf4j.version>1.7.36</slf4j.version>
+        <slf4j.version>2.0.0</slf4j.version>
         <powsybl.version>4.9.2</powsybl.version>
         <mapstruct.version>1.5.2.Final</mapstruct.version>
         <openpojo.version>0.9.1</openpojo.version>
