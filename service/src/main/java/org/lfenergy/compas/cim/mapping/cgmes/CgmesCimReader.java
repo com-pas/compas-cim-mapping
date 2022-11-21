@@ -8,10 +8,10 @@ import com.powsybl.cgmes.model.CgmesModelFactory;
 import com.powsybl.commons.datasource.ReadOnlyMemDataSource;
 import com.powsybl.triplestore.api.TripleStoreFactory;
 import org.apache.commons.io.input.ReaderInputStream;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.lfenergy.compas.cim.mapping.exception.CompasCimMappingException;
 import org.lfenergy.compas.cim.mapping.model.CimData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.io.InputStream;
@@ -28,7 +28,7 @@ import static org.lfenergy.compas.cim.mapping.exception.CompasCimMappingErrorCod
  */
 @ApplicationScoped
 public class CgmesCimReader {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CgmesCimReader.class);
+    private static final Logger LOGGER = LogManager.getLogger(CgmesCimReader.class);
 
     /**
      * Use PowSyBl to convert a CIM XML InputStream to the PowSyBl Cgmes Model.
