@@ -3,12 +3,12 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.lfenergy.compas.cim.mapping.mapper;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.lfenergy.compas.cim.mapping.model.*;
 import org.lfenergy.compas.scl2007b4.model.*;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 
@@ -25,7 +25,7 @@ import static org.lfenergy.compas.cim.mapping.CimMappingConstants.DC_LINE_SEGMEN
 public abstract class CimToSclMapper {
     public static final CimToSclMapper INSTANCE = Mappers.getMapper(CimToSclMapper.class);
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CimToSclMapper.class);
+    private static final Logger LOGGER = LogManager.getLogger(CimToSclMapper.class);
 
     /**
      * Top level mapping method to start the mapping of all known elements from Cgmes Model
