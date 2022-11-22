@@ -45,6 +45,7 @@ public class CompasCimMappingResource {
     @Consumes(MediaType.APPLICATION_XML)
     @Produces(MediaType.APPLICATION_XML)
     public MapResponse map(@Valid MapRequest request) {
+        LOGGER.info("Converting CIM File to SCL File");
         String who = jsonWebToken.getClaim(userInfoProperties.who());
         LOGGER.trace("Username used for Who {}", who);
 
