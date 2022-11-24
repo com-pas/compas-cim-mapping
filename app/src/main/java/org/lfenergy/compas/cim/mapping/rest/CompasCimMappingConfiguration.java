@@ -13,8 +13,8 @@ import javax.enterprise.inject.Produces;
  */
 @RegisterForReflection(targets = {
         com.powsybl.triplestore.impl.rdf4j.TripleStoreFactoryServiceRDF4J.class,
-        org.lfenergy.compas.core.jaxrs.model.ErrorResponse.class,
-        org.lfenergy.compas.core.jaxrs.model.ErrorMessage.class,
+        org.lfenergy.compas.core.commons.model.ErrorResponse.class,
+        org.lfenergy.compas.core.commons.model.ErrorMessage.class,
         javax.xml.namespace.QName.class
 })
 public class CompasCimMappingConfiguration {
