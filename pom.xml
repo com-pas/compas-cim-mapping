@@ -29,7 +29,7 @@ SPDX-License-Identifier: Apache-2.0
         <microprofile-openapi-api.version>3.1</microprofile-openapi-api.version>
         <powsybl.version>5.2.1</powsybl.version>
         <log4j2.version>2.20.0</log4j2.version>
-        <mapstruct.version>1.5.3.Final</mapstruct.version>
+        <mapstruct.version>1.5.4.Final</mapstruct.version>
         <openpojo.version>0.9.1</openpojo.version>
     </properties>
 
