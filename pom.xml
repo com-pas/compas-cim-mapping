@@ -25,11 +25,11 @@ SPDX-License-Identifier: Apache-2.0
 
         <compas.core.version>0.11.0</compas.core.version>
 
-        <quarkus.platform.version>2.16.5.Final</quarkus.platform.version>
+        <quarkus.platform.version>2.16.6.Final</quarkus.platform.version>
         <microprofile-openapi-api.version>3.1</microprofile-openapi-api.version>
         <powsybl.version>5.2.1</powsybl.version>
         <log4j2.version>2.20.0</log4j2.version>
-        <mapstruct.version>1.5.4.Final</mapstruct.version>
+        <mapstruct.version>1.5.5.Final</mapstruct.version>
         <openpojo.version>0.9.1</openpojo.version>
     </properties>
 
@@ -193,7 +193,7 @@ SPDX-License-Identifier: Apache-2.0
                 <sonar.language>java</sonar.language>
 
                 <!-- JaCoCo Properties -->
-                <jacoco.version>0.8.9</jacoco.version>
+                <jacoco.version>0.8.10</jacoco.version>
                 <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
                 <sonar.coverage.jacoco.xmlReportPaths>
                     target/site/jacoco/jacoco.xml,
