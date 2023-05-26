@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.lfenergy.compas.cim.mapping.exception.CompasCimMappingException;
 import org.lfenergy.compas.cim.mapping.model.CimData;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
