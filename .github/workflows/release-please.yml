@@ -21,7 +21,7 @@ jobs:
       - uses: google-github-actions/release-please-action@v3
         id: release
         with:
-          release-type: node
+          release-type: maven
           package-name: compas-cim-mapping
   # The logic below handles the docker hub publication:
   push_to_registry:
