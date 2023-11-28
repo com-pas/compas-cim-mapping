@@ -1,15 +1,32 @@
-# SPDX-FileCopyrightText: 2022 Alliander N.V.
+# SPDX-FileCopyrightText: 2023 Alliander N.V.
 #
 # SPDX-License-Identifier: Apache-2.0
-
-name: Release Project
-
 on:
-  release:
-    types: [ released ]
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+name: release-please
 
 jobs:
+  release_please:
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+    steps:
+      - uses: google-github-actions/release-please-action@v3
+        id: release
+        with:
+          release-type: maven
+          package-name: compas-cim-mapping
+  # The logic below handles the docker hub publication:
   push_to_registry:
+    needs: release_please
+    if: needs.release_please.outputs.release_created == "true"
     name: Build and publish
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -63,3 +80,4 @@ jobs:
         run: ./mvnw -B -s custom_maven_settings.xml -Pnative-image,release clean deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
