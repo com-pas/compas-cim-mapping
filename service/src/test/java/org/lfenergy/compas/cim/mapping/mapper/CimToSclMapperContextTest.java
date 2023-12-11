@@ -38,7 +38,7 @@ class CimToSclMapperContextTest {
         var substationName = "Name Substation";
 
         var bags = new PropertyBags();
-        var bag = new PropertyBag(List.of(SUBSTATION_PROP, NAME_PROP));
+        var bag = new PropertyBag(List.of(SUBSTATION_PROP, NAME_PROP), true);
         bag.put(SUBSTATION_PROP, substationId);
         bag.put(NAME_PROP, substationName);
         bags.add(bag);
@@ -60,7 +60,7 @@ class CimToSclMapperContextTest {
         var substationId = "Known Substation ID";
 
         var bags = new PropertyBags();
-        var bag = new PropertyBag(List.of(VOLTAGE_LEVEL_PROP, NAME_PROP, NOMINAL_VOLTAGE_PROP, SUBSTATION_PROP));
+        var bag = new PropertyBag(List.of(VOLTAGE_LEVEL_PROP, NAME_PROP, NOMINAL_VOLTAGE_PROP, SUBSTATION_PROP), true);
         bag.put(VOLTAGE_LEVEL_PROP, voltageLevelId);
         bag.put(NAME_PROP, voltageLevelName);
         bag.put(NOMINAL_VOLTAGE_PROP, "1.0");
@@ -84,7 +84,7 @@ class CimToSclMapperContextTest {
         var equipmentContainerId = "ContainerId";
 
         var bags = new PropertyBags();
-        var bag = new PropertyBag(List.of(BUSBARSECTION_PROP, NAME_PROP, EQUIPMENT_CONTAINER_PROP));
+        var bag = new PropertyBag(List.of(BUSBARSECTION_PROP, NAME_PROP, EQUIPMENT_CONTAINER_PROP), true);
         bag.put(BUSBARSECTION_PROP, busbarSectionId);
         bag.put(NAME_PROP, busbarSectionName);
         bag.put(EQUIPMENT_CONTAINER_PROP, equipmentContainerId);
@@ -107,7 +107,7 @@ class CimToSclMapperContextTest {
         var voltageLevelId = "VoltageLevelId";
 
         var bags = new PropertyBags();
-        var bag = new PropertyBag(List.of(BAY_PROP, NAME_PROP, VOLTAGE_LEVEL_PROP));
+        var bag = new PropertyBag(List.of(BAY_PROP, NAME_PROP, VOLTAGE_LEVEL_PROP), true);
         bag.put(BAY_PROP, bayId);
         bag.put(NAME_PROP, bayName);
         bag.put(VOLTAGE_LEVEL_PROP, voltageLevelId);
@@ -131,7 +131,7 @@ class CimToSclMapperContextTest {
         var pwContainerId = "Known Container ID";
 
         var bags = new PropertyBags();
-        var bag = new PropertyBag(List.of(POWER_TRANSFORMER_PROP, NAME_PROP, DESCRIPTION_PROP, EQUIPMENT_CONTAINER_PROP));
+        var bag = new PropertyBag(List.of(POWER_TRANSFORMER_PROP, NAME_PROP, DESCRIPTION_PROP, EQUIPMENT_CONTAINER_PROP),true);
         bag.put(POWER_TRANSFORMER_PROP, pwId);
         bag.put(NAME_PROP, pwName);
         bag.put(DESCRIPTION_PROP, pwDesc);
@@ -158,7 +158,7 @@ class CimToSclMapperContextTest {
         var endNumber = "1";
 
         var bags = new PropertyBags();
-        var bag = new PropertyBag(List.of(TRANSFORMER_END_PROP, NAME_PROP, POWER_TRANSFORMER_PROP, TERMINAL_PROP, END_NUMBER_PROP));
+        var bag = new PropertyBag(List.of(TRANSFORMER_END_PROP, NAME_PROP, POWER_TRANSFORMER_PROP, TERMINAL_PROP, END_NUMBER_PROP), true);
         bag.put(TRANSFORMER_END_PROP, tfeId);
         bag.put(NAME_PROP, tfeName);
         bag.put(POWER_TRANSFORMER_PROP, tfId);
@@ -200,7 +200,7 @@ class CimToSclMapperContextTest {
 
         var ratioBags = new PropertyBags();
 
-        var bag = new PropertyBag(List.of(RATIO_TAP_CHANGER_PROP, NAME_PROP, TRANSFORMER_END_PROP));
+        var bag = new PropertyBag(List.of(RATIO_TAP_CHANGER_PROP, NAME_PROP, TRANSFORMER_END_PROP), true);
         bag.put(RATIO_TAP_CHANGER_PROP, tcId);
         bag.put(NAME_PROP, tcName);
         bag.put(TRANSFORMER_END_PROP, tfeId);
@@ -224,7 +224,7 @@ class CimToSclMapperContextTest {
         var ratioBags = new PropertyBags();
         var phaseBags = new PropertyBags();
 
-        var bag = new PropertyBag(List.of(PHASE_TAP_CHANGER_PROP, NAME_PROP, TRANSFORMER_END_PROP));
+        var bag = new PropertyBag(List.of(PHASE_TAP_CHANGER_PROP, NAME_PROP, TRANSFORMER_END_PROP), true);
         bag.put(PHASE_TAP_CHANGER_PROP, tcId);
         bag.put(NAME_PROP, tcName);
         bag.put(TRANSFORMER_END_PROP, tfeId);
@@ -246,7 +246,7 @@ class CimToSclMapperContextTest {
         var busbarSectionId = "BusbarSection ID";
 
         var bags = new PropertyBags();
-        var bag = new PropertyBag(List.of(CONNECTIVITY_NODE_PROP, NAME_PROP, CONDUCTING_EQUIPMENT_PROP));
+        var bag = new PropertyBag(List.of(CONNECTIVITY_NODE_PROP, NAME_PROP, CONDUCTING_EQUIPMENT_PROP), true);
         bag.put(CONNECTIVITY_NODE_PROP, ccnId);
         bag.put(NAME_PROP, ccnName);
         bag.put(CONDUCTING_EQUIPMENT_PROP, busbarSectionId);
@@ -269,7 +269,7 @@ class CimToSclMapperContextTest {
         var bayID = "Bay ID";
 
         var bags = new PropertyBags();
-        var bag = new PropertyBag(List.of(CONNECTIVITY_NODE_PROP, NAME_PROP, EQUIPMENT_CONTAINER_PROP));
+        var bag = new PropertyBag(List.of(CONNECTIVITY_NODE_PROP, NAME_PROP, EQUIPMENT_CONTAINER_PROP), true);
         bag.put(CONNECTIVITY_NODE_PROP, ccnId);
         bag.put(NAME_PROP, ccnName);
         bag.put(EQUIPMENT_CONTAINER_PROP, bayID);
@@ -292,7 +292,7 @@ class CimToSclMapperContextTest {
         var containerId = "Known Container ID";
 
         var bags = new PropertyBags();
-        var bag = new PropertyBag(List.of(SWITCH_PROP, NAME_PROP, TYPE_PROP, EQUIPMENT_CONTAINER_PROP));
+        var bag = new PropertyBag(List.of(SWITCH_PROP, NAME_PROP, TYPE_PROP, EQUIPMENT_CONTAINER_PROP), true);
         bag.put(SWITCH_PROP, switchId);
         bag.put(NAME_PROP, switchName);
         bag.put(TYPE_PROP, "Breaker");
@@ -317,7 +317,7 @@ class CimToSclMapperContextTest {
         var containerId = "Known Container ID";
 
         var bags = new PropertyBags();
-        var bag = new PropertyBag(List.of(TERMINAL_PROP, NAME_PROP, CONNECTIVITY_NODE_PROP));
+        var bag = new PropertyBag(List.of(TERMINAL_PROP, NAME_PROP, CONNECTIVITY_NODE_PROP), true);
         bag.put(TERMINAL_PROP, terminalId);
         bag.put(NAME_PROP, terminalName);
         bag.put(CONNECTIVITY_NODE_PROP, ccnNode);
@@ -343,7 +343,7 @@ class CimToSclMapperContextTest {
         var ccnNode = "Connectivity Node ID";
 
         var bags = new PropertyBags();
-        var bag = new PropertyBag(List.of(TERMINAL_PROP, NAME_PROP, CONNECTIVITY_NODE_PROP));
+        var bag = new PropertyBag(List.of(TERMINAL_PROP, NAME_PROP, CONNECTIVITY_NODE_PROP), true);
         bag.put(TERMINAL_PROP, terminalId);
         bag.put(NAME_PROP, terminalName);
         bag.put(CONNECTIVITY_NODE_PROP, ccnNode);
