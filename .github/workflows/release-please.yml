@@ -21,6 +21,7 @@ jobs:
         with:
           release-type: maven
           package-name: compas-cim-mapping
+          target-branch: ${{ github.ref_name }}
       - if: ${{ steps.release.outputs.release_created }}
         name: Checkout
         uses: actions/checkout@v4
