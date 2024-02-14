@@ -66,7 +66,7 @@ jobs:
 
       - name: Create custom Maven Settings.xml
         if: ${{ steps.release.outputs.release_created }}
-        uses: whelk-io/maven-settings-xml-action@v21
+        uses: whelk-io/maven-settings-xml-action@v22
         with:
           output_file: custom_maven_settings.xml
           servers: '[{ "id": "github-packages-compas", "username": "OWNER", "password": "${{ secrets.GITHUB_TOKEN }}" }]'
