@@ -32,13 +32,6 @@ jobs:
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ hashFiles('**/Dockerfile') }}
-      - name: Cache Maven packages
-        if: ${{ steps.release.outputs.release_created }}
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
 
       - name: Extract tag name
         if: ${{ steps.release.outputs.release_created }}
@@ -53,6 +46,7 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17'
+          cache: 'maven'
       - name: Set up Docker Buildx
         if: ${{ steps.release.outputs.release_created }}
         id: buildx
