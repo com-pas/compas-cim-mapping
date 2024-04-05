@@ -19,7 +19,7 @@ SPDX-License-Identifier: Apache-2.0
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <compiler-plugin.version>3.12.1</compiler-plugin.version>
+        <compiler-plugin.version>3.13.0</compiler-plugin.version>
         <surefire-plugin.version>3.2.5</surefire-plugin.version>
         <sonarqube-plugin.version>3.2.0</sonarqube-plugin.version>
 
@@ -28,7 +28,7 @@ SPDX-License-Identifier: Apache-2.0
         <quarkus.platform.version>2.16.6.Final</quarkus.platform.version>
         <microprofile-openapi-api.version>3.1.1</microprofile-openapi-api.version>
         <powsybl.version>6.2.3</powsybl.version>
-        <log4j2.version>2.23.0</log4j2.version>
+        <log4j2.version>2.23.1</log4j2.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <openpojo.version>0.9.1</openpojo.version>
     </properties>
