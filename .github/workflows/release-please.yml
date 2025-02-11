@@ -20,11 +20,9 @@ jobs:
       - uses: google-github-actions/release-please-action@v4
         id: release
         with:
-          release-type: maven
-          package-name: compas-cim-mapping
-          target-branch: ${{ github.ref_name }}
-      - if: ${{ steps.release.outputs.release_created }}
-        name: Checkout
+          target-branch: main
+      - name: Checkout
+        if: ${{ steps.release.outputs.release_created }}
         uses: actions/checkout@v4
 
       - name: Cache Docker Register
@@ -54,7 +52,7 @@ jobs:
 
       - name: Create custom Maven Settings.xml
         if: ${{ steps.release.outputs.release_created }}
-        uses: whelk-io/maven-settings-xml-action@v21
+        uses: whelk-io/maven-settings-xml-action@v22
         with:
           output_file: custom_maven_settings.xml
           servers: '[{ "id": "github-packages-compas", "username": "OWNER", "password": "${{ secrets.GITHUB_TOKEN }}" }]'
