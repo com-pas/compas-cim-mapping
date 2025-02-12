@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: write
+  packages: write
   pull-requests: write
 
 name: release-please
@@ -19,33 +20,17 @@ jobs:
       - uses: google-github-actions/release-please-action@v4
         id: release
         with:
-          release-type: maven
-          package-name: compas-cim-mapping
-          target-branch: ${{ github.ref_name }}
-      - if: ${{ steps.release.outputs.release_created }}
-        name: Checkout
+          target-branch: main
+      - name: Checkout
+        if: ${{ steps.release.outputs.release_created }}
         uses: actions/checkout@v4
 
       - name: Cache Docker Register
         if: ${{ steps.release.outputs.release_created }}
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ hashFiles('**/Dockerfile') }}
-      - name: Cache Maven packages
-        if: ${{ steps.release.outputs.release_created }}
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-
-      - name: Extract tag name
-        if: ${{ steps.release.outputs.release_created }}
-        id: extract_tagname
-        shell: bash
-        # Extract the tag name from the git reference, value of GITHUB_REF will be something like refs/tags/<tag_name>.
-        run: echo "##[set-output name=tagname;]$(echo ${GITHUB_REF##*/})"
 
       - name: Set up JDK 17
         if: ${{ steps.release.outputs.release_created }}
@@ -53,6 +38,7 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17'
+          cache: 'maven'
       - name: Set up Docker Buildx
         if: ${{ steps.release.outputs.release_created }}
         id: buildx
@@ -66,15 +52,10 @@ jobs:
 
       - name: Create custom Maven Settings.xml
         if: ${{ steps.release.outputs.release_created }}
-        uses: whelk-io/maven-settings-xml-action@v21
+        uses: whelk-io/maven-settings-xml-action@v22
         with:
           output_file: custom_maven_settings.xml
           servers: '[{ "id": "github-packages-compas", "username": "OWNER", "password": "${{ secrets.GITHUB_TOKEN }}" }]'
-      - name: Set version with Maven
-        if: ${{ steps.release.outputs.release_created }}
-        run: ./mvnw -B versions:set -DprocessAllModules=true -DnewVersion=${{ steps.extract_tagname.outputs.tagname }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Deploy with Maven to GitHub Packages and Docker Hub
         if: ${{ steps.release.outputs.release_created }}
         run: ./mvnw -B -s custom_maven_settings.xml -Pnative-image,release clean deploy
