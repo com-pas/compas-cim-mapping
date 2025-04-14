@@ -6,8 +6,8 @@ package org.lfenergy.compas.cim.mapping.constraint.impl;
 import com.powsybl.cgmes.model.CgmesSubset;
 import org.lfenergy.compas.cim.mapping.constraint.CimDataNamePattern;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;

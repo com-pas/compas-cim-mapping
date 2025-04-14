@@ -6,10 +6,10 @@ package org.lfenergy.compas.cim.mapping.rest.v1.model;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.lfenergy.compas.scl2007b4.model.SCL;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import static org.lfenergy.compas.cim.mapping.CimMappingConstants.CIM_MAPPING_SERVICE_V1_NS_URI;
 import static org.lfenergy.compas.cim.mapping.CimMappingConstants.SCL_NS_URI;
