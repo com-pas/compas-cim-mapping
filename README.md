@@ -43,3 +43,6 @@ environment variables that can be set in the container to configure the validati
 
 There are no roles defined in this service, only need to be authenticated.
 
+## Contributing
+
+Please refer to the [CoMPAS Contributing Guide](https://com-pas.github.io/contributing/) for contribution guidelines.
