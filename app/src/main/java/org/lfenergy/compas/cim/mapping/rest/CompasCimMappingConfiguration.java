@@ -6,7 +6,7 @@ package org.lfenergy.compas.cim.mapping.rest;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import org.lfenergy.compas.cim.mapping.mapper.CimToSclMapper;
 
-import javax.enterprise.inject.Produces;
+import jakarta.enterprise.inject.Produces;
 
 /**
  * Create Beans from other dependencies that are used in the application.

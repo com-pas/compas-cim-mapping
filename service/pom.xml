@@ -88,9 +88,9 @@ SPDX-License-Identifier: Apache-2.0
             <artifactId>hibernate-validator</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.glassfish</groupId>
-            <artifactId>jakarta.el</artifactId>
+        <!--~~(No version provided)~~>--><dependency>
+            <groupId>org.glassfish.expressly</groupId>
+            <artifactId>expressly</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
