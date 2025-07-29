@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "bootstrap-sha": "2dc26242b596d099a88f61063a063c710db0a8de",
+  "include-component-in-tag": false,
+  "packages": {
+    ".": {
+      "release-type": "maven",
+      "package-name": "compas-cim-mapping",
+      "initial-version": "0.10.4"
+    }
+  }
+}
