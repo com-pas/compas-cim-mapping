@@ -18,7 +18,7 @@ The Mapping between IEC CIM and IEC 61850 is described in [Mapping](MAPPING.md).
 
 ## Development
 
-Information about how to run and develop for this project check [Development](DEVELOPMENT.md).
+Information about how to run and develop for this project, check [Development](DEVELOPMENT.md).
 
 ## Environment variables
 
