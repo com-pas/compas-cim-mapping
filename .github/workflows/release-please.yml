@@ -23,7 +23,7 @@ jobs:
           target-branch: main
       - name: Checkout
         if: ${{ steps.release.outputs.release_created }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Cache Docker Register
         if: ${{ steps.release.outputs.release_created }}
