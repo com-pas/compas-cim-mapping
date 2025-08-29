@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.2](https://github.com/com-pas/compas-cim-mapping/compare/v0.11.1...v0.11.2) (2025-08-29)
+
+
+### Documentation
+
+* update readme ([7cd6682](https://github.com/com-pas/compas-cim-mapping/commit/7cd66823d30b86a2853b07c7d431ace8649987bc))
+
 ## [0.11.1](https://github.com/com-pas/compas-cim-mapping/compare/v0.11.0...v0.11.1) (2025-07-30)
 
 
