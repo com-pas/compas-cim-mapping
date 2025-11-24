@@ -31,7 +31,7 @@ Who Attribute in the History Record.
 
 ## Security
 
-To use most of the endpoints the users needs to be authenticated using JWT in the authorization header. There are 4
+To use most of the endpoints the user needs to be authenticated using JWT in the authorization header. There are 4
 environment variables that can be set in the container to configure the validation/processing of the JWT.
 
 | Environment variable             | Java Property                    | Description                                        | Example                                                                |

@@ -23,7 +23,7 @@ jobs:
           target-branch: main
       - name: Checkout
         if: ${{ steps.release.outputs.release_created }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Cache Docker Register
         if: ${{ steps.release.outputs.release_created }}
@@ -34,7 +34,7 @@ jobs:
 
       - name: Set up JDK 17
         if: ${{ steps.release.outputs.release_created }}
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
           java-version: '17'
