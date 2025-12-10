@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.5](https://github.com/com-pas/compas-cim-mapping/compare/v0.11.4...v0.11.5) (2025-12-10)
+
+
+### Build System
+
+* **deps:** Bump org.apache.maven.plugins:maven-jar-plugin from 3.4.2 to 3.5.0 ([b27dafd](https://github.com/com-pas/compas-cim-mapping/commit/b27dafd3577fdfaa9454beba537f185391f4c764))
+
 ## [0.11.4](https://github.com/com-pas/compas-cim-mapping/compare/v0.11.3...v0.11.4) (2025-11-27)
 
 
