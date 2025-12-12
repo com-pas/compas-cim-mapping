@@ -27,7 +27,7 @@ jobs:
 
       - name: Cache Docker Register
         if: ${{ steps.release.outputs.release_created }}
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ hashFiles('**/Dockerfile') }}
