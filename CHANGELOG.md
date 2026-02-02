@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.11.6](https://github.com/com-pas/compas-cim-mapping/compare/v0.11.5...v0.11.6) (2026-02-02)
+
+
+### Build System
+
+* **deps:** Bump dawidd6/action-download-artifact from 12 to 13 ([c3308c1](https://github.com/com-pas/compas-cim-mapping/commit/c3308c101879fad9f39ee563804b020515cc7c62))
+* **deps:** Bump dawidd6/action-download-artifact from 12 to 13 ([92906ff](https://github.com/com-pas/compas-cim-mapping/commit/92906ff35ca6f2b8afc69a85146cbc5c97a7d291))
+
 ## [0.11.5](https://github.com/com-pas/compas-cim-mapping/compare/v0.11.4...v0.11.5) (2026-01-05)
 
 
