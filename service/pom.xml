@@ -9,7 +9,7 @@ SPDX-License-Identifier: Apache-2.0
     <parent>
         <groupId>org.lfenergy.compas.cim.mapping</groupId>
         <artifactId>compas-cim-mapping</artifactId>
-        <version>0.11.5</version>
+        <version>0.11.6-SNAPSHOT</version>
     </parent>
 
     <artifactId>service</artifactId>
