@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.11.7](https://github.com/com-pas/compas-cim-mapping/compare/v0.11.6...v0.11.7) (2026-02-17)
+
+
+### Build System
+
+* **deps:** Bump dawidd6/action-download-artifact from 13 to 14 ([4110ec1](https://github.com/com-pas/compas-cim-mapping/commit/4110ec1bafb315fabdcdd73721838e2d204854e7))
+* **deps:** Bump dawidd6/action-download-artifact from 13 to 14 ([73fa4b7](https://github.com/com-pas/compas-cim-mapping/commit/73fa4b7bb926c1e625f01b8a5cd0ee88209a0479))
+* **deps:** Bump org.apache.maven.plugins:maven-compiler-plugin ([8a2c169](https://github.com/com-pas/compas-cim-mapping/commit/8a2c1691cb577c98b72c5fb7026121a61f596513))
+* **deps:** Bump org.apache.maven.plugins:maven-compiler-plugin from 3.14.1 to 3.15.0 ([0ecb780](https://github.com/com-pas/compas-cim-mapping/commit/0ecb7807b391e602a9c6c30de0ceb5529aeceb22))
+
 ## [0.11.6](https://github.com/com-pas/compas-cim-mapping/compare/v0.11.5...v0.11.6) (2026-02-02)
 
 
