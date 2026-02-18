@@ -29,4 +29,10 @@ public class MapResponse {
     public void setScl(SCL scl) {
         this.scl = scl;
     }
+        public static MapResponse fromXml(String xml) throws javax.xml.bind.JAXBException {
+            return org.lfenergy.compas.cim.mapping.websocket.v1.util.XmlUtil.fromXml(xml, MapResponse.class);
+        }
+        public String toXml() throws javax.xml.bind.JAXBException {
+            return org.lfenergy.compas.cim.mapping.websocket.v1.util.XmlUtil.toXml(this);
+        }
 }
