@@ -78,6 +78,11 @@ SPDX-License-Identifier: Apache-2.0
                 <artifactId>rest-commons</artifactId>
                 <version>${compas.core.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.lfenergy.compas.core</groupId>
+                <artifactId>websocket-commons</artifactId>
+                <version>${compas.core.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>com.powsybl</groupId>

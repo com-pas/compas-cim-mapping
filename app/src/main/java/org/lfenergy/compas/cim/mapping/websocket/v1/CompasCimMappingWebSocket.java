@@ -6,10 +6,10 @@ import io.quarkus.security.Authenticated;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.microprofile.jwt.JsonWebToken;
+import io.vertx.mutiny.core.eventbus.EventBus;
 import org.lfenergy.compas.cim.mapping.rest.UserInfoProperties;
 import org.lfenergy.compas.cim.mapping.rest.v1.model.MapRequest;
-import org.lfenergy.compas.cim.mapping.rest.v1.model.MapResponse;
-import org.lfenergy.compas.cim.mapping.service.CompasCimMappingService;
+import org.lfenergy.compas.cim.mapping.websocket.v1.event.model.MapEventRequest;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -20,20 +20,28 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
+import static org.lfenergy.compas.core.websocket.WebsocketSupport.handleException;
+
 @Authenticated
 @ApplicationScoped
-@ServerEndpoint("/cim-ws/v1/map")
+@ServerEndpoint(value = "/cim-ws/v1/map",
+    decoders = {org.lfenergy.compas.cim.mapping.websocket.v1.decoder.CreateWsRequestDecoder.class},
+    encoders = {org.lfenergy.compas.cim.mapping.websocket.v1.encoder.CreateWsResponseEncoder.class})
 public class CompasCimMappingWebSocket {
     private static final Logger LOGGER = LogManager.getLogger(CompasCimMappingWebSocket.class);
 
-    @Inject
-    CompasCimMappingService compasCimMappingService;
+    private final EventBus eventBus;
+    private final JsonWebToken jsonWebToken;
+    private final UserInfoProperties userInfoProperties;
 
     @Inject
-    JsonWebToken jsonWebToken;
-
-    @Inject
-    UserInfoProperties userInfoProperties;
+    public CompasCimMappingWebSocket(EventBus eventBus,
+                                     JsonWebToken jsonWebToken,
+                                     UserInfoProperties userInfoProperties) {
+        this.eventBus = eventBus;
+        this.jsonWebToken = jsonWebToken;
+        this.userInfoProperties = userInfoProperties;
+    }
 
     @OnOpen
     public void onOpen(Session session) {
@@ -41,32 +49,23 @@ public class CompasCimMappingWebSocket {
     }
 
     @OnMessage
-    public void onMessage(String message, Session session) {
-        LOGGER.info("Received WebSocket message: {}", message);
-        try {
-            MapRequest request = MapRequest.fromXml(message);
-            String who = jsonWebToken.getClaim(userInfoProperties.who());
-            MapResponse response = new MapResponse();
-            response.setScl(compasCimMappingService.map(request.getCimData(), who));
-            String xmlResponse = response.toXml();
-            session.getAsyncRemote().sendText(xmlResponse);
-        } catch (Exception e) {
-            LOGGER.error("Error processing WebSocket message", e);
-            session.getAsyncRemote().sendText("<error>" + e.getMessage() + "</error>");
-        }
+    public void onMapMessage(Session session, MapRequest request) {
+        LOGGER.info("Received WebSocket message (map) from session {}.", session.getId());
+
+        String who = jsonWebToken.getClaim(userInfoProperties.who());
+        LOGGER.trace("Username used for Who {}", who);
+
+        eventBus.send("map-ws", new MapEventRequest(session, request, who));
     }
 
     @OnError
     public void onError(Session session, Throwable throwable) {
-        LOGGER.error("WebSocket error in session {}", session != null ? session.getId() : "unknown", throwable);
-        if (session != null && session.isOpen()) {
-            String errorMsg = throwable.getMessage() != null ? throwable.getMessage() : "Unknown error";
-            session.getAsyncRemote().sendText("<error>" + errorMsg + "</error>");
-        }
+        LOGGER.warn("WebSocket error in session {}", session.getId(), throwable);
+        handleException(session, throwable);
     }
     
     @OnClose
     public void onClose(Session session) {
-        LOGGER.info("WebSocket closed: {}", session.getId());
+        LOGGER.debug("WebSocket closed: {}", session.getId());
     }
 }

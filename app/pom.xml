@@ -34,7 +34,10 @@ SPDX-License-Identifier: Apache-2.0
             <groupId>org.lfenergy.compas.core</groupId>
             <artifactId>rest-commons</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.lfenergy.compas.core</groupId>
+            <artifactId>websocket-commons</artifactId>
+        </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-arc</artifactId>
@@ -115,6 +118,11 @@ SPDX-License-Identifier: Apache-2.0
         <dependency>
             <groupId>com.openpojo</groupId>
             <artifactId>openpojo</artifactId>
+            <scope>test</scope>
+        </dependency>
+            <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

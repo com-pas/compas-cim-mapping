@@ -32,10 +32,4 @@ public class MapRequest {
     public void setCimData(List<CimData> cimData) {
         this.cimData = cimData;
     }
-        public static MapRequest fromXml(String xml) throws javax.xml.bind.JAXBException {
-            return org.lfenergy.compas.cim.mapping.websocket.v1.util.XmlUtil.fromXml(xml, MapRequest.class);
-        }
-        public String toXml() throws javax.xml.bind.JAXBException {
-            return org.lfenergy.compas.cim.mapping.websocket.v1.util.XmlUtil.toXml(this);
-        }
 }
