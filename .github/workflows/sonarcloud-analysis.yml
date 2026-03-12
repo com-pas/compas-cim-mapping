@@ -46,18 +46,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
       with:
-        repository: ${{ github.event.workflow_run.head_repository.full_name }}
-        ref: ${{ github.event.workflow_run.head_branch }}
         fetch-depth: 0
-        persist-credentials: false
-    - name: Checkout base branch
-      if: github.event.workflow_run.event == 'pull_request'
-      run: |
-        git remote add upstream ${{ github.event.repository.clone_url }}
-        git fetch upstream
-        git checkout -B ${{ fromJson(steps.get_pr_data.outputs.data).base.ref }} upstream/${{ fromJson(steps.get_pr_data.outputs.data).base.ref }}
-        git checkout ${{ github.event.workflow_run.head_branch }}
-        git clean -ffdx && git reset --hard HEAD
     - name: Download build artifacts
       uses: dawidd6/action-download-artifact@5c98f0b039f36ef966fdb7dfa9779262785ecb05 # v14
       with:

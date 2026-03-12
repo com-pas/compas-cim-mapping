@@ -56,6 +56,8 @@ jobs:
         with:
           name: build-artifacts
           path: |
+            service/src/
+            app/src/
             service/target/
             app/target/
           retention-days: 1
