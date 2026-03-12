@@ -49,6 +49,7 @@ jobs:
         repository: ${{ github.event.workflow_run.head_repository.full_name }}
         ref: ${{ github.event.workflow_run.head_branch }}
         fetch-depth: 0
+        persist-credentials: false
     - name: Checkout base branch
       if: github.event.workflow_run.event == 'pull_request'
       run: |
@@ -57,6 +58,12 @@ jobs:
         git checkout -B ${{ fromJson(steps.get_pr_data.outputs.data).base.ref }} upstream/${{ fromJson(steps.get_pr_data.outputs.data).base.ref }}
         git checkout ${{ github.event.workflow_run.head_branch }}
         git clean -ffdx && git reset --hard HEAD
+    - name: Download build artifacts
+      uses: dawidd6/action-download-artifact@5c98f0b039f36ef966fdb7dfa9779262785ecb05 # v14
+      with:
+        workflow: SonarCloud Build
+        run_id: ${{ github.event.workflow_run.id }}
+        name: build-artifacts
     - name: Cache SonarCloud packages
       uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5
       with:
@@ -88,21 +95,21 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: |
-        ./mvnw -B -s custom_maven_settings.xml -Psonar \
+        mvn -B -s custom_maven_settings.xml -Psonar \
           ${{ steps.sonar_env.outputs.sonar_opts }} \
           -Dsonar.pullrequest.branch=${{ fromJson(steps.get_pr_data.outputs.data).head.ref }} \
           -Dsonar.pullrequest.key=${{ fromJson(steps.get_pr_data.outputs.data).number }} \
           -Dsonar.pullrequest.base=${{ fromJson(steps.get_pr_data.outputs.data).base.ref }} \
           -Dsonar.scm.revision=${{ github.event.workflow_run.head_sha }} \
-          clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+          org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
     - name: Build and analyze (Push)
       if: ${{ github.event.workflow_run.event == 'push' }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: |
-        ./mvnw -B -s custom_maven_settings.xml -Psonar \
+        mvn -B -s custom_maven_settings.xml -Psonar \
           ${{ steps.sonar_env.outputs.sonar_opts }} \
           -Dsonar.scm.revision=${{ github.event.workflow_run.head_sha }} \
           -Dsonar.branch.name=${{ github.event.workflow_run.head_branch }} \
-          clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+          org.sonarsource.scanner.maven:sonar-maven-plugin:sonar

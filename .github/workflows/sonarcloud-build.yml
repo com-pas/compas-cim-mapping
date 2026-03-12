@@ -51,6 +51,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ./mvnw -B -s custom_maven_settings.xml clean verify
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: build-artifacts
+          path: |
+            service/target/
+            app/target/
+          retention-days: 1
       - name: Save PR number to file
         if: github.event_name == 'pull_request'
         run: echo ${{ github.event.pull_request.number }} > PR_NUMBER.txt
