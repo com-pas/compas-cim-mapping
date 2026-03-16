@@ -31,6 +31,7 @@ public abstract class CimToSclMapper {
      * Top level mapping method to start the mapping of all known elements from Cgmes Model
      * to the IEC SCL Model.
      *
+     * @param scl     The SCL model to fill with mapped data.
      * @param context Holding all data from which the SCL (also passed) needs to be filled.
      */
     public void mapToScl(SCL scl, CimToSclMapperContext context) {
