@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.12.0](https://github.com/com-pas/compas-cim-mapping/compare/v0.11.7...v0.12.0) (2026-03-18)
+
+
+### Features
+
+* add websocket support ([dce834f](https://github.com/com-pas/compas-cim-mapping/commit/dce834fc3d8b38a0d6d3b4f305dae29c5ed28ebd))
+* add WebSocket support for CIM mapping ([e117c92](https://github.com/com-pas/compas-cim-mapping/commit/e117c92de69e131364cdd28748fdaa043264311e))
+* implement WebSocket support for CIM mapping with event handling and XML encoding/decoding ([a38eac6](https://github.com/com-pas/compas-cim-mapping/commit/a38eac6171be51b644330c75189d764f6a1e04d2))
+
+
+### Bug Fixes
+
+* add Sonar profile to Maven build in sonar workflow ([157a726](https://github.com/com-pas/compas-cim-mapping/commit/157a7269d6273a9c015a5bb92f4c3df9c200428f))
+* add Sonar profile to Maven build in sonar workflow ([f701d3f](https://github.com/com-pas/compas-cim-mapping/commit/f701d3f679973a25625db72945bef25e9fbd121e))
+* harden GitHub Actions workflows against supply chain and injection attacks ([0e6d66b](https://github.com/com-pas/compas-cim-mapping/commit/0e6d66b0e08e8c4dde913756fb13ca7da170200f))
+
+
+### Build System
+
+* **deps:** Bump dawidd6/action-download-artifact from 14 to 18 ([de222cb](https://github.com/com-pas/compas-cim-mapping/commit/de222cbb664ae2fc4607f169f24fa0aa2d26fae1))
+* **deps:** Bump dawidd6/action-download-artifact from 14 to 18 ([caf63a9](https://github.com/com-pas/compas-cim-mapping/commit/caf63a97a669a11e1312cb47d4667f2079f3e8b6))
+* **deps:** Bump juliangruber/read-file-action from 1.1.7 to 1.1.8 ([196bdd1](https://github.com/com-pas/compas-cim-mapping/commit/196bdd1e3999ea16803f0515e2da8f44e73517df))
+* **deps:** Bump juliangruber/read-file-action from 1.1.7 to 1.1.8 ([beaf3f4](https://github.com/com-pas/compas-cim-mapping/commit/beaf3f49284e8ef3076c14af41b2f30b5ba543b2))
+* **deps:** Bump surefire-plugin.version from 3.5.4 to 3.5.5 ([229b511](https://github.com/com-pas/compas-cim-mapping/commit/229b511f0cfbb2df072d8f361a971a10966fa734))
+* **deps:** Bump surefire-plugin.version from 3.5.4 to 3.5.5 ([d63b464](https://github.com/com-pas/compas-cim-mapping/commit/d63b464d5c11c28dd0b01533d2009ff08b4298f7))
+
 ## [0.11.7](https://github.com/com-pas/compas-cim-mapping/compare/v0.11.6...v0.11.7) (2026-02-17)
 
 
