@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.12.1](https://github.com/com-pas/compas-cim-mapping/compare/v0.12.0...v0.12.1) (2026-04-14)
+
+
+### Build System
+
+* **deps:** Bump actions/cache from 5.0.3 to 5.0.4 ([68b0e58](https://github.com/com-pas/compas-cim-mapping/commit/68b0e586aac9985b7a8db09980445cc9620d3558))
+* **deps:** Bump actions/cache from 5.0.3 to 5.0.4 ([e3dac59](https://github.com/com-pas/compas-cim-mapping/commit/e3dac5907a45edbad2f022bb0b0e3c4c48a5dc11))
+* **deps:** Bump actions/upload-artifact from 6.0.0 to 7.0.0 ([6e89ea0](https://github.com/com-pas/compas-cim-mapping/commit/6e89ea0583cb3546df0d3d07f77e0012216fa07a))
+* **deps:** Bump dawidd6/action-download-artifact from 18 to 19 ([862d342](https://github.com/com-pas/compas-cim-mapping/commit/862d342f8e0ecea380f2410f563430a5f524d541))
+* **deps:** Bump dawidd6/action-download-artifact from 18 to 19 ([81ff443](https://github.com/com-pas/compas-cim-mapping/commit/81ff44377df85d4b7b6854a5162ca1c364bf28e5))
+* **deps:** Bump docker/login-action from 3.7.0 to 4.0.0 ([7d4b50f](https://github.com/com-pas/compas-cim-mapping/commit/7d4b50fdb99b33fed823b35f3f70e209b4d464f0))
+* **deps:** Bump docker/setup-buildx-action from 3.12.0 to 4.0.0 ([16d6b0b](https://github.com/com-pas/compas-cim-mapping/commit/16d6b0b168d70bfebf077eb1ace97e443d1a57ee))
+* **deps:** Bump docker/setup-buildx-action from 3.12.0 to 4.0.0 ([f0ff953](https://github.com/com-pas/compas-cim-mapping/commit/f0ff953e77235fa77670589121d5c72dde023c6e))
+* **deps:** Bump log4j2.version from 2.25.3 to 2.25.4 ([584ede4](https://github.com/com-pas/compas-cim-mapping/commit/584ede410157b31258bc98ec42599e83578c43c1))
+* **deps:** Bump log4j2.version from 2.25.3 to 2.25.4 ([66a9e34](https://github.com/com-pas/compas-cim-mapping/commit/66a9e343db1cb016a35f061e9be881960f196181))
+
 ## [0.12.0](https://github.com/com-pas/compas-cim-mapping/compare/v0.11.7...v0.12.0) (2026-03-18)
 
 
