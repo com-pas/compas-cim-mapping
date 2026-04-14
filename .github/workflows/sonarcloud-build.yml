@@ -42,7 +42,7 @@ jobs:
           cache: 'maven'
 
       - name: Create custom Maven Settings.xml
-        uses: whelk-io/maven-settings-xml-action@7c60eb95b2d5ec18f2e0e29f34c9ed69475e7a96 # v21
+        uses: whelk-io/maven-settings-xml-action@9dc09b23833fa9aa7f27b63db287951856f3433d # v22
         with:
           output_file: custom_maven_settings.xml
           servers: '[{ "id": "github-packages-compas", "username": "OWNER", "password": "${{ secrets.GITHUB_TOKEN }}" }]'
