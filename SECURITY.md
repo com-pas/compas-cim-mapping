@@ -18,7 +18,7 @@ cosign verify \
   lfenergy/compas-cim-mapping:<tag>
 ```
 
-Replace `<tag>` with the specific release tag (e.g. `v0.12.1`) or `latest`.
+Replace `<tag>` with the specific release tag (e.g. `0.12.1`) or `latest`.
 
 ## Reporting a Vulnerability
 
