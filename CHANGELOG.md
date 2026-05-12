@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.12.2](https://github.com/com-pas/compas-cim-mapping/compare/v0.12.1...v0.12.2) (2026-05-12)
+
+
+### Bug Fixes
+
+* formatting for release tag in SECURITY.md ([ac8cba9](https://github.com/com-pas/compas-cim-mapping/commit/ac8cba966329bbeff2615279fc07a44524b3d3d8))
+
+
+### Build System
+
+* **deps:** Bump actions/cache from 5.0.4 to 5.0.5 ([7c67b61](https://github.com/com-pas/compas-cim-mapping/commit/7c67b619a58e3e189e99d787c46c22c4160c1a26))
+* **deps:** Bump actions/cache from 5.0.4 to 5.0.5 ([7feb692](https://github.com/com-pas/compas-cim-mapping/commit/7feb692a7b8d301b39223b606647dd9b3165f0b6))
+* **deps:** Bump actions/upload-artifact from 7.0.0 to 7.0.1 ([80744d0](https://github.com/com-pas/compas-cim-mapping/commit/80744d0db3ed3aa15f8cd07ac2c5568c9e9fcac0))
+* **deps:** Bump actions/upload-artifact from 7.0.0 to 7.0.1 ([7f86e8e](https://github.com/com-pas/compas-cim-mapping/commit/7f86e8ef63097058ea4693f430cf077a39c59d39))
+* **deps:** Bump dawidd6/action-download-artifact from 19 to 21 ([77af28f](https://github.com/com-pas/compas-cim-mapping/commit/77af28f4ddf3b28a68eec715a55c28366b2c9bec))
+* **deps:** Bump dawidd6/action-download-artifact from 19 to 21 ([8c358dd](https://github.com/com-pas/compas-cim-mapping/commit/8c358ddd4ea98de2aa00be2081bf072affcee700))
+* **deps:** Bump docker/login-action from 4.0.0 to 4.1.0 ([2e52944](https://github.com/com-pas/compas-cim-mapping/commit/2e52944b8379b7b0d8a66e4e2224b68f173f23ab))
+* **deps:** Bump docker/login-action from 4.0.0 to 4.1.0 ([622347a](https://github.com/com-pas/compas-cim-mapping/commit/622347aa99a54f9a4cc4401a5617faf1c0bd9e8b))
+* **deps:** Bump googleapis/release-please-action from 4.4.0 to 4.4.1 ([f6c88f1](https://github.com/com-pas/compas-cim-mapping/commit/f6c88f142e2d88ce9b85cfbf19e1a8ba5f510196))
+* **deps:** Bump googleapis/release-please-action from 4.4.0 to 4.4.1 ([a8deb30](https://github.com/com-pas/compas-cim-mapping/commit/a8deb3040aee3b5d528b4a095932fe2cd816cc7d))
+* **deps:** Bump googleapis/release-please-action from 4.4.1 to 5.0.0 ([a055a61](https://github.com/com-pas/compas-cim-mapping/commit/a055a6154853c06579aea7599ac5cafc1fff09b6))
+* **deps:** Bump googleapis/release-please-action from 4.4.1 to 5.0.0 ([bee05fb](https://github.com/com-pas/compas-cim-mapping/commit/bee05fb56dff363203a1a1615bda5948f5b31f14))
+* **deps:** Bump log4j2.version from 2.25.4 to 2.26.0 ([6f4905f](https://github.com/com-pas/compas-cim-mapping/commit/6f4905fb4327d3f23456d0ceafe10023d058471c))
+* **deps:** Bump log4j2.version from 2.25.4 to 2.26.0 ([bd0a13a](https://github.com/com-pas/compas-cim-mapping/commit/bd0a13a0f31603f259ad9b2f241bd84175c49533))
+* **deps:** Bump octokit/request-action from 2.4.0 to 3.0.0 ([1ab80ab](https://github.com/com-pas/compas-cim-mapping/commit/1ab80ab832f6527ef3106423b6bb686450e19d82))
+* **deps:** Bump octokit/request-action from 2.4.0 to 3.0.0 ([5e60d79](https://github.com/com-pas/compas-cim-mapping/commit/5e60d798013509d4b5cfc148bfee44a27b58197a))
+* **deps:** Bump whelk-io/maven-settings-xml-action from 21 to 22 ([524eb35](https://github.com/com-pas/compas-cim-mapping/commit/524eb35e2736420b3fcfed6321325dd2a1bc37d6))
+* **deps:** Bump whelk-io/maven-settings-xml-action from 21 to 22 ([41844cc](https://github.com/com-pas/compas-cim-mapping/commit/41844cc02dfda2d3f9d38d984e2ac6be4b051a35))
+
 ## [0.12.1](https://github.com/com-pas/compas-cim-mapping/compare/v0.12.0...v0.12.1) (2026-04-14)
 
 
