@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.12.3](https://github.com/com-pas/compas-cim-mapping/compare/v0.12.2...v0.12.3) (2026-06-29)
+
+
+### Build System
+
+* **deps:** Bump actions/cache from 5.0.5 to 6.1.0 ([#597](https://github.com/com-pas/compas-cim-mapping/issues/597)) ([eb66f3d](https://github.com/com-pas/compas-cim-mapping/commit/eb66f3dfa0a2fb47c8dd4ea1a59f98f0b2f4df31))
+* **deps:** Bump actions/checkout from 6.0.2 to 7.0.0 ([9315006](https://github.com/com-pas/compas-cim-mapping/commit/9315006efbc4b2ec96e91b5ae1caa86956647855))
+* **deps:** Bump actions/checkout from 6.0.2 to 7.0.0 ([90158f0](https://github.com/com-pas/compas-cim-mapping/commit/90158f0012ca3b7e4ce3b7369675ae49edd5fa01))
+* **deps:** Bump actions/setup-java from 5.2.0 to 5.4.0 ([#595](https://github.com/com-pas/compas-cim-mapping/issues/595)) ([b06041d](https://github.com/com-pas/compas-cim-mapping/commit/b06041db376cd025a7f5fe66de63e9d4d41fd6c2))
+* **deps:** Bump docker/login-action from 4.1.0 to 4.2.0 ([67c8bf5](https://github.com/com-pas/compas-cim-mapping/commit/67c8bf5aa691a4ba55532f7243d9e48d53b03f11))
+* **deps:** Bump docker/login-action from 4.1.0 to 4.2.0 ([1ac9be5](https://github.com/com-pas/compas-cim-mapping/commit/1ac9be5d57933ff0f5cdc937eb80368a324a2fc3))
+* **deps:** Bump docker/setup-buildx-action from 4.0.0 to 4.1.0 ([d0d738e](https://github.com/com-pas/compas-cim-mapping/commit/d0d738eb8c840ebc458aabbf5a95e65d178c3bdc))
+* **deps:** Bump docker/setup-buildx-action from 4.0.0 to 4.1.0 ([6ecb297](https://github.com/com-pas/compas-cim-mapping/commit/6ecb297b6537f27ba5ee2c7ff37392d74be48d34))
+* **deps:** Bump org.jacoco:jacoco-maven-plugin from 0.8.14 to 0.8.15 ([#594](https://github.com/com-pas/compas-cim-mapping/issues/594)) ([346f745](https://github.com/com-pas/compas-cim-mapping/commit/346f7458b8223f8851bd4c220aff9f48115cf775))
+* **deps:** Bump surefire-plugin.version from 3.5.5 to 3.5.6 ([#591](https://github.com/com-pas/compas-cim-mapping/issues/591)) ([7af14d2](https://github.com/com-pas/compas-cim-mapping/commit/7af14d23bbd95e0d2bd8a78d0464338ec1abf68d))
+
 ## [0.12.2](https://github.com/com-pas/compas-cim-mapping/compare/v0.12.1...v0.12.2) (2026-05-12)
 
 
