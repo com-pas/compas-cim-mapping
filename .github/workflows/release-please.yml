@@ -57,9 +57,9 @@ jobs:
 
       - name: Create custom Maven Settings.xml
         if: ${{ steps.release.outputs.release_created }}
-        uses: whelk-io/maven-settings-xml-action@9dc09b23833fa9aa7f27b63db287951856f3433d # v22
+        uses: s4u/maven-settings-action@894661b3ddae382f1ae8edbeab60987e08cf0788 # v4.0.0
         with:
-          output_file: custom_maven_settings.xml
+          path: custom_maven_settings.xml
           servers: '[{ "id": "github-packages-compas", "username": "OWNER", "password": "${{ secrets.GITHUB_TOKEN }}" }]'
       - name: Deploy with Maven to GitHub Packages and Docker Hub
         if: ${{ steps.release.outputs.release_created }}
