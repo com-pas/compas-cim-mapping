@@ -45,6 +45,7 @@ jobs:
         uses: s4u/maven-settings-action@894661b3ddae382f1ae8edbeab60987e08cf0788 # v4.0.0
         with:
           path: custom_maven_settings.xml
+          githubServer: false
           servers: '[{ "id": "github-packages-compas", "username": "OWNER", "password": "${{ secrets.GITHUB_TOKEN }}" }]'
       - name: Build
         env:
