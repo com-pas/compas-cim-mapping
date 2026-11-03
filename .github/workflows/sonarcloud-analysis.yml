@@ -23,7 +23,7 @@ jobs:
       run: cat $GITHUB_EVENT_PATH
     - name: Download PR number artifact
       if: github.event.workflow_run.event == 'pull_request'
-      uses: dawidd6/action-download-artifact@eab87c9830c39eff17e5a6eadb20bfb4bc880477 # v27
+      uses: dawidd6/action-download-artifact@a92c7ae74cf1df8810783758581e485ac3aaa309 # v28
       with:
         workflow: SonarCloud Build
         run_id: ${{ github.event.workflow_run.id }}
@@ -48,7 +48,7 @@ jobs:
       with:
         fetch-depth: 0
     - name: Download build artifacts
-      uses: dawidd6/action-download-artifact@eab87c9830c39eff17e5a6eadb20bfb4bc880477 # v27
+      uses: dawidd6/action-download-artifact@a92c7ae74cf1df8810783758581e485ac3aaa309 # v28
       with:
         workflow: SonarCloud Build
         run_id: ${{ github.event.workflow_run.id }}
