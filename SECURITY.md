@@ -5,6 +5,10 @@ SPDX-License-Identifier: Apache-2.0
 -->
 # Security Policy
 
+## CRA stewardship
+
+This project is supported under the Linux Foundation CRA stewardship framework, as described at [https://www.linuxfoundation.org/security](https://www.linuxfoundation.org/security). Security vulnerabilities should be reported through the mechanisms described below, which we will coordinate with our CRA steward. For actively exploited vulnerabilities and severe incidents that may require CRA escalation, please use the project’s emergency security reporting mechanisms as appropriate.
+
 ## Verifying Docker images
 
 Docker images published by this project are signed using [Cosign](https://github.com/sigstore/cosign) keyless signing via [Sigstore](https://www.sigstore.dev/). Signatures are recorded in the public [Rekor](https://rekor.sigstore.dev/) transparency log — no private key is stored or required.
